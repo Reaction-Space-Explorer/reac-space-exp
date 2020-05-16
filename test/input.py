@@ -1,14 +1,10 @@
-# TODO: Fix exception: rmgpy.exceptions.ForbiddenStructureException:
-#  Species C2O from reaction library Glarborg/C3 is globally forbidden.
-#  You may explicitly allow it, but it will remain inert unless found in a seed mechanism or reaction library.
-
 database(
     thermoLibraries = ['primaryThermoLibrary'],
  #   seedMechanisms = [],
 #    kineticsDepositories=['training'],
  #   kineticsFamilies='default',
  #   kineticsEstimator='rate rules',
-    reactionLibraries = [] # 'Glarborg/C3' wasn't allowing C20
+    reactionLibraries = [] # 'Glarborg/C3' had forbidden Species C20 and threw an exception
 )
 
 ## isomeric smiles for glucose: C([C@@H]1[C@H]([C@@H]([C@H](C(O1)O)O)O)O)O
@@ -32,9 +28,9 @@ simpleReactor(
         'glycine':.5,
         'HCN':0.5
     },
-    terminationTime=(1e-8,'s'),
+    terminationTime=(1e0,'s'),
     terminationConversion={
-        'glycine':0.01
+        'glycine':0.49 #stop after this much glycine has been used up, initial mole fraction was 0.5
     },
     sensitivity=('HCN','glycine')
 )
