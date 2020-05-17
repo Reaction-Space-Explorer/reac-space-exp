@@ -1,7 +1,7 @@
 database(
-    thermoLibraries = ['primaryThermoLibrary'],
+    thermoLibraries = ['primaryThermoLibrary', 'GRI-Mech3.0'],
  #   seedMechanisms = [],
-#    kineticsDepositories=['training'],
+ #    kineticsDepositories=['training'],
  #   kineticsFamilies='default',
  #   kineticsEstimator='rate rules',
     reactionLibraries = [] # 'Glarborg/C3' had forbidden Species C20 and threw an exception
@@ -25,12 +25,12 @@ simpleReactor(
     temperature=(800,'K'),
     pressure=(1.0,'bar'),
     initialMoleFractions={
-        'glycine':.5,
-        'HCN':0.5
+        'glycine':0.9,
+        'HCN':0.1
     },
     terminationTime=(1e0,'s'),
     terminationConversion={
-        'glycine':0.49 #stop after this much glycine has been used up, initial mole fraction was 0.5
+        'glycine':0.99 # terminate the reaction upon 99% conversion of glycine
     },
     sensitivity=('HCN','glycine')
 )
@@ -53,8 +53,8 @@ model(
 
 options(
     units='si',
-    generateOutputHTML=True,
+    generateOutputHTML=False,
     generatePlots=False,
     saveEdgeSpecies=False,
-    saveSimulationProfiles=True,
+    saveSimulationProfiles=False,
 )
