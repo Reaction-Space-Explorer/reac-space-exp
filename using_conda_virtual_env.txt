@@ -1,0 +1,14 @@
+Set up commands using Anaconda Prompt:
+cd /d D:\Anaconda3
+conda create -c rdkit -n my-rdkit-env rdkit
+cd condabin
+activate my-rdkit-env
+[cd into script folder]
+python test_rdkit.py
+
+Every time you re-open Anaconda Prompt to run:
+cd /d D:\Anaconda3
+cd condabin
+activate my-rdkit-env
+[cd into script folder]
+python test_rdkit.py

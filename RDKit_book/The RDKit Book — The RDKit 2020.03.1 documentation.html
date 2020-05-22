@@ -1,0 +1,1832 @@
+<!DOCTYPE html>
+<!-- saved from url=(0057)http://www.rdkit.org/docs/RDKit_Book.html#reaction-smarts -->
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <title>The RDKit Book — The RDKit 2020.03.1 documentation</title>
+    <link rel="stylesheet" href="./The RDKit Book — The RDKit 2020.03.1 documentation_files/sphinxdoc.css" type="text/css">
+    <link rel="stylesheet" href="./The RDKit Book — The RDKit 2020.03.1 documentation_files/pygments.css" type="text/css">
+    <script id="documentation_options" data-url_root="./" src="./The RDKit Book — The RDKit 2020.03.1 documentation_files/documentation_options.js.download"></script>
+    <script src="./The RDKit Book — The RDKit 2020.03.1 documentation_files/jquery.js.download"></script>
+    <script src="./The RDKit Book — The RDKit 2020.03.1 documentation_files/underscore.js.download"></script>
+    <script src="./The RDKit Book — The RDKit 2020.03.1 documentation_files/doctools.js.download"></script>
+    <script src="./The RDKit Book — The RDKit 2020.03.1 documentation_files/language_data.js.download"></script>
+    <script async="async" src="./The RDKit Book — The RDKit 2020.03.1 documentation_files/latest.js.download"></script>
+    <link rel="index" title="Index" href="http://www.rdkit.org/docs/genindex.html">
+    <link rel="search" title="Search" href="http://www.rdkit.org/docs/search.html">
+    <link rel="next" title="RDKit Cookbook" href="http://www.rdkit.org/docs/Cookbook.html">
+    <link rel="prev" title="Getting Started with the RDKit in Python" href="http://www.rdkit.org/docs/GettingStartedInPython.html"> 
+  <script type="text/javascript" async="" src="./The RDKit Book — The RDKit 2020.03.1 documentation_files/MathJax.js.download"></script><style type="text/css">.MathJax_Hover_Frame {border-radius: .25em; -webkit-border-radius: .25em; -moz-border-radius: .25em; -khtml-border-radius: .25em; box-shadow: 0px 0px 15px #83A; -webkit-box-shadow: 0px 0px 15px #83A; -moz-box-shadow: 0px 0px 15px #83A; -khtml-box-shadow: 0px 0px 15px #83A; border: 1px solid #A6D ! important; display: inline-block; position: absolute}
+.MathJax_Menu_Button .MathJax_Hover_Arrow {position: absolute; cursor: pointer; display: inline-block; border: 2px solid #AAA; border-radius: 4px; -webkit-border-radius: 4px; -moz-border-radius: 4px; -khtml-border-radius: 4px; font-family: 'Courier New',Courier; font-size: 9px; color: #F0F0F0}
+.MathJax_Menu_Button .MathJax_Hover_Arrow span {display: block; background-color: #AAA; border: 1px solid; border-radius: 3px; line-height: 0; padding: 4px}
+.MathJax_Hover_Arrow:hover {color: white!important; border: 2px solid #CCC!important}
+.MathJax_Hover_Arrow:hover span {background-color: #CCC!important}
+</style><style type="text/css">#MathJax_About {position: fixed; left: 50%; width: auto; text-align: center; border: 3px outset; padding: 1em 2em; background-color: #DDDDDD; color: black; cursor: default; font-family: message-box; font-size: 120%; font-style: normal; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; border-radius: 15px; -webkit-border-radius: 15px; -moz-border-radius: 15px; -khtml-border-radius: 15px; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+#MathJax_About.MathJax_MousePost {outline: none}
+.MathJax_Menu {position: absolute; background-color: white; color: black; width: auto; padding: 2px; border: 1px solid #CCCCCC; margin: 0; cursor: default; font: menu; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+.MathJax_MenuItem {padding: 2px 2em; background: transparent}
+.MathJax_MenuArrow {position: absolute; right: .5em; padding-top: .25em; color: #666666; font-size: .75em}
+.MathJax_MenuActive .MathJax_MenuArrow {color: white}
+.MathJax_MenuArrow.RTL {left: .5em; right: auto}
+.MathJax_MenuCheck {position: absolute; left: .7em}
+.MathJax_MenuCheck.RTL {right: .7em; left: auto}
+.MathJax_MenuRadioCheck {position: absolute; left: 1em}
+.MathJax_MenuRadioCheck.RTL {right: 1em; left: auto}
+.MathJax_MenuLabel {padding: 2px 2em 4px 1.33em; font-style: italic}
+.MathJax_MenuRule {border-top: 1px solid #CCCCCC; margin: 4px 1px 0px}
+.MathJax_MenuDisabled {color: GrayText}
+.MathJax_MenuActive {background-color: Highlight; color: HighlightText}
+.MathJax_MenuDisabled:focus, .MathJax_MenuLabel:focus {background-color: #E8E8E8}
+.MathJax_ContextMenu:focus {outline: none}
+.MathJax_ContextMenu .MathJax_MenuItem:focus {outline: none}
+#MathJax_AboutClose {top: .2em; right: .2em}
+.MathJax_Menu .MathJax_MenuClose {top: -10px; left: -10px}
+.MathJax_MenuClose {position: absolute; cursor: pointer; display: inline-block; border: 2px solid #AAA; border-radius: 18px; -webkit-border-radius: 18px; -moz-border-radius: 18px; -khtml-border-radius: 18px; font-family: 'Courier New',Courier; font-size: 24px; color: #F0F0F0}
+.MathJax_MenuClose span {display: block; background-color: #AAA; border: 1.5px solid; border-radius: 18px; -webkit-border-radius: 18px; -moz-border-radius: 18px; -khtml-border-radius: 18px; line-height: 0; padding: 8px 0 6px}
+.MathJax_MenuClose:hover {color: white!important; border: 2px solid #CCC!important}
+.MathJax_MenuClose:hover span {background-color: #CCC!important}
+.MathJax_MenuClose:hover:focus {outline: none}
+</style><style type="text/css">.MathJax_Preview .MJXf-math {color: inherit!important}
+</style><style type="text/css">.MJX_Assistive_MathML {position: absolute!important; top: 0; left: 0; clip: rect(1px, 1px, 1px, 1px); padding: 1px 0 0 0!important; border: 0!important; height: 1px!important; width: 1px!important; overflow: hidden!important; display: block!important; -webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none}
+.MJX_Assistive_MathML.MJX_Assistive_MathML_Block {width: 100%!important}
+</style><style type="text/css">#MathJax_Zoom {position: absolute; background-color: #F0F0F0; overflow: auto; display: block; z-index: 301; padding: .5em; border: 1px solid black; margin: 0; font-weight: normal; font-style: normal; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; -webkit-box-sizing: content-box; -moz-box-sizing: content-box; box-sizing: content-box; box-shadow: 5px 5px 15px #AAAAAA; -webkit-box-shadow: 5px 5px 15px #AAAAAA; -moz-box-shadow: 5px 5px 15px #AAAAAA; -khtml-box-shadow: 5px 5px 15px #AAAAAA; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+#MathJax_ZoomOverlay {position: absolute; left: 0; top: 0; z-index: 300; display: inline-block; width: 100%; height: 100%; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+#MathJax_ZoomFrame {position: relative; display: inline-block; height: 0; width: 0}
+#MathJax_ZoomEventTrap {position: absolute; left: 0; top: 0; z-index: 302; display: inline-block; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+</style><style type="text/css">.MathJax_Preview {color: #888}
+#MathJax_Message {position: fixed; left: 1em; bottom: 1.5em; background-color: #E6E6E6; border: 1px solid #959595; margin: 0px; padding: 2px 8px; z-index: 102; color: black; font-size: 80%; width: auto; white-space: nowrap}
+#MathJax_MSIE_Frame {position: absolute; top: 0; left: 0; width: 0px; z-index: 101; border: 0px; margin: 0px; padding: 0px}
+.MathJax_Error {color: #CC0000; font-style: italic}
+</style><style type="text/css">.MJXp-script {font-size: .8em}
+.MJXp-right {-webkit-transform-origin: right; -moz-transform-origin: right; -ms-transform-origin: right; -o-transform-origin: right; transform-origin: right}
+.MJXp-bold {font-weight: bold}
+.MJXp-italic {font-style: italic}
+.MJXp-scr {font-family: MathJax_Script,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-frak {font-family: MathJax_Fraktur,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-sf {font-family: MathJax_SansSerif,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-cal {font-family: MathJax_Caligraphic,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-mono {font-family: MathJax_Typewriter,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-largeop {font-size: 150%}
+.MJXp-largeop.MJXp-int {vertical-align: -.2em}
+.MJXp-math {display: inline-block; line-height: 1.2; text-indent: 0; font-family: 'Times New Roman',Times,STIXGeneral,serif; white-space: nowrap; border-collapse: collapse}
+.MJXp-display {display: block; text-align: center; margin: 1em 0}
+.MJXp-math span {display: inline-block}
+.MJXp-box {display: block!important; text-align: center}
+.MJXp-box:after {content: " "}
+.MJXp-rule {display: block!important; margin-top: .1em}
+.MJXp-char {display: block!important}
+.MJXp-mo {margin: 0 .15em}
+.MJXp-mfrac {margin: 0 .125em; vertical-align: .25em}
+.MJXp-denom {display: inline-table!important; width: 100%}
+.MJXp-denom > * {display: table-row!important}
+.MJXp-surd {vertical-align: top}
+.MJXp-surd > * {display: block!important}
+.MJXp-script-box > *  {display: table!important; height: 50%}
+.MJXp-script-box > * > * {display: table-cell!important; vertical-align: top}
+.MJXp-script-box > *:last-child > * {vertical-align: bottom}
+.MJXp-script-box > * > * > * {display: block!important}
+.MJXp-mphantom {visibility: hidden}
+.MJXp-munderover, .MJXp-munder {display: inline-table!important}
+.MJXp-over {display: inline-block!important; text-align: center}
+.MJXp-over > * {display: block!important}
+.MJXp-munderover > *, .MJXp-munder > * {display: table-row!important}
+.MJXp-mtable {vertical-align: .25em; margin: 0 .125em}
+.MJXp-mtable > * {display: inline-table!important; vertical-align: middle}
+.MJXp-mtr {display: table-row!important}
+.MJXp-mtd {display: table-cell!important; text-align: center; padding: .5em 0 0 .5em}
+.MJXp-mtr > .MJXp-mtd:first-child {padding-left: 0}
+.MJXp-mtr:first-child > .MJXp-mtd {padding-top: 0}
+.MJXp-mlabeledtr {display: table-row!important}
+.MJXp-mlabeledtr > .MJXp-mtd:first-child {padding-left: 0}
+.MJXp-mlabeledtr:first-child > .MJXp-mtd {padding-top: 0}
+.MJXp-merror {background-color: #FFFF88; color: #CC0000; border: 1px solid #CC0000; padding: 1px 3px; font-style: normal; font-size: 90%}
+.MJXp-scale0 {-webkit-transform: scaleX(.0); -moz-transform: scaleX(.0); -ms-transform: scaleX(.0); -o-transform: scaleX(.0); transform: scaleX(.0)}
+.MJXp-scale1 {-webkit-transform: scaleX(.1); -moz-transform: scaleX(.1); -ms-transform: scaleX(.1); -o-transform: scaleX(.1); transform: scaleX(.1)}
+.MJXp-scale2 {-webkit-transform: scaleX(.2); -moz-transform: scaleX(.2); -ms-transform: scaleX(.2); -o-transform: scaleX(.2); transform: scaleX(.2)}
+.MJXp-scale3 {-webkit-transform: scaleX(.3); -moz-transform: scaleX(.3); -ms-transform: scaleX(.3); -o-transform: scaleX(.3); transform: scaleX(.3)}
+.MJXp-scale4 {-webkit-transform: scaleX(.4); -moz-transform: scaleX(.4); -ms-transform: scaleX(.4); -o-transform: scaleX(.4); transform: scaleX(.4)}
+.MJXp-scale5 {-webkit-transform: scaleX(.5); -moz-transform: scaleX(.5); -ms-transform: scaleX(.5); -o-transform: scaleX(.5); transform: scaleX(.5)}
+.MJXp-scale6 {-webkit-transform: scaleX(.6); -moz-transform: scaleX(.6); -ms-transform: scaleX(.6); -o-transform: scaleX(.6); transform: scaleX(.6)}
+.MJXp-scale7 {-webkit-transform: scaleX(.7); -moz-transform: scaleX(.7); -ms-transform: scaleX(.7); -o-transform: scaleX(.7); transform: scaleX(.7)}
+.MJXp-scale8 {-webkit-transform: scaleX(.8); -moz-transform: scaleX(.8); -ms-transform: scaleX(.8); -o-transform: scaleX(.8); transform: scaleX(.8)}
+.MJXp-scale9 {-webkit-transform: scaleX(.9); -moz-transform: scaleX(.9); -ms-transform: scaleX(.9); -o-transform: scaleX(.9); transform: scaleX(.9)}
+.MathJax_PHTML .noError {vertical-align: ; font-size: 90%; text-align: left; color: black; padding: 1px 3px; border: 1px solid}
+</style></head><body><div id="MathJax_Message" style="display: none;"></div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="http://www.rdkit.org/docs/genindex.html" title="General Index" accesskey="I">index</a></li>
+        <li class="right">
+          <a href="http://www.rdkit.org/docs/py-modindex.html" title="Python Module Index">modules</a> |</li>
+        <li class="right">
+          <a href="http://www.rdkit.org/docs/Cookbook.html" title="RDKit Cookbook" accesskey="N">next</a> |</li>
+        <li class="right">
+          <a href="http://www.rdkit.org/docs/GettingStartedInPython.html" title="Getting Started with the RDKit in Python" accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="http://www.rdkit.org/docs/index.html">The RDKit 2020.03.1 documentation</a> »</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="http://www.rdkit.org/docs/index.html">
+              <img class="logo" src="./The RDKit Book — The RDKit 2020.03.1 documentation_files/logo.png" alt="Logo">
+            </a></p>
+  <h3><a href="http://www.rdkit.org/docs/index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="http://www.rdkit.org/docs/RDKit_Book.html#">The RDKit Book</a><ul>
+<li><a class="reference internal" href="http://www.rdkit.org/docs/RDKit_Book.html#misc-cheminformatics-topics">Misc Cheminformatics Topics</a><ul>
+<li><a class="reference internal" href="http://www.rdkit.org/docs/RDKit_Book.html#aromaticity">Aromaticity</a><ul>
+<li><a class="reference internal" href="http://www.rdkit.org/docs/RDKit_Book.html#the-rdkit-aromaticity-model">The RDKit Aromaticity Model</a></li>
+<li><a class="reference internal" href="http://www.rdkit.org/docs/RDKit_Book.html#the-simple-aromaticity-model">The Simple Aromaticity Model</a></li>
+<li><a class="reference internal" href="http://www.rdkit.org/docs/RDKit_Book.html#the-mdl-aromaticity-model">The MDL Aromaticity Model</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="http://www.rdkit.org/docs/RDKit_Book.html#smiles-support-and-extensions">SMILES Support and Extensions</a><ul>
+<li><a class="reference internal" href="http://www.rdkit.org/docs/RDKit_Book.html#id2">Aromaticity</a></li>
+<li><a class="reference internal" href="http://www.rdkit.org/docs/RDKit_Book.html#dative-bonds">Dative bonds</a></li>
+<li><a class="reference internal" href="http://www.rdkit.org/docs/RDKit_Book.html#ring-closures">Ring closures</a></li>
+<li><a class="reference internal" href="http://www.rdkit.org/docs/RDKit_Book.html#specifying-atoms-by-atomic-number">Specifying atoms by atomic number</a></li>
+<li><a class="reference internal" href="http://www.rdkit.org/docs/RDKit_Book.html#cxsmiles-extensions">CXSMILES extensions</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="http://www.rdkit.org/docs/RDKit_Book.html#smarts-support-and-extensions">SMARTS Support and Extensions</a><ul>
+<li><a class="reference internal" href="http://www.rdkit.org/docs/RDKit_Book.html#hybridization-queries">Hybridization queries</a></li>
+<li><a class="reference internal" href="http://www.rdkit.org/docs/RDKit_Book.html#id5">Dative bonds</a></li>
+<li><a class="reference internal" href="http://www.rdkit.org/docs/RDKit_Book.html#heteroatom-neighbor-queries">Heteroatom neighbor queries</a></li>
+<li><a class="reference internal" href="http://www.rdkit.org/docs/RDKit_Book.html#range-queries">Range queries</a></li>
+<li><a class="reference internal" href="http://www.rdkit.org/docs/RDKit_Book.html#smarts-reference">SMARTS Reference</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="http://www.rdkit.org/docs/RDKit_Book.html#ring-finding-and-sssr">Ring Finding and SSSR</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="http://www.rdkit.org/docs/RDKit_Book.html#chemical-reaction-handling">Chemical Reaction Handling</a><ul>
+<li><a class="reference internal" href="http://www.rdkit.org/docs/RDKit_Book.html#reaction-smarts">Reaction SMARTS</a><ul>
+<li><a class="reference internal" href="http://www.rdkit.org/docs/RDKit_Book.html#some-features">Some features</a></li>
+<li><a class="reference internal" href="http://www.rdkit.org/docs/RDKit_Book.html#chirality">Chirality</a></li>
+<li><a class="reference internal" href="http://www.rdkit.org/docs/RDKit_Book.html#rules-and-caveats">Rules and caveats</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="http://www.rdkit.org/docs/RDKit_Book.html#the-feature-definition-file-format">The Feature Definition File Format</a><ul>
+<li><a class="reference internal" href="http://www.rdkit.org/docs/RDKit_Book.html#chemical-features">Chemical Features</a></li>
+<li><a class="reference internal" href="http://www.rdkit.org/docs/RDKit_Book.html#syntax-of-the-fdef-file">Syntax of the FDef file</a><ul>
+<li><a class="reference internal" href="http://www.rdkit.org/docs/RDKit_Book.html#atomtype-definitions">AtomType definitions</a></li>
+<li><a class="reference internal" href="http://www.rdkit.org/docs/RDKit_Book.html#feature-definitions">Feature definitions</a></li>
+<li><a class="reference internal" href="http://www.rdkit.org/docs/RDKit_Book.html#additional-syntax-notes">Additional syntax notes:</a></li>
+<li><a class="reference internal" href="http://www.rdkit.org/docs/RDKit_Book.html#atom-weights-and-feature-locations">Atom weights and feature locations</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="http://www.rdkit.org/docs/RDKit_Book.html#frequently-asked-question-s">Frequently Asked Question(s)</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="http://www.rdkit.org/docs/RDKit_Book.html#representation-of-pharmacophore-fingerprints">Representation of Pharmacophore Fingerprints</a></li>
+<li><a class="reference internal" href="http://www.rdkit.org/docs/RDKit_Book.html#atom-atom-matching-in-substructure-queries">Atom-Atom Matching in Substructure Queries</a></li>
+<li><a class="reference internal" href="http://www.rdkit.org/docs/RDKit_Book.html#molecular-sanitization">Molecular Sanitization</a></li>
+<li><a class="reference internal" href="http://www.rdkit.org/docs/RDKit_Book.html#implementation-details">Implementation Details</a><ul>
+<li><a class="reference internal" href="http://www.rdkit.org/docs/RDKit_Book.html#magic-property-values">“Magic” Property Values</a><ul>
+<li><a class="reference internal" href="http://www.rdkit.org/docs/RDKit_Book.html#romol-mol-in-python">ROMol  (Mol in Python)</a></li>
+<li><a class="reference internal" href="http://www.rdkit.org/docs/RDKit_Book.html#atom">Atom</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="http://www.rdkit.org/docs/RDKit_Book.html#thread-safety-and-the-rdkit">Thread safety and the RDKit</a><ul>
+<li><a class="reference internal" href="http://www.rdkit.org/docs/RDKit_Book.html#what-has-been-tested">What has been tested</a></li>
+<li><a class="reference internal" href="http://www.rdkit.org/docs/RDKit_Book.html#known-problems">Known Problems</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="http://www.rdkit.org/docs/RDKit_Book.html#implementation-of-the-tpsa-descriptor">Implementation of the TPSA Descriptor</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="http://www.rdkit.org/docs/RDKit_Book.html#atom-properties-and-sdf-files">Atom Properties and SDF files</a></li>
+<li><a class="reference internal" href="http://www.rdkit.org/docs/RDKit_Book.html#support-for-enhanced-stereochemistry">Support for Enhanced Stereochemistry</a><ul>
+<li><a class="reference internal" href="http://www.rdkit.org/docs/RDKit_Book.html#overview">Overview</a></li>
+<li><a class="reference internal" href="http://www.rdkit.org/docs/RDKit_Book.html#representation">Representation</a></li>
+<li><a class="reference internal" href="http://www.rdkit.org/docs/RDKit_Book.html#use-cases">Use cases</a></li>
+<li><a class="reference internal" href="http://www.rdkit.org/docs/RDKit_Book.html#enhanced-stereochemistry-and-substructure-search">Enhanced Stereochemistry and substructure search</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="http://www.rdkit.org/docs/RDKit_Book.html#additional-information-about-the-fingerprints">Additional Information About the Fingerprints</a><ul>
+<li><a class="reference internal" href="http://www.rdkit.org/docs/RDKit_Book.html#rdkit-fingerprints">RDKit Fingerprints</a><ul>
+<li><a class="reference internal" href="http://www.rdkit.org/docs/RDKit_Book.html#fingerprint-specific-options">Fingerprint-specific options</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="http://www.rdkit.org/docs/RDKit_Book.html#pattern-fingerprints">Pattern Fingerprints</a></li>
+<li><a class="reference internal" href="http://www.rdkit.org/docs/RDKit_Book.html#atom-pair-and-topological-torsion-fingerprints">Atom-Pair and Topological Torsion Fingerprints</a></li>
+<li><a class="reference internal" href="http://www.rdkit.org/docs/RDKit_Book.html#morgan-and-feature-morgan-fingerprints">Morgan and Feature Morgan Fingerprints</a></li>
+<li><a class="reference internal" href="http://www.rdkit.org/docs/RDKit_Book.html#layered-fingerprints">Layered Fingerprints</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="http://www.rdkit.org/docs/RDKit_Book.html#license">License</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="http://www.rdkit.org/docs/GettingStartedInPython.html" title="previous chapter">Getting Started with the RDKit in Python</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="http://www.rdkit.org/docs/Cookbook.html" title="next chapter">RDKit Cookbook</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="http://www.rdkit.org/docs/_sources/RDKit_Book.rst.txt" rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="http://www.rdkit.org/docs/search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel">
+      <input type="submit" value="Go">
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="the-rdkit-book">
+<h1>The RDKit Book<a class="headerlink" href="http://www.rdkit.org/docs/RDKit_Book.html#the-rdkit-book" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="misc-cheminformatics-topics">
+<h2>Misc Cheminformatics Topics<a class="headerlink" href="http://www.rdkit.org/docs/RDKit_Book.html#misc-cheminformatics-topics" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="aromaticity">
+<h3>Aromaticity<a class="headerlink" href="http://www.rdkit.org/docs/RDKit_Book.html#aromaticity" title="Permalink to this headline">¶</a></h3>
+<p>Aromaticity is one of those unpleasant topics that is simultaneously simple and impossibly complicated.
+Since neither experimental nor theoretical chemists can agree with each other about a definition, it’s necessary to pick something arbitrary and stick to it.
+This is the approach taken in the RDKit.</p>
+<p>Instead of using patterns to match known aromatic systems, the aromaticity perception code in the RDKit uses a set of rules.
+The rules are relatively straightforward.</p>
+<p>Aromaticity is a property of atoms and bonds in rings.
+An aromatic bond must be between aromatic atoms, but a bond between aromatic atoms does not need to be aromatic.</p>
+<p>For example the fusing bonds here are not considered to be aromatic by the RDKit:</p>
+<img alt="_images/picture_9.png" src="./The RDKit Book — The RDKit 2020.03.1 documentation_files/picture_9.png">
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">rdkit</span> <span class="kn">import</span> <span class="n">Chem</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'C1=CC2=C(C=C1)C1=CC=CC=C21'</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">GetAtomWithIdx</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">GetIsAromatic</span><span class="p">()</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">GetAtomWithIdx</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span><span class="o">.</span><span class="n">GetIsAromatic</span><span class="p">()</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">GetBondBetweenAtoms</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">6</span><span class="p">)</span><span class="o">.</span><span class="n">GetIsAromatic</span><span class="p">()</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+<p>The RDKit supports a number of different aromaticity models and allows the user to define their own by providing a function that assigns aromaticity.</p>
+<div class="section" id="the-rdkit-aromaticity-model">
+<h4>The RDKit Aromaticity Model<a class="headerlink" href="http://www.rdkit.org/docs/RDKit_Book.html#the-rdkit-aromaticity-model" title="Permalink to this headline">¶</a></h4>
+<p>A ring, or fused ring system, is considered to be aromatic if it obeys the 4N+2 rule.
+Contributions to the electron count are determined by atom type and environment.
+Some examples:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 29%">
+<col style="width: 71%">
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>Fragment</p></td>
+<td><p>Number of pi electrons</p></td>
+</tr>
+<tr class="row-even"><td><p>c(a)a</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-odd"><td><p>n(a)a</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-even"><td><p>An(a)a</p></td>
+<td><p>2</p></td>
+</tr>
+<tr class="row-odd"><td><p>o(a)a</p></td>
+<td><p>2</p></td>
+</tr>
+<tr class="row-even"><td><p>s(a)a</p></td>
+<td><p>2</p></td>
+</tr>
+<tr class="row-odd"><td><p>se(a)a</p></td>
+<td><p>2</p></td>
+</tr>
+<tr class="row-even"><td><p>te(a)a</p></td>
+<td><p>2</p></td>
+</tr>
+<tr class="row-odd"><td><p>O=c(a)a</p></td>
+<td><p>0</p></td>
+</tr>
+<tr class="row-even"><td><p>N=c(a)a</p></td>
+<td><p>0</p></td>
+</tr>
+<tr class="row-odd"><td><p>*(a)a</p></td>
+<td><p>0, 1, or 2</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Notation</strong> a: any aromatic atom; A: any atom, include H; *: a dummy atom</p>
+<p>Notice that exocyclic bonds to electronegative atoms “steal” the valence electron from the ring atom and that dummy atoms contribute whatever count is necessary to make the ring aromatic.</p>
+<p>The use of fused rings for aromaticity can lead to situations where individual rings are not aromatic, but the fused system is.
+An example of this is azulene:</p>
+<img alt="_images/picture_8.png" src="./The RDKit Book — The RDKit 2020.03.1 documentation_files/picture_8.png">
+<p>An extreme example, demonstrating both fused rings and the influence of exocyclic double bonds:</p>
+<img alt="_images/picture_7.png" src="./The RDKit Book — The RDKit 2020.03.1 documentation_files/picture_7.png">
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">=</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'O=C1C=CC(=O)C2=C1OC=CO2'</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">GetAtomWithIdx</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span><span class="o">.</span><span class="n">GetIsAromatic</span><span class="p">()</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">GetAtomWithIdx</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span><span class="o">.</span><span class="n">GetIsAromatic</span><span class="p">()</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">GetBondBetweenAtoms</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">)</span><span class="o">.</span><span class="n">GetIsAromatic</span><span class="p">()</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+<p>A special case, heteroatoms with radicals are not considered candidates for aromaticity:</p>
+<img alt="_images/picture_10.png" src="./The RDKit Book — The RDKit 2020.03.1 documentation_files/picture_10.png">
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'C1=C[N]C=C1'</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">GetAtomWithIdx</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">GetIsAromatic</span><span class="p">()</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">GetAtomWithIdx</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">GetIsAromatic</span><span class="p">()</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">GetAtomWithIdx</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">GetNumRadicalElectrons</span><span class="p">()</span>
+<span class="go">1</span>
+</pre></div>
+</div>
+<p>Charged carbons with radicals are also not considered:</p>
+<img alt="_images/picture_12.png" src="./The RDKit Book — The RDKit 2020.03.1 documentation_files/picture_12.png">
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'C1=CC=CC=C[C+]1'</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">GetAtomWithIdx</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">GetIsAromatic</span><span class="p">()</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">GetAtomWithIdx</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span><span class="o">.</span><span class="n">GetIsAromatic</span><span class="p">()</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">GetAtomWithIdx</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span><span class="o">.</span><span class="n">GetFormalCharge</span><span class="p">()</span>
+<span class="go">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">GetAtomWithIdx</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span><span class="o">.</span><span class="n">GetNumRadicalElectrons</span><span class="p">()</span>
+<span class="go">1</span>
+</pre></div>
+</div>
+<p>Neutral carbons with radicals, however, are still considered:</p>
+<img alt="_images/picture_11.png" src="./The RDKit Book — The RDKit 2020.03.1 documentation_files/picture_11.png">
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'C1=[C]NC=C1'</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">GetAtomWithIdx</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">GetIsAromatic</span><span class="p">()</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">GetAtomWithIdx</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">GetIsAromatic</span><span class="p">()</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">GetAtomWithIdx</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">GetNumRadicalElectrons</span><span class="p">()</span>
+<span class="go">1</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="the-simple-aromaticity-model">
+<h4>The Simple Aromaticity Model<a class="headerlink" href="http://www.rdkit.org/docs/RDKit_Book.html#the-simple-aromaticity-model" title="Permalink to this headline">¶</a></h4>
+<p>This one is quite simple: only five- and six-membered simple rings are considered candidates for aromaticity.
+The same electron-contribution counts listed above are used.</p>
+</div>
+<div class="section" id="the-mdl-aromaticity-model">
+<h4>The MDL Aromaticity Model<a class="headerlink" href="http://www.rdkit.org/docs/RDKit_Book.html#the-mdl-aromaticity-model" title="Permalink to this headline">¶</a></h4>
+<p>This isn’t well documented (at least not publicly), so we tried to reproduce what’s provided in the oechem documentation (<a class="reference external" href="https://docs.eyesopen.com/toolkits/python/oechemtk/aromaticity.html">https://docs.eyesopen.com/toolkits/python/oechemtk/aromaticity.html</a>)</p>
+<ul class="simple">
+<li><p>fused rings (i.e. azulene) can be aromatic</p></li>
+<li><p>five-membered rings are not aromatic (though they can be part of fused aromatic systems)</p></li>
+<li><p>only C and N can be aromatic</p></li>
+<li><p>only one electron donors are accepted</p></li>
+<li><p>atoms with exocyclic double bonds are not aromatic</p></li>
+</ul>
+<p><strong>Note:</strong> For reasons of computational expediency, aromaticity perception is only done for fused-ring systems where all members are at most 24 atoms in size.</p>
+</div>
+</div>
+<div class="section" id="smiles-support-and-extensions">
+<h3>SMILES Support and Extensions<a class="headerlink" href="http://www.rdkit.org/docs/RDKit_Book.html#smiles-support-and-extensions" title="Permalink to this headline">¶</a></h3>
+<p>The RDKit covers all of the standard features of Daylight SMILES <a class="footnote-reference brackets" href="http://www.rdkit.org/docs/RDKit_Book.html#smiles" id="id1">2</a> as well as some useful extensions.</p>
+<p>Here’s the (likely partial) list of extensions:</p>
+<div class="section" id="id2">
+<h4>Aromaticity<a class="headerlink" href="http://www.rdkit.org/docs/RDKit_Book.html#id2" title="Permalink to this headline">¶</a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">te</span></code> (aromatic Te) is accepted. Here is an example with tellurophene-2-carboxylic acid:</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'OC(=O)c1[te]ccc1'</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">GetAtomWithIdx</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="o">.</span><span class="n">GetIsAromatic</span><span class="p">()</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="dative-bonds">
+<h4>Dative bonds<a class="headerlink" href="http://www.rdkit.org/docs/RDKit_Book.html#dative-bonds" title="Permalink to this headline">¶</a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">&lt;-</span></code> and <code class="docutils literal notranslate"><span class="pre">-&gt;</span></code> create a dative bond between the atoms, direction does matter.</p>
+<p>Here’s an example of a bipy-copper complex:</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">bipycu</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'c1cccn-&gt;2c1-c1n-&gt;3cccc1.[Cu]23(Cl)Cl'</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bipycu</span><span class="o">.</span><span class="n">GetBondBetweenAtoms</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="mi">12</span><span class="p">)</span><span class="o">.</span><span class="n">GetBondType</span><span class="p">()</span>
+<span class="go">rdkit.Chem.rdchem.BondType.DATIVE</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Chem</span><span class="o">.</span><span class="n">MolToSmiles</span><span class="p">(</span><span class="n">bipycu</span><span class="p">)</span>
+<span class="go">'Cl[Cu]1(Cl)&lt;-n2ccccc2-c2ccccn-&gt;12'</span>
+</pre></div>
+</div>
+<p>Dative bonds have the special characteristic that they don’t affect the valence on the start atom, but do affect
+the end atom. So in this case, the N atoms involved in the dative bond have the valence of 3 that we expect from bipy,
+while the Cu has a valence of 4:</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">bipycu</span><span class="o">.</span><span class="n">GetAtomWithIdx</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="o">.</span><span class="n">GetTotalValence</span><span class="p">()</span>
+<span class="go">3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bipycu</span><span class="o">.</span><span class="n">GetAtomWithIdx</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span><span class="o">.</span><span class="n">GetTotalValence</span><span class="p">()</span>
+<span class="go">4</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="ring-closures">
+<h4>Ring closures<a class="headerlink" href="http://www.rdkit.org/docs/RDKit_Book.html#ring-closures" title="Permalink to this headline">¶</a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">%(N)</span></code> notation is supported for ring closures, where N is a single digit <code class="docutils literal notranslate"><span class="pre">%(N)</span></code> up to
+five digits <code class="docutils literal notranslate"><span class="pre">%(NNNNN)</span></code>. Here is an example:</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'C%(1000)OC%(1000)'</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">GetAtomWithIdx</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">IsInRing</span><span class="p">()</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">GetAtomWithIdx</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">IsInRing</span><span class="p">()</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="specifying-atoms-by-atomic-number">
+<h4>Specifying atoms by atomic number<a class="headerlink" href="http://www.rdkit.org/docs/RDKit_Book.html#specifying-atoms-by-atomic-number" title="Permalink to this headline">¶</a></h4>
+<p>The <code class="docutils literal notranslate"><span class="pre">[#6]</span></code> construct from SMARTS is supported in SMILES.</p>
+</div>
+<div class="section" id="cxsmiles-extensions">
+<h4>CXSMILES extensions<a class="headerlink" href="http://www.rdkit.org/docs/RDKit_Book.html#cxsmiles-extensions" title="Permalink to this headline">¶</a></h4>
+<p>The RDKit supports parsing and writing a subset of the extended SMILES functionality introduced by ChemAxon <a class="footnote-reference brackets" href="http://www.rdkit.org/docs/RDKit_Book.html#cxsmiles" id="id3">4</a>.</p>
+<p>The features which are parsed include:</p>
+<ul class="simple">
+<li><p>atomic coordinates</p></li>
+<li><p>atomic values</p></li>
+<li><p>atomic labels</p></li>
+<li><p>atomic properties</p></li>
+<li><p>coordinate bonds (these are translated into double bonds)</p></li>
+<li><p>radicals</p></li>
+<li><p>enhanced stereo (these are converted into <code class="docutils literal notranslate"><span class="pre">StereoGroups</span></code>)</p></li>
+</ul>
+<p>The features which are written by <a class="reference internal" href="http://www.rdkit.org/docs/source/rdkit.Chem.rdmolfiles.html#rdkit.Chem.rdmolfiles.MolToCXSmiles" title="rdkit.Chem.rdmolfiles.MolToCXSmiles"><code class="xref py py-func docutils literal notranslate"><span class="pre">rdkit.Chem.rdmolfiles.MolToCXSmiles()</span></code></a>
+(note the specialized writer function) include:</p>
+<ul class="simple">
+<li><p>atomic coordinates</p></li>
+<li><p>atomic values</p></li>
+<li><p>atomic labels</p></li>
+<li><p>atomic properties</p></li>
+<li><p>radicals</p></li>
+<li><p>enhanced stereo</p></li>
+</ul>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'OC'</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">GetAtomWithIdx</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">SetProp</span><span class="p">(</span><span class="s1">'p1'</span><span class="p">,</span><span class="s1">'2'</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">GetAtomWithIdx</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">SetProp</span><span class="p">(</span><span class="s1">'p1'</span><span class="p">,</span><span class="s1">'5'</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">GetAtomWithIdx</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">SetProp</span><span class="p">(</span><span class="s1">'p2'</span><span class="p">,</span><span class="s1">'A1'</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">GetAtomWithIdx</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">SetProp</span><span class="p">(</span><span class="s1">'atomLabel'</span><span class="p">,</span><span class="s1">'O1'</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">GetAtomWithIdx</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">SetProp</span><span class="p">(</span><span class="s1">'atomLabel'</span><span class="p">,</span><span class="s1">'C2'</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Chem</span><span class="o">.</span><span class="n">MolToCXSmiles</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+<span class="go">'CO |$C2;O1$,atomProp:0.p1.5:0.p2.A1:1.p1.2|'</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="smarts-support-and-extensions">
+<h3>SMARTS Support and Extensions<a class="headerlink" href="http://www.rdkit.org/docs/RDKit_Book.html#smarts-support-and-extensions" title="Permalink to this headline">¶</a></h3>
+<p>The RDKit covers most of the standard features of Daylight SMARTS <a class="footnote-reference brackets" href="http://www.rdkit.org/docs/RDKit_Book.html#smarts" id="id4">3</a> as well as some useful extensions.</p>
+<p>Here’s the (hopefully complete) list of SMARTS features that are <em>not</em> supported:</p>
+<ul class="simple">
+<li><p>Non-tetrahedral chiral classes</p></li>
+<li><p>the <code class="docutils literal notranslate"><span class="pre">@?</span></code> operator</p></li>
+<li><p>explicit atomic masses (though isotope queries are supported)</p></li>
+<li><p>component level grouping requiring matches in different components, i.e. <code class="docutils literal notranslate"><span class="pre">(C).(C)</span></code></p></li>
+</ul>
+<p>Here’s the (likely partial) list of extensions:</p>
+<div class="section" id="hybridization-queries">
+<h4>Hybridization queries<a class="headerlink" href="http://www.rdkit.org/docs/RDKit_Book.html#hybridization-queries" title="Permalink to this headline">¶</a></h4>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">^0</span></code> matches S hybridized atoms</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">^1</span></code> matches SP hybridized atoms</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">^2</span></code> matches SP2 hybridized atoms</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">^3</span></code> matches SP3 hybridized atoms</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">^4</span></code> matches SP3D hybridized atoms</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">^5</span></code> matches SP3D2 hybridized atoms</p></li>
+</ul>
+</div></blockquote>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="go">&gt;&gt; Chem.MolFromSmiles('CC=CF').GetSubstructMatches(Chem.MolFromSmarts('[^2]'))</span>
+<span class="go">((1,), (2,))</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id5">
+<h4>Dative bonds<a class="headerlink" href="http://www.rdkit.org/docs/RDKit_Book.html#id5" title="Permalink to this headline">¶</a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">&lt;-</span></code> and <code class="docutils literal notranslate"><span class="pre">-&gt;</span></code> match the corresponding dative bonds, direction does matter.</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'C1=CC=CC=N1-&gt;[Fe]'</span><span class="p">)</span><span class="o">.</span><span class="n">GetSubstructMatches</span><span class="p">(</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmarts</span><span class="p">(</span><span class="s1">'[#7]-&gt;*'</span><span class="p">))</span>
+<span class="go">((5, 6),)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'C1=CC=CC=N1-&gt;[Fe]'</span><span class="p">)</span><span class="o">.</span><span class="n">GetSubstructMatches</span><span class="p">(</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmarts</span><span class="p">(</span><span class="s1">'*&lt;-[#7]'</span><span class="p">))</span>
+<span class="go">((6, 5),)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="heteroatom-neighbor-queries">
+<h4>Heteroatom neighbor queries<a class="headerlink" href="http://www.rdkit.org/docs/RDKit_Book.html#heteroatom-neighbor-queries" title="Permalink to this headline">¶</a></h4>
+<blockquote>
+<div><ul class="simple">
+<li><p>the atom query <code class="docutils literal notranslate"><span class="pre">z</span></code> matches atoms that have the specified number of heteroatom (i.e. not C or H) neighbors. For example, <code class="docutils literal notranslate"><span class="pre">z2</span></code> would match the second C in <code class="docutils literal notranslate"><span class="pre">CC(=O)O</span></code>.</p></li>
+<li><p>the atom query <code class="docutils literal notranslate"><span class="pre">Z</span></code> matches atoms that have the specified number of aliphatic heteroatom (i.e. not C or H) neighbors.</p></li>
+</ul>
+</div></blockquote>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'O=C(O)c1nc(O)ccn1'</span><span class="p">)</span><span class="o">.</span><span class="n">GetSubstructMatches</span><span class="p">(</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmarts</span><span class="p">(</span><span class="s1">'[z2]'</span><span class="p">))</span>
+<span class="go">((1,), (3,), (5,))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'O=C(O)c1nc(O)ccn1'</span><span class="p">)</span><span class="o">.</span><span class="n">GetSubstructMatches</span><span class="p">(</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmarts</span><span class="p">(</span><span class="s1">'[Z2]'</span><span class="p">))</span>
+<span class="go">((1,),)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'O=C(O)c1nc(O)ccn1'</span><span class="p">)</span><span class="o">.</span><span class="n">GetSubstructMatches</span><span class="p">(</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmarts</span><span class="p">(</span><span class="s1">'[Z1]'</span><span class="p">))</span>
+<span class="go">((5,),)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="range-queries">
+<h4>Range queries<a class="headerlink" href="http://www.rdkit.org/docs/RDKit_Book.html#range-queries" title="Permalink to this headline">¶</a></h4>
+<p>Ranges of values can be provided for many query types that expect numeric values.
+The query types that currently support range queries are:
+<code class="docutils literal notranslate"><span class="pre">D</span></code>, <code class="docutils literal notranslate"><span class="pre">h</span></code>, <code class="docutils literal notranslate"><span class="pre">r</span></code>, <code class="docutils literal notranslate"><span class="pre">R</span></code>, <code class="docutils literal notranslate"><span class="pre">v</span></code>, <code class="docutils literal notranslate"><span class="pre">x</span></code>, <code class="docutils literal notranslate"><span class="pre">X</span></code>, <code class="docutils literal notranslate"><span class="pre">z</span></code>, <code class="docutils literal notranslate"><span class="pre">Z</span></code>, <code class="docutils literal notranslate"><span class="pre">+</span></code>, <code class="docutils literal notranslate"><span class="pre">-</span></code></p>
+<dl class="simple">
+<dt>Here are some examples:</dt><dd><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">D{2-4}</span></code> matches atoms that have between 2 and 4 (inclusive) explicit connections.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">D{-3}</span></code> matches atoms that have less than or equal to 3 explicit connections.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">D{2-}</span></code> matches atoms that have at least 2 explicit connections.</p></li>
+</ul>
+</dd>
+</dl>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'CC(=O)OC'</span><span class="p">)</span><span class="o">.</span><span class="n">GetSubstructMatches</span><span class="p">(</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmarts</span><span class="p">(</span><span class="s1">'[z{1-}]'</span><span class="p">))</span>
+<span class="go">((1,), (4,))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'CC(=O)OC'</span><span class="p">)</span><span class="o">.</span><span class="n">GetSubstructMatches</span><span class="p">(</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmarts</span><span class="p">(</span><span class="s1">'[D{2-3}]'</span><span class="p">))</span>
+<span class="go">((1,), (3,))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'CC(=O)OC.C'</span><span class="p">)</span><span class="o">.</span><span class="n">GetSubstructMatches</span><span class="p">(</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmarts</span><span class="p">(</span><span class="s1">'[D{-2}]'</span><span class="p">))</span>
+<span class="go">((0,), (2,), (3,), (4,), (5,))</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="smarts-reference">
+<h4>SMARTS Reference<a class="headerlink" href="http://www.rdkit.org/docs/RDKit_Book.html#smarts-reference" title="Permalink to this headline">¶</a></h4>
+<p><em>Note</em> that the text versions of the tables below include some backslash characters to
+escape special characters. This is a wart from the documentation system we are using.
+Please ignore those characters.</p>
+<p><strong>Atoms</strong></p>
+<p><strong>Bonds</strong></p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 19%">
+<col style="width: 42%">
+<col style="width: 40%">
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Primitive</p></th>
+<th class="head"><p>Property</p></th>
+<th class="head"><p>Notes</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>“”</p></td>
+<td><p>“single or aromatic”</p></td>
+<td><p>“unspecified bonds”</p></td>
+</tr>
+<tr class="row-odd"><td><p>-</p></td>
+<td><p>single</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>=</p></td>
+<td><p>double</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>#</p></td>
+<td><p>triple</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>:</p></td>
+<td><p>aromatic</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>~</p></td>
+<td><p>“any bond”</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>@</p></td>
+<td><p>“ring bond”</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>/</p></td>
+<td><p>“directional”</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>\</p></td>
+<td><p>“directional”</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>-&gt;</p></td>
+<td><p>“dative right”</p></td>
+<td><p>extension</p></td>
+</tr>
+<tr class="row-even"><td><p>&lt;-</p></td>
+<td><p>“dative left”</p></td>
+<td><p>extension</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="ring-finding-and-sssr">
+<h3>Ring Finding and SSSR<a class="headerlink" href="http://www.rdkit.org/docs/RDKit_Book.html#ring-finding-and-sssr" title="Permalink to this headline">¶</a></h3>
+<p>[Section taken from “Getting Started” document]</p>
+<p>As others have ranted about with more energy and eloquence than I intend to, the definition of a molecule’s smallest set of smallest rings is not unique.
+In some high symmetry molecules, a “true” SSSR will give results that are unappealing.
+For example, the SSSR for cubane only contains 5 rings, even though there are “obviously” 6. This problem can be fixed by implementing a <em>small</em> (instead of <em>smallest</em>) set of smallest rings algorithm that returns symmetric results.
+This is the approach that we took with the RDKit.</p>
+<p>Because it is sometimes useful to be able to count how many SSSR rings are present in the molecule, there is a GetSSSR function, but this only returns the SSSR count, not the potentially non-unique set of rings.</p>
+<p>For situations where you just care about knowing whether or not atoms/bonds are in rings, the RDKit provides the function
+<a class="reference internal" href="http://www.rdkit.org/docs/source/rdkit.Chem.rdmolops.html#rdkit.Chem.rdmolops.FastFindRings" title="rdkit.Chem.rdmolops.FastFindRings"><code class="xref py py-func docutils literal notranslate"><span class="pre">rdkit.Chem.rdmolops.FastFindRings()</span></code></a>. This does a depth-first traversal of the molecule graph and identifies atoms and bonds that
+are in rings.</p>
+</div>
+</div>
+<div class="section" id="chemical-reaction-handling">
+<h2>Chemical Reaction Handling<a class="headerlink" href="http://www.rdkit.org/docs/RDKit_Book.html#chemical-reaction-handling" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="reaction-smarts">
+<h3>Reaction SMARTS<a class="headerlink" href="http://www.rdkit.org/docs/RDKit_Book.html#reaction-smarts" title="Permalink to this headline">¶</a></h3>
+<p>Not SMIRKS <a class="footnote-reference brackets" href="http://www.rdkit.org/docs/RDKit_Book.html#smirks" id="id6">1</a> , not reaction SMILES <a class="footnote-reference brackets" href="http://www.rdkit.org/docs/RDKit_Book.html#smiles" id="id7">2</a>, derived from SMARTS <a class="footnote-reference brackets" href="http://www.rdkit.org/docs/RDKit_Book.html#smarts" id="id8">3</a>.</p>
+<p>The general grammar for a reaction SMARTS is :</p>
+<pre><strong id="grammar-token-reaction">reaction </strong> ::=   reactants "&gt;&gt;" products
+<strong id="grammar-token-reactants">reactants</strong> ::=  molecules
+<strong id="grammar-token-products">products </strong> ::=   molecules
+<strong id="grammar-token-molecules">molecules</strong> ::=  molecule
+               molecules "." molecule
+<strong id="grammar-token-molecule">molecule </strong> ::=   a valid SMARTS string without "." characters
+                "(" a valid SMARTS string without "." characters ")"
+</pre>
+<div class="section" id="some-features">
+<h4>Some features<a class="headerlink" href="http://www.rdkit.org/docs/RDKit_Book.html#some-features" title="Permalink to this headline">¶</a></h4>
+<p>Mapped dummy atoms in the product template are replaced by the corresponding atom in the reactant:</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">rdkit.Chem</span> <span class="kn">import</span> <span class="n">AllChem</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rxn</span> <span class="o">=</span> <span class="n">AllChem</span><span class="o">.</span><span class="n">ReactionFromSmarts</span><span class="p">(</span><span class="s1">'[C:1]=[O,N:2]&gt;&gt;[C:1][*:2]'</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolToSmiles</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">rxn</span><span class="o">.</span><span class="n">RunReactants</span><span class="p">((</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'CC=O'</span><span class="p">),))[</span><span class="mi">0</span><span class="p">]]</span>
+<span class="go">['CCO']</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolToSmiles</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">rxn</span><span class="o">.</span><span class="n">RunReactants</span><span class="p">((</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'CC=N'</span><span class="p">),))[</span><span class="mi">0</span><span class="p">]]</span>
+<span class="go">['CCN']</span>
+</pre></div>
+</div>
+<p>but unmapped dummy atoms are left as dummies:</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">rxn</span> <span class="o">=</span> <span class="n">AllChem</span><span class="o">.</span><span class="n">ReactionFromSmarts</span><span class="p">(</span><span class="s1">'[C:1]=[O,N:2]&gt;&gt;*[C:1][*:2]'</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolToSmiles</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">rxn</span><span class="o">.</span><span class="n">RunReactants</span><span class="p">((</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'CC=O'</span><span class="p">),))[</span><span class="mi">0</span><span class="p">]]</span>
+<span class="go">['*C(C)O']</span>
+</pre></div>
+</div>
+<p>“Any” bonds in the products are replaced by the corresponding bond in the reactant:</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">rxn</span> <span class="o">=</span> <span class="n">AllChem</span><span class="o">.</span><span class="n">ReactionFromSmarts</span><span class="p">(</span><span class="s1">'[C:1]~[O,N:2]&gt;&gt;*[C:1]~[*:2]'</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolToSmiles</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">rxn</span><span class="o">.</span><span class="n">RunReactants</span><span class="p">((</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'C=O'</span><span class="p">),))[</span><span class="mi">0</span><span class="p">]]</span>
+<span class="go">['*C=O']</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolToSmiles</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">rxn</span><span class="o">.</span><span class="n">RunReactants</span><span class="p">((</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'CO'</span><span class="p">),))[</span><span class="mi">0</span><span class="p">]]</span>
+<span class="go">['*CO']</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolToSmiles</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">rxn</span><span class="o">.</span><span class="n">RunReactants</span><span class="p">((</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'C#N'</span><span class="p">),))[</span><span class="mi">0</span><span class="p">]]</span>
+<span class="go">['*C#N']</span>
+</pre></div>
+</div>
+<p>Intramolecular reactions can be expressed flexibly by including
+reactants in parentheses. This is demonstrated in this ring-closing
+metathesis example <a class="footnote-reference brackets" href="http://www.rdkit.org/docs/RDKit_Book.html#intramolrxn" id="id9">5</a>:</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">rxn</span> <span class="o">=</span> <span class="n">AllChem</span><span class="o">.</span><span class="n">ReactionFromSmarts</span><span class="p">(</span><span class="s2">"([C:1]=[C;H2].[C:2]=[C;H2])&gt;&gt;[*:1]=[*:2]"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m1</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'C=CCOCC=C'</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ps</span> <span class="o">=</span> <span class="n">rxn</span><span class="o">.</span><span class="n">RunReactants</span><span class="p">((</span><span class="n">m1</span><span class="p">,))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Chem</span><span class="o">.</span><span class="n">MolToSmiles</span><span class="p">(</span><span class="n">ps</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+<span class="go">'C1=CCOC1'</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="chirality">
+<h4>Chirality<a class="headerlink" href="http://www.rdkit.org/docs/RDKit_Book.html#chirality" title="Permalink to this headline">¶</a></h4>
+<p>This section describes how chirality information in the reaction
+defition is handled. A consistent example, esterification of secondary
+alcohols, is used throughout <a class="footnote-reference brackets" href="http://www.rdkit.org/docs/RDKit_Book.html#chiralrxn" id="id10">6</a>.</p>
+<p>If no chiral information is present in the reaction definition, the
+stereochemistry of the reactants is preserved, as is membership in
+enhanced stereo groups:</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">alcohol1</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'CC(CCN)O'</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">alcohol2</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'C[C@H](CCN)O'</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">alcohol3</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'C[C@@H](CCN)O'</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">acid</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'CC(=O)O'</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rxn</span> <span class="o">=</span> <span class="n">AllChem</span><span class="o">.</span><span class="n">ReactionFromSmarts</span><span class="p">(</span><span class="s1">'[CH1:1][OH:2].[OH][C:3]=[O:4]&gt;&gt;[C:1][O:2][C:3]=[O:4]'</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ps</span><span class="o">=</span><span class="n">rxn</span><span class="o">.</span><span class="n">RunReactants</span><span class="p">((</span><span class="n">alcohol1</span><span class="p">,</span><span class="n">acid</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Chem</span><span class="o">.</span><span class="n">MolToSmiles</span><span class="p">(</span><span class="n">ps</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">'CC(=O)OC(C)CCN'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ps</span><span class="o">=</span><span class="n">rxn</span><span class="o">.</span><span class="n">RunReactants</span><span class="p">((</span><span class="n">alcohol2</span><span class="p">,</span><span class="n">acid</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Chem</span><span class="o">.</span><span class="n">MolToSmiles</span><span class="p">(</span><span class="n">ps</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">'CC(=O)O[C@H](C)CCN'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ps</span><span class="o">=</span><span class="n">rxn</span><span class="o">.</span><span class="n">RunReactants</span><span class="p">((</span><span class="n">alcohol3</span><span class="p">,</span><span class="n">acid</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Chem</span><span class="o">.</span><span class="n">MolToSmiles</span><span class="p">(</span><span class="n">ps</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">'CC(=O)O[C@@H](C)CCN'</span>
+</pre></div>
+</div>
+<p>You get the same result (retention of stereochemistry) if a mapped atom has the same chirality
+in both reactants and products:</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">rxn</span> <span class="o">=</span> <span class="n">AllChem</span><span class="o">.</span><span class="n">ReactionFromSmarts</span><span class="p">(</span><span class="s1">'[C@H1:1][OH:2].[OH][C:3]=[O:4]&gt;&gt;[C@:1][O:2][C:3]=[O:4]'</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ps</span><span class="o">=</span><span class="n">rxn</span><span class="o">.</span><span class="n">RunReactants</span><span class="p">((</span><span class="n">alcohol1</span><span class="p">,</span><span class="n">acid</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Chem</span><span class="o">.</span><span class="n">MolToSmiles</span><span class="p">(</span><span class="n">ps</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">'CC(=O)OC(C)CCN'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ps</span><span class="o">=</span><span class="n">rxn</span><span class="o">.</span><span class="n">RunReactants</span><span class="p">((</span><span class="n">alcohol2</span><span class="p">,</span><span class="n">acid</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Chem</span><span class="o">.</span><span class="n">MolToSmiles</span><span class="p">(</span><span class="n">ps</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">'CC(=O)O[C@H](C)CCN'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ps</span><span class="o">=</span><span class="n">rxn</span><span class="o">.</span><span class="n">RunReactants</span><span class="p">((</span><span class="n">alcohol3</span><span class="p">,</span><span class="n">acid</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Chem</span><span class="o">.</span><span class="n">MolToSmiles</span><span class="p">(</span><span class="n">ps</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">'CC(=O)O[C@@H](C)CCN'</span>
+</pre></div>
+</div>
+<p>A mapped atom with different chirality in reactants and products leads
+to inversion of stereochemistry:</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">rxn</span> <span class="o">=</span> <span class="n">AllChem</span><span class="o">.</span><span class="n">ReactionFromSmarts</span><span class="p">(</span><span class="s1">'[C@H1:1][OH:2].[OH][C:3]=[O:4]&gt;&gt;[C@@:1][O:2][C:3]=[O:4]'</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ps</span><span class="o">=</span><span class="n">rxn</span><span class="o">.</span><span class="n">RunReactants</span><span class="p">((</span><span class="n">alcohol1</span><span class="p">,</span><span class="n">acid</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Chem</span><span class="o">.</span><span class="n">MolToSmiles</span><span class="p">(</span><span class="n">ps</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">'CC(=O)OC(C)CCN'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ps</span><span class="o">=</span><span class="n">rxn</span><span class="o">.</span><span class="n">RunReactants</span><span class="p">((</span><span class="n">alcohol2</span><span class="p">,</span><span class="n">acid</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Chem</span><span class="o">.</span><span class="n">MolToSmiles</span><span class="p">(</span><span class="n">ps</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">'CC(=O)O[C@@H](C)CCN'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ps</span><span class="o">=</span><span class="n">rxn</span><span class="o">.</span><span class="n">RunReactants</span><span class="p">((</span><span class="n">alcohol3</span><span class="p">,</span><span class="n">acid</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Chem</span><span class="o">.</span><span class="n">MolToSmiles</span><span class="p">(</span><span class="n">ps</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">'CC(=O)O[C@H](C)CCN'</span>
+</pre></div>
+</div>
+<p>If a mapped atom has chirality specified in the reactants, but not
+in the products, the reaction destroys chirality at that center:</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">rxn</span> <span class="o">=</span> <span class="n">AllChem</span><span class="o">.</span><span class="n">ReactionFromSmarts</span><span class="p">(</span><span class="s1">'[C@H1:1][OH:2].[OH][C:3]=[O:4]&gt;&gt;[C:1][O:2][C:3]=[O:4]'</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ps</span><span class="o">=</span><span class="n">rxn</span><span class="o">.</span><span class="n">RunReactants</span><span class="p">((</span><span class="n">alcohol1</span><span class="p">,</span><span class="n">acid</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Chem</span><span class="o">.</span><span class="n">MolToSmiles</span><span class="p">(</span><span class="n">ps</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">'CC(=O)OC(C)CCN'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ps</span><span class="o">=</span><span class="n">rxn</span><span class="o">.</span><span class="n">RunReactants</span><span class="p">((</span><span class="n">alcohol2</span><span class="p">,</span><span class="n">acid</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Chem</span><span class="o">.</span><span class="n">MolToSmiles</span><span class="p">(</span><span class="n">ps</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">'CC(=O)OC(C)CCN'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ps</span><span class="o">=</span><span class="n">rxn</span><span class="o">.</span><span class="n">RunReactants</span><span class="p">((</span><span class="n">alcohol3</span><span class="p">,</span><span class="n">acid</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Chem</span><span class="o">.</span><span class="n">MolToSmiles</span><span class="p">(</span><span class="n">ps</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">'CC(=O)OC(C)CCN'</span>
+</pre></div>
+</div>
+<p>And, finally, if chirality is specified in the products, but not the
+reactants, the reaction creates a stereocenter with the specified
+chirality:</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">rxn</span> <span class="o">=</span> <span class="n">AllChem</span><span class="o">.</span><span class="n">ReactionFromSmarts</span><span class="p">(</span><span class="s1">'[CH1:1][OH:2].[OH][C:3]=[O:4]&gt;&gt;[C@:1][O:2][C:3]=[O:4]'</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ps</span><span class="o">=</span><span class="n">rxn</span><span class="o">.</span><span class="n">RunReactants</span><span class="p">((</span><span class="n">alcohol1</span><span class="p">,</span><span class="n">acid</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Chem</span><span class="o">.</span><span class="n">MolToSmiles</span><span class="p">(</span><span class="n">ps</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">'CC(=O)O[C@H](C)CCN'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ps</span><span class="o">=</span><span class="n">rxn</span><span class="o">.</span><span class="n">RunReactants</span><span class="p">((</span><span class="n">alcohol2</span><span class="p">,</span><span class="n">acid</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Chem</span><span class="o">.</span><span class="n">MolToSmiles</span><span class="p">(</span><span class="n">ps</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">'CC(=O)O[C@H](C)CCN'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ps</span><span class="o">=</span><span class="n">rxn</span><span class="o">.</span><span class="n">RunReactants</span><span class="p">((</span><span class="n">alcohol3</span><span class="p">,</span><span class="n">acid</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Chem</span><span class="o">.</span><span class="n">MolToSmiles</span><span class="p">(</span><span class="n">ps</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">'CC(=O)O[C@H](C)CCN'</span>
+</pre></div>
+</div>
+<p>Note that this doesn’t make sense without including a bit more
+context around the stereocenter in the reaction definition:</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">rxn</span> <span class="o">=</span> <span class="n">AllChem</span><span class="o">.</span><span class="n">ReactionFromSmarts</span><span class="p">(</span><span class="s1">'[CH3:5][CH1:1]([C:6])[OH:2].[OH][C:3]=[O:4]&gt;&gt;[C:5][C@:1]([C:6])[O:2][C:3]=[O:4]'</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ps</span><span class="o">=</span><span class="n">rxn</span><span class="o">.</span><span class="n">RunReactants</span><span class="p">((</span><span class="n">alcohol1</span><span class="p">,</span><span class="n">acid</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Chem</span><span class="o">.</span><span class="n">MolToSmiles</span><span class="p">(</span><span class="n">ps</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">'CC(=O)O[C@H](C)CCN'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ps</span><span class="o">=</span><span class="n">rxn</span><span class="o">.</span><span class="n">RunReactants</span><span class="p">((</span><span class="n">alcohol2</span><span class="p">,</span><span class="n">acid</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Chem</span><span class="o">.</span><span class="n">MolToSmiles</span><span class="p">(</span><span class="n">ps</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">'CC(=O)O[C@H](C)CCN'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ps</span><span class="o">=</span><span class="n">rxn</span><span class="o">.</span><span class="n">RunReactants</span><span class="p">((</span><span class="n">alcohol3</span><span class="p">,</span><span class="n">acid</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Chem</span><span class="o">.</span><span class="n">MolToSmiles</span><span class="p">(</span><span class="n">ps</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">'CC(=O)O[C@H](C)CCN'</span>
+</pre></div>
+</div>
+<p>Note that the chirality specification is not being used as part of the
+query: a molecule with no chirality specified can match a reactant
+with specified chirality.</p>
+<p>In general, the reaction machinery tries to preserve as much
+stereochemistry information as possible. This works when a single new
+bond is formed to a chiral center:</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">rxn</span> <span class="o">=</span> <span class="n">AllChem</span><span class="o">.</span><span class="n">ReactionFromSmarts</span><span class="p">(</span><span class="s1">'[C:1][C:2]-O&gt;&gt;[C:1][C:2]-S'</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">alcohol2</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'C[C@@H](O)CCN'</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ps</span><span class="o">=</span><span class="n">rxn</span><span class="o">.</span><span class="n">RunReactants</span><span class="p">((</span><span class="n">alcohol2</span><span class="p">,))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Chem</span><span class="o">.</span><span class="n">MolToSmiles</span><span class="p">(</span><span class="n">ps</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">'C[C@@H](S)CCN'</span>
+</pre></div>
+</div>
+<p>But it fails if two or more bonds are formed:</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">rxn</span> <span class="o">=</span> <span class="n">AllChem</span><span class="o">.</span><span class="n">ReactionFromSmarts</span><span class="p">(</span><span class="s1">'[C:1][C:2](-O)-F&gt;&gt;[C:1][C:2](-S)-Cl'</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">alcohol</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'C[C@@H](O)F'</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ps</span><span class="o">=</span><span class="n">rxn</span><span class="o">.</span><span class="n">RunReactants</span><span class="p">((</span><span class="n">alcohol</span><span class="p">,))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Chem</span><span class="o">.</span><span class="n">MolToSmiles</span><span class="p">(</span><span class="n">ps</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">'CC(S)Cl'</span>
+</pre></div>
+</div>
+<p>In this case, there’s just not sufficient information present to allow
+the information to be preserved. You can help by providing mapping
+information:</p>
+</div>
+<div class="section" id="rules-and-caveats">
+<h4>Rules and caveats<a class="headerlink" href="http://www.rdkit.org/docs/RDKit_Book.html#rules-and-caveats" title="Permalink to this headline">¶</a></h4>
+<ol class="arabic simple">
+<li><p>Include atom map information at the end of an atom query.
+So do [C,N,O:1] or [C;R:1].</p></li>
+<li><p>Don’t forget that unspecified bonds in SMARTS are either single or aromatic.
+Bond orders in product templates are assigned when the product template itself is constructed and it’s not always possible to tell if the bond should be single or aromatic:</p></li>
+</ol>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">rxn</span> <span class="o">=</span> <span class="n">AllChem</span><span class="o">.</span><span class="n">ReactionFromSmarts</span><span class="p">(</span><span class="s1">'[#6:1][#7,#8:2]&gt;&gt;[#6:1][#6:2]'</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolToSmiles</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">rxn</span><span class="o">.</span><span class="n">RunReactants</span><span class="p">((</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'C1NCCCC1'</span><span class="p">),))[</span><span class="mi">0</span><span class="p">]]</span>
+<span class="go">['C1CCCCC1']</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolToSmiles</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">rxn</span><span class="o">.</span><span class="n">RunReactants</span><span class="p">((</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'c1ncccc1'</span><span class="p">),))[</span><span class="mi">0</span><span class="p">]]</span>
+<span class="go">['c1ccccc-1']</span>
+
+<span class="go">So if you want to copy the bond order from the reactant, use an “Any” bond:</span>
+</pre></div>
+</div>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">rxn</span> <span class="o">=</span> <span class="n">AllChem</span><span class="o">.</span><span class="n">ReactionFromSmarts</span><span class="p">(</span><span class="s1">'[#6:1][#7,#8:2]&gt;&gt;[#6:1]~[#6:2]'</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolToSmiles</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">rxn</span><span class="o">.</span><span class="n">RunReactants</span><span class="p">((</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'c1ncccc1'</span><span class="p">),))[</span><span class="mi">0</span><span class="p">]]</span>
+<span class="go">['c1ccccc1']</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="the-feature-definition-file-format">
+<h2>The Feature Definition File Format<a class="headerlink" href="http://www.rdkit.org/docs/RDKit_Book.html#the-feature-definition-file-format" title="Permalink to this headline">¶</a></h2>
+<p>An FDef file contains all the information needed to define a set of chemical features.
+It contains definitions of feature types that are defined from queries built up using Daylight’s SMARTS language. <a class="footnote-reference brackets" href="http://www.rdkit.org/docs/RDKit_Book.html#smarts" id="id11">3</a> The FDef file can optionally also include definitions of atom types that are used to make feature definitions more readable.</p>
+<div class="section" id="chemical-features">
+<h3>Chemical Features<a class="headerlink" href="http://www.rdkit.org/docs/RDKit_Book.html#chemical-features" title="Permalink to this headline">¶</a></h3>
+<p>Chemical features are defined by a Feature Type and a Feature Family.
+The Feature Family is a general classification of the feature (such as “Hydrogen-bond Donor” or “Aromatic”) while the Feature Type provides additional, higher-resolution, information about features.
+Pharmacophore matching is done using Feature Family’s. Each feature type contains the following pieces of information:</p>
+<ul class="simple">
+<li><p>A SMARTS pattern that describes atoms (one or more) matching the feature type.</p></li>
+<li><p>Weights used to determine the feature’s position based on the positions of its defining atoms.</p></li>
+</ul>
+</div>
+<div class="section" id="syntax-of-the-fdef-file">
+<h3>Syntax of the FDef file<a class="headerlink" href="http://www.rdkit.org/docs/RDKit_Book.html#syntax-of-the-fdef-file" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="atomtype-definitions">
+<h4>AtomType definitions<a class="headerlink" href="http://www.rdkit.org/docs/RDKit_Book.html#atomtype-definitions" title="Permalink to this headline">¶</a></h4>
+<p>An AtomType definition allows you to assign a shorthand name to be used in place of a SMARTS string defining an atom query.
+This allows FDef files to be made much more readable.
+For example, defining a non-polar carbon atom like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>AtomType Carbon_NonPolar [C&amp;!$(C=[O,N,P,S])&amp;!$(C#N)]
+</pre></div>
+</div>
+<p>creates a new name that can be used anywhere else in the FDef file that it would be useful to use this SMARTS.
+To reference an AtomType, just include its name in curly brackets.
+For example, this excerpt from an FDef file defines another atom type - Hphobe - which references the Carbon_NonPolar definition:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>AtomType Carbon_NonPolar [C&amp;!$(C=[O,N,P,S])&amp;!$(C#N)]
+AtomType Hphobe [{Carbon_NonPolar},c,s,S&amp;H0&amp;v2,F,Cl,Br,I]
+</pre></div>
+</div>
+<p>Note that <code class="docutils literal notranslate"><span class="pre">{Carbon_NonPolar}</span></code> is used in the new AtomType definition without any additional decoration (no square brackes or recursive SMARTS markers are required).</p>
+<p>Repeating an AtomType results in the two definitions being combined using the SMARTS “,” (or) operator.
+Here’s an example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>AtomType d1 [N&amp;!H0]
+AtomType d1 [O&amp;!H0]
+</pre></div>
+</div>
+<p>This is equivalent to:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>AtomType d1 [N&amp;!H0,O&amp;!H0]
+</pre></div>
+</div>
+<p>Which is equivalent to the more efficient:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>AtomType d1 [N,O;!H0]
+</pre></div>
+</div>
+<p><strong>Note</strong> that these examples tend to use SMARTS’s high-precedence and operator “&amp;” and not the low-precedence and “;”.
+This can be important when AtomTypes are combined or when they are repeated.
+The SMARTS “,” operator is higher precedence than “;”, so definitions that use “;” can lead to unexpected results.</p>
+<p>It is also possible to define negative AtomType queries:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>AtomType d1 [N,O,S]
+AtomType !d1 [H0]
+</pre></div>
+</div>
+<p>The negative query gets combined with the first to produce a definition identical to this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>AtomType d1 [!H0;N,O,S]
+</pre></div>
+</div>
+<p>Note that the negative AtomType is added to the beginning of the query.</p>
+</div>
+<div class="section" id="feature-definitions">
+<h4>Feature definitions<a class="headerlink" href="http://www.rdkit.org/docs/RDKit_Book.html#feature-definitions" title="Permalink to this headline">¶</a></h4>
+<p>A feature definition is more complex than an AtomType definition and stretches across multiple lines:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>DefineFeature HDonor1 [N,O;!H0]
+Family HBondDonor
+Weights 1.0
+EndFeature
+</pre></div>
+</div>
+<p>The first line of the feature definition includes the feature type and the SMARTS string defining the feature.
+The next two lines (order not important) define the feature’s family and its atom weights (a comma-delimited list that is the same length as the number of atoms defining the feature).
+The atom weights are used to calculate the feature’s locations based on a weighted average of the positions of the atom defining the feature.
+More detail on this is provided below.
+The final line of a feature definition must be EndFeature.
+It is perfectly legal to mix AtomType definitions with feature definitions in the FDef file.
+The one rule is that AtomTypes must be defined before they are referenced.</p>
+</div>
+<div class="section" id="additional-syntax-notes">
+<h4>Additional syntax notes:<a class="headerlink" href="http://www.rdkit.org/docs/RDKit_Book.html#additional-syntax-notes" title="Permalink to this headline">¶</a></h4>
+<ul>
+<li><p>Any line that begins with a # symbol is considered a comment and will be ignored.</p></li>
+<li><p>A backslash character, , at the end of a line is a continuation character, it indicates that the data from that line is continued on the next line of the file.  Blank space at the beginning of these additional lines is ignored. For example, this AtomType definition:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>AtomType tButylAtom [$([C;!R](-[CH3])(-[CH3])(-[CH3])),\
+$([CH3](-[C;!R](-[CH3])(-[CH3])))]
+</pre></div>
+</div>
+<p>is exactly equivalent to this one:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>AtomType tButylAtom [$([C;!R](-[CH3])(-[CH3])(-[CH3])),$([CH3](-[C;!R](-[CH3])(-[CH3])))]
+</pre></div>
+</div>
+<p>(though the first form is much easier to read!)</p>
+</li>
+</ul>
+</div>
+<div class="section" id="atom-weights-and-feature-locations">
+<h4>Atom weights and feature locations<a class="headerlink" href="http://www.rdkit.org/docs/RDKit_Book.html#atom-weights-and-feature-locations" title="Permalink to this headline">¶</a></h4>
+</div>
+</div>
+<div class="section" id="frequently-asked-question-s">
+<h3>Frequently Asked Question(s)<a class="headerlink" href="http://www.rdkit.org/docs/RDKit_Book.html#frequently-asked-question-s" title="Permalink to this headline">¶</a></h3>
+<ul>
+<li><p>What happens if a Feature Type is repeated in the file? Here’s an example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>DefineFeature HDonor1 [O&amp;!H0]
+Family HBondDonor
+Weights 1.0
+EndFeature
+
+DefineFeature HDonor1 [N&amp;!H0]
+Family HBondDonor
+Weights 1.0
+EndFeature
+</pre></div>
+</div>
+<p>In this case both definitions of the HDonor1 feature type will be active.
+This is functionally identical to:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>DefineFeature HDonor1 [O,N;!H0]
+Family HBondDonor
+Weights 1.0
+EndFeature
+</pre></div>
+</div>
+<p><strong>However</strong> the formulation of this feature definition with a duplicated feature type is considerably less efficient and more confusing than the simpler combined definition.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="representation-of-pharmacophore-fingerprints">
+<h2>Representation of Pharmacophore Fingerprints<a class="headerlink" href="http://www.rdkit.org/docs/RDKit_Book.html#representation-of-pharmacophore-fingerprints" title="Permalink to this headline">¶</a></h2>
+<p>In the RDKit scheme the bit ids in pharmacophore fingerprints are not hashed: each bit corresponds to a particular combination of features and distances.
+A given bit id can be converted back to the corresponding feature types and distances to allow interpretation.
+An illustration for 2D pharmacophores is shown in <a class="reference internal" href="http://www.rdkit.org/docs/RDKit_Book.html#ph4-figure"><span class="std std-ref">Figure 1:   Bit numbering in pharmacophore fingerprints</span></a>.</p>
+<div class="figure align-default" id="id17">
+<span id="ph4-figure"></span><a class="reference internal image-reference" href="./The RDKit Book — The RDKit 2020.03.1 documentation_files/picture_10.jpg"><img alt="_images/picture_10.jpg" src="./The RDKit Book — The RDKit 2020.03.1 documentation_files/picture_10.jpg" style="width: 597.0px; height: 732.5px;"></a>
+<p class="caption"><span class="caption-text">Figure 1:   Bit numbering in pharmacophore fingerprints</span><a class="headerlink" href="http://www.rdkit.org/docs/RDKit_Book.html#id17" title="Permalink to this image">¶</a></p>
+</div>
+</div>
+<div class="section" id="atom-atom-matching-in-substructure-queries">
+<h2>Atom-Atom Matching in Substructure Queries<a class="headerlink" href="http://www.rdkit.org/docs/RDKit_Book.html#atom-atom-matching-in-substructure-queries" title="Permalink to this headline">¶</a></h2>
+<p>When doing substructure matches for queries derived from SMARTS the
+rules for which atoms in the molecule should match which atoms in the
+query are well defined.[#smarts]_  The same is not necessarily the
+case when the query molecule is derived from a mol block or SMILES.</p>
+<p>The general rule used in the RDKit is that if you
+don’t specify a property in the query, then it’s not used as part of
+the matching criteria and that Hs are ignored.
+This leads to the following behavior:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 38%">
+<col style="width: 35%">
+<col style="width: 27%">
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Molecule</p></th>
+<th class="head"><p>Query</p></th>
+<th class="head"><p>Match</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>CCO</p></td>
+<td><p>CCO</p></td>
+<td><p>Yes</p></td>
+</tr>
+<tr class="row-odd"><td><p>CC[O-]</p></td>
+<td><p>CCO</p></td>
+<td><p>Yes</p></td>
+</tr>
+<tr class="row-even"><td><p>CCO</p></td>
+<td><p>CC[O-]</p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-odd"><td><p>CC[O-]</p></td>
+<td><p>CC[O-]</p></td>
+<td><p>Yes</p></td>
+</tr>
+<tr class="row-even"><td><p>CC[O-]</p></td>
+<td><p>CC[OH]</p></td>
+<td><p>Yes</p></td>
+</tr>
+<tr class="row-odd"><td><p>CCOC</p></td>
+<td><p>CC[OH]</p></td>
+<td><p>Yes</p></td>
+</tr>
+<tr class="row-even"><td><p>CCOC</p></td>
+<td><p>CCO</p></td>
+<td><p>Yes</p></td>
+</tr>
+<tr class="row-odd"><td><p>CCC</p></td>
+<td><p>CCC</p></td>
+<td><p>Yes</p></td>
+</tr>
+<tr class="row-even"><td><p>CC[14C]</p></td>
+<td><p>CCC</p></td>
+<td><p>Yes</p></td>
+</tr>
+<tr class="row-odd"><td><p>CCC</p></td>
+<td><p>CC[14C]</p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-even"><td><p>CC[14C]</p></td>
+<td><p>CC[14C]</p></td>
+<td><p>Yes</p></td>
+</tr>
+<tr class="row-odd"><td><p>OCO</p></td>
+<td><p>C</p></td>
+<td><p>Yes</p></td>
+</tr>
+<tr class="row-even"><td><p>OCO</p></td>
+<td><p>[CH]</p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-odd"><td><p>OCO</p></td>
+<td><p>[CH2]</p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-even"><td><p>OCO</p></td>
+<td><p>[CH3]</p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-odd"><td><p>OCO</p></td>
+<td><p>O[CH3]</p></td>
+<td><p>Yes</p></td>
+</tr>
+<tr class="row-even"><td><p>O[CH2]O</p></td>
+<td><p>C</p></td>
+<td><p>Yes</p></td>
+</tr>
+<tr class="row-odd"><td><p>O[CH2]O</p></td>
+<td><p>[CH2]</p></td>
+<td><p>No</p></td>
+</tr>
+</tbody>
+</table>
+<p>Demonstrated here:</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'CCO'</span><span class="p">)</span><span class="o">.</span><span class="n">HasSubstructMatch</span><span class="p">(</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'CCO'</span><span class="p">))</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'CC[O-]'</span><span class="p">)</span><span class="o">.</span><span class="n">HasSubstructMatch</span><span class="p">(</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'CCO'</span><span class="p">))</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'CCO'</span><span class="p">)</span><span class="o">.</span><span class="n">HasSubstructMatch</span><span class="p">(</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'CC[O-]'</span><span class="p">))</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'CC[O-]'</span><span class="p">)</span><span class="o">.</span><span class="n">HasSubstructMatch</span><span class="p">(</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'CC[O-]'</span><span class="p">))</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'CC[O-]'</span><span class="p">)</span><span class="o">.</span><span class="n">HasSubstructMatch</span><span class="p">(</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'CC[OH]'</span><span class="p">))</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'CCOC'</span><span class="p">)</span><span class="o">.</span><span class="n">HasSubstructMatch</span><span class="p">(</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'CC[OH]'</span><span class="p">))</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'CCOC'</span><span class="p">)</span><span class="o">.</span><span class="n">HasSubstructMatch</span><span class="p">(</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'CCO'</span><span class="p">))</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'CCC'</span><span class="p">)</span><span class="o">.</span><span class="n">HasSubstructMatch</span><span class="p">(</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'CCC'</span><span class="p">))</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'CC[14C]'</span><span class="p">)</span><span class="o">.</span><span class="n">HasSubstructMatch</span><span class="p">(</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'CCC'</span><span class="p">))</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'CCC'</span><span class="p">)</span><span class="o">.</span><span class="n">HasSubstructMatch</span><span class="p">(</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'CC[14C]'</span><span class="p">))</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'CC[14C]'</span><span class="p">)</span><span class="o">.</span><span class="n">HasSubstructMatch</span><span class="p">(</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'CC[14C]'</span><span class="p">))</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'OCO'</span><span class="p">)</span><span class="o">.</span><span class="n">HasSubstructMatch</span><span class="p">(</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'C'</span><span class="p">))</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'OCO'</span><span class="p">)</span><span class="o">.</span><span class="n">HasSubstructMatch</span><span class="p">(</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'[CH]'</span><span class="p">))</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'OCO'</span><span class="p">)</span><span class="o">.</span><span class="n">HasSubstructMatch</span><span class="p">(</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'[CH2]'</span><span class="p">))</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'OCO'</span><span class="p">)</span><span class="o">.</span><span class="n">HasSubstructMatch</span><span class="p">(</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'[CH3]'</span><span class="p">))</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'OCO'</span><span class="p">)</span><span class="o">.</span><span class="n">HasSubstructMatch</span><span class="p">(</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'O[CH3]'</span><span class="p">))</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'O[CH2]O'</span><span class="p">)</span><span class="o">.</span><span class="n">HasSubstructMatch</span><span class="p">(</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'C'</span><span class="p">))</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'O[CH2]O'</span><span class="p">)</span><span class="o">.</span><span class="n">HasSubstructMatch</span><span class="p">(</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'[CH2]'</span><span class="p">))</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="molecular-sanitization">
+<h2>Molecular Sanitization<a class="headerlink" href="http://www.rdkit.org/docs/RDKit_Book.html#molecular-sanitization" title="Permalink to this headline">¶</a></h2>
+<p>The molecule parsing functions all, by default, perform a “sanitization”
+operation on the molecules read. The idea is to generate useful computed
+properties (like hybridization, ring membership, etc.) for the rest of the code
+and to ensure that the molecules are “reasonable”: that they can be represented
+with octet-complete Lewis dot structures.</p>
+<p>Here are the steps involved, in order.</p>
+<blockquote>
+<div><ol class="arabic">
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">clearComputedProps</span></code>: removes any computed properties that already exist</dt><dd><p>on the molecule and its atoms and bonds. This step is always performed.</p>
+</dd>
+</dl>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cleanUp</span></code>: standardizes a small number of non-standard valence states.
+The clean up operations are:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Neutral 5 valent Ns with double bonds to Os are converted
+to the zwitterionic form.
+Example: <code class="docutils literal notranslate"><span class="pre">N(=O)=O</span> <span class="pre">-&gt;</span> <span class="pre">[N+](=O)O-]</span></code></p></li>
+<li><p>Neutral 5 valent Ns with triple bonds to another N are converted
+to the zwitterionic form.
+Example: <code class="docutils literal notranslate"><span class="pre">C-N=N#N</span> <span class="pre">-&gt;</span> <span class="pre">C-N=[N+]=[N-]</span></code></p></li>
+<li><p>Neutral 5 valent phosphorus with one double bond to an O and another to
+either a C or a P are converted to the zwitterionic form.
+Example: <code class="docutils literal notranslate"><span class="pre">C=P(=O)O</span> <span class="pre">-&gt;</span> <span class="pre">C=[P+]([O-])O</span></code></p></li>
+<li><p>Neutral Cl, Br, or I with exclusively O neighbors, and a valence of 3,
+5, or 7, are converted to the zwitterionic form. This covers things
+like chlorous acid, chloric acid, and perchloric acid.
+Example: <code class="docutils literal notranslate"><span class="pre">O=Cl(=O)O</span> <span class="pre">-&gt;</span> <span class="pre">[O-][Cl+2][O-]O</span></code></p></li>
+</ul>
+</div></blockquote>
+<p>This step should not generate exceptions.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">updatePropertyCache</span></code>: calculates the explicit and implicit valences on
+all atoms. This generates exceptions for atoms in higher-than-allowed
+valence states. This step is always performed, but if it is “skipped”
+the test for non-standard valences will not be carried out.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">symmetrizeSSSR</span></code>: calls the symmetrized smallest set of smallest rings
+algorithm (discussed in the Getting Started document).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Kekulize</span></code>: converts aromatic rings to their Kekule form. Will raise an
+exception if a ring cannot be kekulized or if aromatic bonds are found
+outside of rings.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">assignRadicals</span></code>: determines the number of radical electrons (if any) on
+each atom.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">setAromaticity</span></code>: identifies the aromatic rings and ring systems
+(see above), sets the aromatic flag on atoms and bonds, sets bond orders
+to aromatic.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">setConjugation</span></code>: identifies which bonds are conjugated</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">setHybridization</span></code>: calculates the hybridization state of each atom</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cleanupChirality</span></code>: removes chiral tags from atoms that are not sp3
+hybridized.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">adjustHs</span></code>: adds explicit Hs where necessary to preserve the chemistry.
+This is typically needed for heteroatoms in aromatic rings. The classic
+example is the nitrogen atom in pyrrole.</p></li>
+</ol>
+</div></blockquote>
+<p>The individual steps can be toggled on or off when calling
+<code class="docutils literal notranslate"><span class="pre">MolOps::sanitizeMol</span></code> or <code class="docutils literal notranslate"><span class="pre">Chem.SanitizeMol</span></code>.</p>
+</div>
+<div class="section" id="implementation-details">
+<h2>Implementation Details<a class="headerlink" href="http://www.rdkit.org/docs/RDKit_Book.html#implementation-details" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="magic-property-values">
+<h3>“Magic” Property Values<a class="headerlink" href="http://www.rdkit.org/docs/RDKit_Book.html#magic-property-values" title="Permalink to this headline">¶</a></h3>
+<p>The following property values are regularly used in the RDKit codebase and may be useful to client code.</p>
+<div class="section" id="romol-mol-in-python">
+<h4>ROMol  (Mol in Python)<a class="headerlink" href="http://www.rdkit.org/docs/RDKit_Book.html#romol-mol-in-python" title="Permalink to this headline">¶</a></h4>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 32%">
+<col style="width: 68%">
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Property Name</p></th>
+<th class="head"><p>Use</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>MolFileComments</p></td>
+<td><p>Read from/written to the comment line of CTABs.</p></td>
+</tr>
+<tr class="row-odd"><td><p>MolFileInfo</p></td>
+<td><p>Read from/written to the info line of CTABs.</p></td>
+</tr>
+<tr class="row-even"><td><p>_MolFileChiralFlag</p></td>
+<td><p>Read from/written to the chiral flag of CTABs.</p></td>
+</tr>
+<tr class="row-odd"><td><p>_Name</p></td>
+<td><p>Read from/written to the name line of CTABs.</p></td>
+</tr>
+<tr class="row-even"><td><p>_smilesAtomOutputOrder</p></td>
+<td><p>The order in which atoms were written to SMILES</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="atom">
+<h4>Atom<a class="headerlink" href="http://www.rdkit.org/docs/RDKit_Book.html#atom" title="Permalink to this headline">¶</a></h4>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 80%">
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Property Name</p></th>
+<th class="head"><p>Use</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>_CIPCode</p></td>
+<td><p>the CIP code (R or S) of the atom</p></td>
+</tr>
+<tr class="row-odd"><td><p>_CIPRank</p></td>
+<td><p>the integer CIP rank of the atom</p></td>
+</tr>
+<tr class="row-even"><td><p>_ChiralityPossible</p></td>
+<td><p>set if an atom is a possible chiral center</p></td>
+</tr>
+<tr class="row-odd"><td><p>_MolFileRLabel</p></td>
+<td><p>integer R group label for an atom, read from/written to CTABs.</p></td>
+</tr>
+<tr class="row-even"><td><p>_ReactionDegreeChanged</p></td>
+<td><p>set on an atom in a product template of a reaction if its degree changes in the reaction</p></td>
+</tr>
+<tr class="row-odd"><td><p>_protected</p></td>
+<td><p>atoms with this property set will not be considered as matching reactant queries in reactions</p></td>
+</tr>
+<tr class="row-even"><td><p>dummyLabel</p></td>
+<td><p>(on dummy atoms) read from/written to CTABs as the atom symbol</p></td>
+</tr>
+<tr class="row-odd"><td><p>molAtomMapNumber</p></td>
+<td><p>the atom map number for an atom, read from/written to SMILES and CTABs</p></td>
+</tr>
+<tr class="row-even"><td><p>molfileAlias</p></td>
+<td><p>the mol file alias for an atom (follows A tags), read from/written to CTABs</p></td>
+</tr>
+<tr class="row-odd"><td><p>molFileValue</p></td>
+<td><p>the mol file value for an atom (follows V tags), read from/written to CTABs</p></td>
+</tr>
+<tr class="row-even"><td><p>molFileInversionFlag</p></td>
+<td><p>used to flag whether stereochemistry at an atom changes in a reaction,
+read from/written to CTABs, determined automatically from SMILES</p></td>
+</tr>
+<tr class="row-odd"><td><p>molRxnComponent</p></td>
+<td><p>which component of a reaction an atom belongs to, read from/written to CTABs</p></td>
+</tr>
+<tr class="row-even"><td><p>molRxnRole</p></td>
+<td><p>which role an atom plays in a reaction (1=Reactant, 2=Product, 3=Agent),
+read from/written to CTABs</p></td>
+</tr>
+<tr class="row-odd"><td><p>smilesSymbol</p></td>
+<td><p>determines the symbol that will be written to a SMILES for the atom</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="thread-safety-and-the-rdkit">
+<h3>Thread safety and the RDKit<a class="headerlink" href="http://www.rdkit.org/docs/RDKit_Book.html#thread-safety-and-the-rdkit" title="Permalink to this headline">¶</a></h3>
+<p>While writing the RDKit, we did attempt to ensure that the code would
+work in a multi-threaded environment by avoiding use of global
+variables, etc. However, making code thread safe is not a completely
+trivial thing, so there are no doubt some gaps. This section describes
+which pieces of the code base have explicitly been tested for thread safety.</p>
+<dl class="simple">
+<dt><strong>Note:</strong> With the exception of the small number of methods/functions</dt><dd><p>that take a <code class="docutils literal notranslate"><span class="pre">numThreads</span></code> argument, this section does not apply to
+using the RDKit from Python threads. Boost.Python ensures that only
+one thread is calling into the C++ code at any point. To get
+concurrent execution in Python, use the multiprocessing module or
+one of the other standard python approaches for this .</p>
+</dd>
+</dl>
+<div class="section" id="what-has-been-tested">
+<h4>What has been tested<a class="headerlink" href="http://www.rdkit.org/docs/RDKit_Book.html#what-has-been-tested" title="Permalink to this headline">¶</a></h4>
+<blockquote>
+<div><ul class="simple">
+<li><p>Reading molecules from SMILES/SMARTS/Mol blocks</p></li>
+<li><p>Writing molecules to SMILES/SMARTS/Mol blocks</p></li>
+<li><p>Generating 2D coordinates</p></li>
+<li><p>Generating 3D conformations with the distance geometry code</p></li>
+<li><p>Optimizing molecules with UFF or MMFF</p></li>
+<li><p>Generating fingerprints</p></li>
+<li><p>The descriptor calculators in $RDBASE/Code/GraphMol/Descriptors</p></li>
+<li><p>Substructure searching (Note: if a query molecule contains
+recursive queries, it may not be safe to use it concurrently on
+multiple threads, see below)</p></li>
+<li><p>The Subgraph code</p></li>
+<li><p>The ChemTransforms code</p></li>
+<li><p>The chemical reactions code</p></li>
+<li><p>The Open3DAlign code</p></li>
+<li><p>The MolDraw2D drawing code</p></li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="known-problems">
+<h4>Known Problems<a class="headerlink" href="http://www.rdkit.org/docs/RDKit_Book.html#known-problems" title="Permalink to this headline">¶</a></h4>
+<blockquote>
+<div><ul class="simple">
+<li><p>InChI generation and (probably) parsing. This seems to be a
+limitation of the IUPAC InChI code. In order to allow the code to
+be used in a multi-threaded environment, a mutex is used to ensure
+that only one thread is using the IUPAC code at a time. This is
+only enabled if the RDKit is built with the <code class="docutils literal notranslate"><span class="pre">RDK_TEST_MULTITHREADED</span></code>
+option enabled.</p></li>
+<li><p>The MolSuppliers (e.g. SDMolSupplier, SmilesMolSupplier?) change
+their internal state when a molecule is read. It is not safe to
+use one supplier on more than one thread.</p></li>
+<li><p>Substructure searching using query molecules that include
+recursive queries. The recursive queries modify their internal
+state when a search is run, so it’s not safe to use the same query
+concurrently on multiple threads. If the code is built using the
+<code class="docutils literal notranslate"><span class="pre">RDK_BUILD_THREADSAFE_SSS</span></code> argument (the default for the binaries
+we provide), a mutex is used to ensure that only one thread is
+using a given recursive query at a time.</p></li>
+</ul>
+</div></blockquote>
+</div>
+</div>
+<div class="section" id="implementation-of-the-tpsa-descriptor">
+<h3>Implementation of the TPSA Descriptor<a class="headerlink" href="http://www.rdkit.org/docs/RDKit_Book.html#implementation-of-the-tpsa-descriptor" title="Permalink to this headline">¶</a></h3>
+<p>The topological polar surface area (TPSA) descriptor implemented in the RDKit
+is described in a publication by Peter Ertl et al.
+(<a class="reference external" href="https://pubs.acs.org/doi/abs/10.1021/jm000942e">https://pubs.acs.org/doi/abs/10.1021/jm000942e</a>)
+The RDKit’s implementation differs from what is described in that publication.
+This section describes the difference and why it’s there.</p>
+<p>The RDKit’s TPSA implementation only includes, by default, contributions from N
+and O atoms. Table 1 of the TPSA publication. however, includes parameters for
+polar S and P in addition to N and O. What’s going on?</p>
+<p>The original TPSA implementation that is in the Daylight Contrib dir
+(<a class="reference external" href="http://www.daylight.com/download/contrib/tpsa.html">http://www.daylight.com/download/contrib/tpsa.html</a>) does not include
+contributions from polar S or P and, it turns out, the reference values that
+are included in the TPSA paper also don’t include S or P contributions. For
+example, the TPSA provided in Table 3 for foscarnet (SMILES <cite>OC(=O)P(=O)(O)O</cite>),
+94.8, corresponds the sum of the O contributions - <cite>3x20.23 + 2*17.07 = 94.8</cite>.
+Adding the P contribution - <cite>9.81</cite>- would give a PSA of 104.6. This is also
+true for the other P and S containing compounds in Table 3.</p>
+<p>In the RDKit implementation, we chose to reproduce the behavior of the <cite>tpsa.c</cite>
+Contrib program and what is provided in Table 3 of the paper, so polar S and P
+are ignored. Based on a couple of user requests, for the <cite>2018.09</cite> release of
+the RDKit we added the option to include S and P contributions:</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">rdkit.Chem</span> <span class="kn">import</span> <span class="n">Descriptors</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Descriptors</span><span class="o">.</span><span class="n">TPSA</span><span class="p">(</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'OC(=O)P(=O)(O)O'</span><span class="p">))</span> <span class="c1"># foscarnet</span>
+<span class="go">94.83</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Descriptors</span><span class="o">.</span><span class="n">TPSA</span><span class="p">(</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'OC(=O)P(=O)(O)O'</span><span class="p">),</span> <span class="n">includeSandP</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">104.64...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Descriptors</span><span class="o">.</span><span class="n">TPSA</span><span class="p">(</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'Cc1ccccc1N1C(=O)c2cc(S(N)(=O)=O)c(Cl)cc2NC1C'</span><span class="p">))</span> <span class="c1"># metolazone</span>
+<span class="go">92.5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Descriptors</span><span class="o">.</span><span class="n">TPSA</span><span class="p">(</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'Cc1ccccc1N1C(=O)c2cc(S(N)(=O)=O)c(Cl)cc2NC1C'</span><span class="p">),</span> <span class="n">includeSandP</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">100.88</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="atom-properties-and-sdf-files">
+<h2>Atom Properties and SDF files<a class="headerlink" href="http://www.rdkit.org/docs/RDKit_Book.html#atom-properties-and-sdf-files" title="Permalink to this headline">¶</a></h2>
+<p><em>Note</em> This section describes functionality added in the <cite>2019.03.1</cite> release of the RDKit.</p>
+<p>By default the <a class="reference internal" href="http://www.rdkit.org/docs/source/rdkit.Chem.rdmolfiles.html#rdkit.Chem.rdmolfiles.SDMolSupplier" title="rdkit.Chem.rdmolfiles.SDMolSupplier"><code class="xref py py-class docutils literal notranslate"><span class="pre">rdkit.Chem.rdmolfiles.SDMolSupplier</span></code></a> and <a class="reference internal" href="http://www.rdkit.org/docs/source/rdkit.Chem.rdmolfiles.html#rdkit.Chem.rdmolfiles.ForwardSDMolSupplier" title="rdkit.Chem.rdmolfiles.ForwardSDMolSupplier"><code class="xref py py-class docutils literal notranslate"><span class="pre">rdkit.Chem.rdmolfiles.ForwardSDMolSupplier</span></code></a> classes
+(<code class="docutils literal notranslate"><span class="pre">RDKit::SDMolSupplier</span></code> and <code class="docutils literal notranslate"><span class="pre">RDKit::ForwardMolSupplier</span></code> in C++) can now recognize some molecular properties as property lists
+and them into atomic properties. Properties with names that start with <code class="docutils literal notranslate"><span class="pre">atom.prop</span></code>, <code class="docutils literal notranslate"><span class="pre">atom.iprop</span></code>, <code class="docutils literal notranslate"><span class="pre">atom.dprop</span></code>, or <code class="docutils literal notranslate"><span class="pre">atom.bprop</span></code>
+are converted to atomic properties of type string, int (64 bit), double, or bool respectively.</p>
+<p>Here’s a sample block from an SDF that demonstrates all of the features, they are explained below:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>property_example
+    RDKit  2D
+
+  3  3  0  0  0  0  0  0  0  0999 V2000
+    0.8660    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
+  -0.4330    0.7500    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0
+  -0.4330   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
+  1  2  1  0
+  2  3  1  0
+  3  1  1  0
+M  END
+&gt;  &lt;atom.dprop.PartialCharge&gt;  (1)
+0.008 -0.314 0.008
+
+&gt;  &lt;atom.iprop.NumHeavyNeighbors&gt;  (1)
+2 2 2
+
+&gt;  &lt;atom.prop.AtomLabel&gt;  (1)
+C1 N2 C3
+
+&gt;  &lt;atom.bprop.IsCarbon&gt;  (1)
+1 0 1
+
+&gt;  &lt;atom.prop.PartiallyMissing&gt;  (1)
+one n/a three
+
+&gt;  &lt;atom.iprop.PartiallyMissingInt&gt;  (1)
+[?] 2 2 ?
+
+$$$$
+</pre></div>
+</div>
+<p>Every atom property list should contain a number of space-delimited elements equal to the number of atoms.
+Missing values are, by default, indicated with the string <code class="docutils literal notranslate"><span class="pre">n/a</span></code>. The missing value marker can be changed by beginning
+the property list with a value in square brackets. So, for example, the property <code class="docutils literal notranslate"><span class="pre">PartiallyMissing</span></code> is set to “one”
+for atom 0, “three” for atom 2, and is not set for atom 1. Similarly the property <code class="docutils literal notranslate"><span class="pre">PartiallyMissingInt</span></code> is set to 2 for atom 0, 2 for atom 1,
+and is not set for atom 2.</p>
+<p>This behavior is enabled by default and can be turned on/off with the
+<code class="xref py py-class docutils literal notranslate"><span class="pre">rdkit.Chem.rdmolfiles.SetProcessPropertyLists</span></code> method.</p>
+<p>If you have atom properties that you would like to have written to SDF files, you can use the functions
+<a class="reference internal" href="http://www.rdkit.org/docs/source/rdkit.Chem.rdmolfiles.html#rdkit.Chem.rdmolfiles.CreateAtomStringPropertyList" title="rdkit.Chem.rdmolfiles.CreateAtomStringPropertyList"><code class="xref py py-func docutils literal notranslate"><span class="pre">rdkit.Chem.rdmolfiles.CreateAtomStringPropertyList()</span></code></a>, <a class="reference internal" href="http://www.rdkit.org/docs/source/rdkit.Chem.rdmolfiles.html#rdkit.Chem.rdmolfiles.CreateAtomIntPropertyList" title="rdkit.Chem.rdmolfiles.CreateAtomIntPropertyList"><code class="xref py py-func docutils literal notranslate"><span class="pre">rdkit.Chem.rdmolfiles.CreateAtomIntPropertyList()</span></code></a>,
+<a class="reference internal" href="http://www.rdkit.org/docs/source/rdkit.Chem.rdmolfiles.html#rdkit.Chem.rdmolfiles.CreateAtomDoublePropertyList" title="rdkit.Chem.rdmolfiles.CreateAtomDoublePropertyList"><code class="xref py py-func docutils literal notranslate"><span class="pre">rdkit.Chem.rdmolfiles.CreateAtomDoublePropertyList()</span></code></a>, or <a class="reference internal" href="http://www.rdkit.org/docs/source/rdkit.Chem.rdmolfiles.html#rdkit.Chem.rdmolfiles.CreateAtomBoolPropertyList" title="rdkit.Chem.rdmolfiles.CreateAtomBoolPropertyList"><code class="xref py py-func docutils literal notranslate"><span class="pre">rdkit.Chem.rdmolfiles.CreateAtomBoolPropertyList()</span></code></a> :</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'CO'</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">GetAtomWithIdx</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">SetDoubleProp</span><span class="p">(</span><span class="s1">'foo'</span><span class="p">,</span><span class="mf">3.14</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Chem</span><span class="o">.</span><span class="n">CreateAtomDoublePropertyList</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="s1">'foo'</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">GetProp</span><span class="p">(</span><span class="s1">'atom.dprop.foo'</span><span class="p">)</span>
+<span class="go">'3.1400000000000001 n/a'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">StringIO</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sio</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">w</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">SDWriter</span><span class="p">(</span><span class="n">sio</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">w</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">w</span><span class="o">=</span><span class="kc">None</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">sio</span><span class="o">.</span><span class="n">getvalue</span><span class="p">())</span>   
+
+<span class="go">     RDKit          2D</span>
+
+<span class="go">  2  1  0  0  0  0  0  0  0  0999 V2000</span>
+<span class="go">    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0</span>
+<span class="go">    1.2990    0.7500    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0</span>
+<span class="go">  1  2  1  0</span>
+<span class="go">M  END</span>
+<span class="go">&gt;  &lt;atom.dprop.foo&gt;  (1)</span>
+<span class="go">3.1400000000000001 n/a</span>
+
+<span class="go">$$$$</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="support-for-enhanced-stereochemistry">
+<h2>Support for Enhanced Stereochemistry<a class="headerlink" href="http://www.rdkit.org/docs/RDKit_Book.html#support-for-enhanced-stereochemistry" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="overview">
+<h3>Overview<a class="headerlink" href="http://www.rdkit.org/docs/RDKit_Book.html#overview" title="Permalink to this headline">¶</a></h3>
+<p>Enhanced stereochemistry is used to indicate that a molecule represents more than one possible diastereomer.
+<code class="docutils literal notranslate"><span class="pre">AND</span></code> indicates that a molecule is a mixture of molecules. <code class="docutils literal notranslate"><span class="pre">OR</span></code> indicates unknown single substances,
+and <code class="docutils literal notranslate"><span class="pre">ABS</span></code> indicates a single substance. This follows, the convention used in V3k mol files: groups of
+atoms with specified stereochemistry with an <code class="docutils literal notranslate"><span class="pre">ABS</span></code>, <code class="docutils literal notranslate"><span class="pre">AND</span></code>, or <code class="docutils literal notranslate"><span class="pre">OR</span></code> marker indicating what is known.</p>
+<p>Here are some illustrations of what the various combinations mean:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 41%">
+<col style="width: 20%">
+<col style="width: 39%">
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>What’s drawn</p></th>
+<th class="head"><p>Mixture?</p></th>
+<th class="head"><p>What it means</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><a class="reference internal" href="./The RDKit Book — The RDKit 2020.03.1 documentation_files/enhanced_stereo_and1_and2_base.png"><img alt="and1_and2_base" class="align-middle" src="./The RDKit Book — The RDKit 2020.03.1 documentation_files/enhanced_stereo_and1_and2_base.png" style="width: 131.0px; height: 78.0px;"></a></p></td>
+<td><p>mixture</p></td>
+<td><p><a class="reference internal" href="./The RDKit Book — The RDKit 2020.03.1 documentation_files/enhanced_stereo_and1_and2_expand.png"><img alt="and1_and2_expand" class="align-middle" src="./The RDKit Book — The RDKit 2020.03.1 documentation_files/enhanced_stereo_and1_and2_expand.png" style="width: 513.0px; height: 78.0px;"></a></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="./The RDKit Book — The RDKit 2020.03.1 documentation_files/enhanced_stereo_and1_cis_base.png"><img alt="and1_cis_base" class="align-middle" src="./The RDKit Book — The RDKit 2020.03.1 documentation_files/enhanced_stereo_and1_cis_base.png" style="width: 131.0px; height: 78.0px;"></a></p></td>
+<td><p>mixture</p></td>
+<td><p><a class="reference internal" href="./The RDKit Book — The RDKit 2020.03.1 documentation_files/enhanced_stereo_and1_cis_expand.png"><img alt="and1_cis_expand" class="align-middle" src="./The RDKit Book — The RDKit 2020.03.1 documentation_files/enhanced_stereo_and1_cis_expand.png" style="width: 258.0px; height: 78.0px;"></a></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="./The RDKit Book — The RDKit 2020.03.1 documentation_files/enhanced_stereo_and1_trans_base.png"><img alt="and1_trans_base" class="align-middle" src="./The RDKit Book — The RDKit 2020.03.1 documentation_files/enhanced_stereo_and1_trans_base.png" style="width: 131.0px; height: 78.0px;"></a></p></td>
+<td><p>mixture</p></td>
+<td><p><a class="reference internal" href="./The RDKit Book — The RDKit 2020.03.1 documentation_files/enhanced_stereo_and1_trans_expand.png"><img alt="and1_trans_expand" class="align-middle" src="./The RDKit Book — The RDKit 2020.03.1 documentation_files/enhanced_stereo_and1_trans_expand.png" style="width: 258.0px; height: 78.0px;"></a></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="./The RDKit Book — The RDKit 2020.03.1 documentation_files/enhanced_stereo_or1_or2_base.png"><img alt="or1_or2_base" class="align-middle" src="./The RDKit Book — The RDKit 2020.03.1 documentation_files/enhanced_stereo_or1_or2_base.png" style="width: 131.0px; height: 78.0px;"></a></p></td>
+<td><p>single</p></td>
+<td><p><a class="reference internal" href="./The RDKit Book — The RDKit 2020.03.1 documentation_files/enhanced_stereo_and1_and2_expand.png"><img alt="or1_or2_expand" class="align-middle" src="./The RDKit Book — The RDKit 2020.03.1 documentation_files/enhanced_stereo_and1_and2_expand.png" style="width: 513.0px; height: 78.0px;"></a></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="./The RDKit Book — The RDKit 2020.03.1 documentation_files/enhanced_stereo_or1_cis_base.png"><img alt="or1_cis_base" class="align-middle" src="./The RDKit Book — The RDKit 2020.03.1 documentation_files/enhanced_stereo_or1_cis_base.png" style="width: 131.0px; height: 78.0px;"></a></p></td>
+<td><p>single</p></td>
+<td><p><a class="reference internal" href="./The RDKit Book — The RDKit 2020.03.1 documentation_files/enhanced_stereo_and1_cis_expand.png"><img alt="or1_cis_expand" class="align-middle" src="./The RDKit Book — The RDKit 2020.03.1 documentation_files/enhanced_stereo_and1_cis_expand.png" style="width: 258.0px; height: 78.0px;"></a></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="./The RDKit Book — The RDKit 2020.03.1 documentation_files/enhanced_stereo_or1_trans_base.png"><img alt="or1_trans_base" class="align-middle" src="./The RDKit Book — The RDKit 2020.03.1 documentation_files/enhanced_stereo_or1_trans_base.png" style="width: 131.0px; height: 78.0px;"></a></p></td>
+<td><p>single</p></td>
+<td><p><a class="reference internal" href="./The RDKit Book — The RDKit 2020.03.1 documentation_files/enhanced_stereo_and1_trans_expand.png"><img alt="or1_trans_expand" class="align-middle" src="./The RDKit Book — The RDKit 2020.03.1 documentation_files/enhanced_stereo_and1_trans_expand.png" style="width: 258.0px; height: 78.0px;"></a></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="./The RDKit Book — The RDKit 2020.03.1 documentation_files/enhanced_stereo_abs_and_base.png"><img alt="abs_and_base" class="align-middle" src="./The RDKit Book — The RDKit 2020.03.1 documentation_files/enhanced_stereo_abs_and_base.png" style="width: 131.0px; height: 78.0px;"></a></p></td>
+<td><p>mixture</p></td>
+<td><p><a class="reference internal" href="./The RDKit Book — The RDKit 2020.03.1 documentation_files/enhanced_stereo_abs_and_expand.png"><img alt="abs_and_expand" class="align-middle" src="./The RDKit Book — The RDKit 2020.03.1 documentation_files/enhanced_stereo_abs_and_expand.png" style="width: 258.0px; height: 78.0px;"></a></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="./The RDKit Book — The RDKit 2020.03.1 documentation_files/enhanced_stereo_abs_or_base.png"><img alt="abs_or_base" class="align-middle" src="./The RDKit Book — The RDKit 2020.03.1 documentation_files/enhanced_stereo_abs_or_base.png" style="width: 131.0px; height: 78.0px;"></a></p></td>
+<td><p>single</p></td>
+<td><p><a class="reference internal" href="./The RDKit Book — The RDKit 2020.03.1 documentation_files/enhanced_stereo_abs_and_expand.png"><img alt="abs_or_expand" class="align-middle" src="./The RDKit Book — The RDKit 2020.03.1 documentation_files/enhanced_stereo_abs_and_expand.png" style="width: 258.0px; height: 78.0px;"></a></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="representation">
+<h3>Representation<a class="headerlink" href="http://www.rdkit.org/docs/RDKit_Book.html#representation" title="Permalink to this headline">¶</a></h3>
+<p>Stored as a vector of <a class="reference internal" href="http://www.rdkit.org/docs/source/rdkit.Chem.rdchem.html#rdkit.Chem.rdchem.StereoGroup" title="rdkit.Chem.rdchem.StereoGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">rdkit.Chem.rdchem.StereoGroup</span></code></a> objects on a molecule. Each <code class="docutils literal notranslate"><span class="pre">StereoGroup</span></code> keeps track of its type
+and the set of atoms that make it up.</p>
+</div>
+<div class="section" id="use-cases">
+<h3>Use cases<a class="headerlink" href="http://www.rdkit.org/docs/RDKit_Book.html#use-cases" title="Permalink to this headline">¶</a></h3>
+<p>The initial target is to not lose data on an <code class="docutils literal notranslate"><span class="pre">V3k</span> <span class="pre">mol</span> <span class="pre">-&gt;</span> <span class="pre">RDKit</span> <span class="pre">-&gt;</span> <span class="pre">V3k</span> <span class="pre">mol</span></code> round trip. Manipulation and depiction are future goals.</p>
+<p>It is possible to enumerate the elements of a <code class="docutils literal notranslate"><span class="pre">StereoGroup</span></code> using the function <code class="xref py py-func docutils literal notranslate"><span class="pre">rdkit.Chem.EnumerateStereoisomers.EumerateStereoisomers()</span></code>, which also
+preserves membership in the original <code class="docutils literal notranslate"><span class="pre">StereoGroup</span></code>.</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s1">'C[C@H](F)C[C@H](O)Cl |&amp;1:1|'</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">GetStereoGroups</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">GetGroupType</span><span class="p">()</span>
+<span class="go">rdkit.Chem.rdchem.StereoGroupType.STEREO_AND</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">GetIdx</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">m</span><span class="o">.</span><span class="n">GetStereoGroups</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">GetAtoms</span><span class="p">()]</span>
+<span class="go">[1]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">rdkit.Chem.EnumerateStereoisomers</span> <span class="kn">import</span> <span class="n">EnumerateStereoisomers</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolToCXSmiles</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">EnumerateStereoisomers</span><span class="p">(</span><span class="n">m</span><span class="p">)]</span>
+<span class="go">['C[C@@H](F)C[C@H](O)Cl |&amp;1:1|', 'C[C@H](F)C[C@H](O)Cl |&amp;1:1|']</span>
+</pre></div>
+</div>
+<p>Reactions also preserve <code class="docutils literal notranslate"><span class="pre">StereoGroup``s.</span> <span class="pre">Product</span> <span class="pre">atoms</span> <span class="pre">are</span> <span class="pre">included</span> <span class="pre">in</span> <span class="pre">the</span> <span class="pre">``StereoGroup</span></code> as long as the reaction doesn’t create or destroy chirality at the atom.</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">clearAllAtomProps</span><span class="p">(</span><span class="n">mol</span><span class="p">):</span>
+<span class="gp">... </span> <span class="sd">"""So that atom mapping isn't shown"""</span>
+<span class="gp">... </span> <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetAtoms</span><span class="p">():</span>
+<span class="gp">... </span>  <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">atom</span><span class="o">.</span><span class="n">GetPropsAsDict</span><span class="p">():</span>
+<span class="gp">... </span>   <span class="n">atom</span><span class="o">.</span><span class="n">ClearProp</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rxn</span> <span class="o">=</span> <span class="n">AllChem</span><span class="o">.</span><span class="n">ReactionFromSmarts</span><span class="p">(</span><span class="s1">'[C:1]F &gt;&gt; [C:1]Br'</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ps</span><span class="o">=</span><span class="n">rxn</span><span class="o">.</span><span class="n">RunReactants</span><span class="p">([</span><span class="n">m</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">clearAllAtomProps</span><span class="p">(</span><span class="n">ps</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Chem</span><span class="o">.</span><span class="n">MolToCXSmiles</span><span class="p">(</span><span class="n">ps</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+<span class="go">'C[C@H](Br)C[C@H](O)Cl |&amp;1:1|'</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="enhanced-stereochemistry-and-substructure-search">
+<h3>Enhanced Stereochemistry and substructure search<a class="headerlink" href="http://www.rdkit.org/docs/RDKit_Book.html#enhanced-stereochemistry-and-substructure-search" title="Permalink to this headline">¶</a></h3>
+<p>Enhanced Stereochemistry may optionally be honored in substructure searches. The following table captures whether or not a substructure query
+(in the rows) matches a particular molecule (in the columns).</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 13%">
+<col style="width: 13%">
+<col style="width: 13%">
+<col style="width: 13%">
+<col style="width: 13%">
+<col style="width: 13%">
+<col style="width: 13%">
+<col style="width: 13%">
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"></th>
+<th class="head"><p><a class="reference internal" href="./The RDKit Book — The RDKit 2020.03.1 documentation_files/EnhancedStereoSSS_molA.png"><img alt="EnhancedSSS_A" class="align-middle" src="./The RDKit Book — The RDKit 2020.03.1 documentation_files/EnhancedStereoSSS_molA.png" style="width: 108.0px; height: 74.25px;"></a></p></th>
+<th class="head"><p><a class="reference internal" href="./The RDKit Book — The RDKit 2020.03.1 documentation_files/EnhancedStereoSSS_molB.png"><img alt="EnhancedSSS_B" class="align-middle" src="./The RDKit Book — The RDKit 2020.03.1 documentation_files/EnhancedStereoSSS_molB.png" style="width: 108.0px; height: 74.25px;"></a></p></th>
+<th class="head"><p><a class="reference internal" href="./The RDKit Book — The RDKit 2020.03.1 documentation_files/EnhancedStereoSSS_molC.png"><img alt="EnhancedSSS_C" class="align-middle" src="./The RDKit Book — The RDKit 2020.03.1 documentation_files/EnhancedStereoSSS_molC.png" style="width: 108.0px; height: 74.25px;"></a></p></th>
+<th class="head"><p><a class="reference internal" href="./The RDKit Book — The RDKit 2020.03.1 documentation_files/EnhancedStereoSSS_molD.png"><img alt="EnhancedSSS_D" class="align-middle" src="./The RDKit Book — The RDKit 2020.03.1 documentation_files/EnhancedStereoSSS_molD.png" style="width: 108.0px; height: 74.25px;"></a></p></th>
+<th class="head"><p><a class="reference internal" href="./The RDKit Book — The RDKit 2020.03.1 documentation_files/EnhancedStereoSSS_molE.png"><img alt="EnhancedSSS_E" class="align-middle" src="./The RDKit Book — The RDKit 2020.03.1 documentation_files/EnhancedStereoSSS_molE.png" style="width: 108.0px; height: 74.25px;"></a></p></th>
+<th class="head"><dl class="simple">
+<dt><a class="reference internal" href="./The RDKit Book — The RDKit 2020.03.1 documentation_files/EnhancedStereoSSS_molF.png"><img alt="EnhancedSSS_F" class="align-middle" src="./The RDKit Book — The RDKit 2020.03.1 documentation_files/EnhancedStereoSSS_molF.png" style="width: 108.0px; height: 74.25px;"></a></dt><dd><p>OR</p>
+</dd>
+</dl>
+</th>
+<th class="head"><dl class="simple">
+<dt><a class="reference internal" href="./The RDKit Book — The RDKit 2020.03.1 documentation_files/EnhancedStereoSSS_molG.png"><img alt="EnhancedSSS_G" class="align-middle" src="./The RDKit Book — The RDKit 2020.03.1 documentation_files/EnhancedStereoSSS_molG.png" style="width: 108.0px; height: 74.25px;"></a></dt><dd><p>AND</p>
+</dd>
+</dl>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><a class="reference internal" href="./The RDKit Book — The RDKit 2020.03.1 documentation_files/EnhancedStereoSSS_molA.png"><img alt="EnhancedSSS_A" class="align-middle" src="./The RDKit Book — The RDKit 2020.03.1 documentation_files/EnhancedStereoSSS_molA.png" style="width: 108.0px; height: 74.25px;"></a></p></td>
+<td><p>Y</p></td>
+<td><p>Y</p></td>
+<td><p>Y</p></td>
+<td><p>Y</p></td>
+<td><p>Y</p></td>
+<td><p>Y</p></td>
+<td><p>Y</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="./The RDKit Book — The RDKit 2020.03.1 documentation_files/EnhancedStereoSSS_molB.png"><img alt="EnhancedSSS_B" class="align-middle" src="./The RDKit Book — The RDKit 2020.03.1 documentation_files/EnhancedStereoSSS_molB.png" style="width: 108.0px; height: 74.25px;"></a></p></td>
+<td><p>N</p></td>
+<td><p>Y</p></td>
+<td><p>N</p></td>
+<td><p>N</p></td>
+<td><p>Y</p></td>
+<td><p>Y</p></td>
+<td><p>Y</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="./The RDKit Book — The RDKit 2020.03.1 documentation_files/EnhancedStereoSSS_molC.png"><img alt="EnhancedSSS_C" class="align-middle" src="./The RDKit Book — The RDKit 2020.03.1 documentation_files/EnhancedStereoSSS_molC.png" style="width: 108.0px; height: 74.25px;"></a></p></td>
+<td><p>N</p></td>
+<td><p>N</p></td>
+<td><p>Y</p></td>
+<td><p>N</p></td>
+<td><p>N</p></td>
+<td><p>Y</p></td>
+<td><p>Y</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="./The RDKit Book — The RDKit 2020.03.1 documentation_files/EnhancedStereoSSS_molD.png"><img alt="EnhancedSSS_D" class="align-middle" src="./The RDKit Book — The RDKit 2020.03.1 documentation_files/EnhancedStereoSSS_molD.png" style="width: 108.0px; height: 74.25px;"></a></p></td>
+<td><p>N</p></td>
+<td><p>N</p></td>
+<td><p>N</p></td>
+<td><p>Y</p></td>
+<td><p>N</p></td>
+<td><p>N</p></td>
+<td><p>N</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="./The RDKit Book — The RDKit 2020.03.1 documentation_files/EnhancedStereoSSS_molE.png"><img alt="EnhancedSSS_E" class="align-middle" src="./The RDKit Book — The RDKit 2020.03.1 documentation_files/EnhancedStereoSSS_molE.png" style="width: 108.0px; height: 74.25px;"></a></p></td>
+<td><p>N</p></td>
+<td><p>Y</p></td>
+<td><p>N</p></td>
+<td><p>N</p></td>
+<td><p>N</p></td>
+<td><p>Y</p></td>
+<td><p>Y</p></td>
+</tr>
+<tr class="row-odd"><td><dl class="simple">
+<dt><a class="reference internal" href="./The RDKit Book — The RDKit 2020.03.1 documentation_files/EnhancedStereoSSS_molF.png"><img alt="EnhancedSSS_F" class="align-middle" src="./The RDKit Book — The RDKit 2020.03.1 documentation_files/EnhancedStereoSSS_molF.png" style="width: 108.0px; height: 74.25px;"></a></dt><dd><p>OR</p>
+</dd>
+</dl>
+</td>
+<td><p>N</p></td>
+<td><p>N</p></td>
+<td><p>N</p></td>
+<td><p>N</p></td>
+<td><p>N</p></td>
+<td><p>Y</p></td>
+<td><p>Y</p></td>
+</tr>
+<tr class="row-even"><td><dl class="simple">
+<dt><a class="reference internal" href="./The RDKit Book — The RDKit 2020.03.1 documentation_files/EnhancedStereoSSS_molG.png"><img alt="EnhancedSSS_G" class="align-middle" src="./The RDKit Book — The RDKit 2020.03.1 documentation_files/EnhancedStereoSSS_molG.png" style="width: 108.0px; height: 74.25px;"></a></dt><dd><p>AND</p>
+</dd>
+</dl>
+</td>
+<td><p>N</p></td>
+<td><p>N</p></td>
+<td><p>N</p></td>
+<td><p>N</p></td>
+<td><p>N</p></td>
+<td><p>N</p></td>
+<td><p>Y</p></td>
+</tr>
+</tbody>
+</table>
+<p>Substructure search using molecules with enhanced stereochemistry follows these rules (where substructure &lt; superstructure):</p>
+<ul class="simple">
+<li><p>achiral &lt; everything, because an achiral query means ignore chirality in the match</p></li>
+<li><p>chiral &lt; AND, because AND includes both the chiral molecule and another one</p></li>
+<li><p>chiral &lt; OR, because OR includes either the chiral molecule or another one</p></li>
+<li><p>OR &lt; AND, because AND includes both molecules that OR could actually mean.</p></li>
+<li><p>one group of two atoms &lt; two groups of one atom, because the latter is 4 different</p></li>
+</ul>
+<p>diastereomers, and the former only two of the four.</p>
+<p>Some concrete examples of this:</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="additional-information-about-the-fingerprints">
+<h2>Additional Information About the Fingerprints<a class="headerlink" href="http://www.rdkit.org/docs/RDKit_Book.html#additional-information-about-the-fingerprints" title="Permalink to this headline">¶</a></h2>
+<p>This section, which is not currently comprehensive, is intended to provide some
+documentation about the types of fingerprints available in the RDKit. We don’t
+reproduce information that can be found in the literature, but try and capture
+the unpublished bits (of which there are quite a few).</p>
+<div class="section" id="rdkit-fingerprints">
+<h3>RDKit Fingerprints<a class="headerlink" href="http://www.rdkit.org/docs/RDKit_Book.html#rdkit-fingerprints" title="Permalink to this headline">¶</a></h3>
+<p>This is an RDKit-specific fingerprint that is inspired by (though it differs
+significantly from) public descriptions of the Daylight fingerprint
+<a class="footnote-reference brackets" href="http://www.rdkit.org/docs/RDKit_Book.html#daylightfp" id="id12">7</a>. The fingerprinting algorithm identifies all subgraphs in the
+molecule within a particular range of sizes, hashes each subgraph to generate a
+raw bit ID, mods that raw bit ID to fit in the assigned fingerprint size, and
+then sets the corresponding bit. Options are available to generate count-based
+forms of the fingerprint or “non-folded” forms (using a sparse representation).</p>
+<dl class="simple">
+<dt>The default scheme for hashing subgraphs is to hash the individual bonds based on:</dt><dd><ul class="simple">
+<li><p>the types of the two atoms. Atom types include the atomic number (mod 128), and whether or not the atom is aromatic.</p></li>
+<li><p>the degrees of the two atoms in the path.</p></li>
+<li><p>the bond type (or <code class="docutils literal notranslate"><span class="pre">AROMATIC</span></code> if the bond is marked as aromatic)</p></li>
+</ul>
+</dd>
+</dl>
+<div class="section" id="fingerprint-specific-options">
+<h4>Fingerprint-specific options<a class="headerlink" href="http://www.rdkit.org/docs/RDKit_Book.html#fingerprint-specific-options" title="Permalink to this headline">¶</a></h4>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">minPath</span></code> and <code class="docutils literal notranslate"><span class="pre">maxPath</span></code> control the size (in bonds) of the subgraphs/paths considered</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">nBitsPerHash</span></code>: If this is greater than one, each subgraph will set more than one bit.
+The additional bits will be generated by seeding a random number generator with the original
+raw bit ID and generating the appropriate number of random numbers.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">useHs</span></code>: toggles whether or not Hs are included in the subgraphs/paths (assuming that there
+are Hs in the molecule graph.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tgtDensity</span></code>: if this is greater than zero, the fingerprint will be repeatedly folded in half
+until the density of set bits is greater than or equal to this value or the fingerprint only
+contains <cite>minSize</cite> bits. Note that this means that the resulting fingerprint will not necessarily
+be the size you requested.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">branchedPaths</span></code>: if this is true (the default value), the algorithm will use subgraphs (i.e features
+can be branched. If false, only linear paths will be considered.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">useBondOrder</span></code>: if true (the default) bond types will be considered when hashing subgraphs, otherwise
+this component of the hash will be ignored.</p></li>
+</ul>
+</div></blockquote>
+</div>
+</div>
+<div class="section" id="pattern-fingerprints">
+<h3>Pattern Fingerprints<a class="headerlink" href="http://www.rdkit.org/docs/RDKit_Book.html#pattern-fingerprints" title="Permalink to this headline">¶</a></h3>
+<p>These fingerprints were designed to be used in substructure screening. These
+are, as far as I know, unique to the RDKit. The algorithm identifies features in
+the molecule by doing substructure searches using a small number (12 in the
+<code class="docutils literal notranslate"><span class="pre">2019.03</span></code> release of the RDKit) of very generic SMARTS patterns - like
+<code class="docutils literal notranslate"><span class="pre">[*]~[*]~[*](~[*])~[*]</span></code> or <code class="docutils literal notranslate"><span class="pre">[R]~1[R]~[R]~[R]~1</span></code>, and then hashing each
+occurrence of a pattern based on the atom and bond types involved. The fact that
+particular pattern matched the molecule at all is also stored by hashing the
+pattern ID and size. If a particular feature contains either a query atom or a
+query bond (e.g. something generated from SMARTS), the only information that is
+hashed is the fact that the generic pattern matched.</p>
+<p>For the <code class="docutils literal notranslate"><span class="pre">2019.03</span></code> release, the atom types use just the atomic number of the
+atom and the bond types use the bond type, or <code class="docutils literal notranslate"><span class="pre">AROMATIC</span></code> for aromatic bonds).</p>
+<p><strong>NOTE</strong>: Because it plays an important role in substructure screenout, the
+internals of this fingerprint (the generic patterns used and/or the details of
+the hashing algorithm) may change from one release to the next.</p>
+</div>
+<div class="section" id="atom-pair-and-topological-torsion-fingerprints">
+<h3>Atom-Pair and Topological Torsion Fingerprints<a class="headerlink" href="http://www.rdkit.org/docs/RDKit_Book.html#atom-pair-and-topological-torsion-fingerprints" title="Permalink to this headline">¶</a></h3>
+<p>These two related fingerprints are implemented based on the original papers:
+<a class="footnote-reference brackets" href="http://www.rdkit.org/docs/RDKit_Book.html#atompairfp" id="id13">8</a> <a class="footnote-reference brackets" href="http://www.rdkit.org/docs/RDKit_Book.html#ttfp" id="id14">9</a>. Atoms are typed based on atomic number, number of pi
+electrons, and the degree of the atom. Optionally information about atomic
+chirality can also be integrated into the atom types. Both fingerprint types can
+be generated in explicit or sparse form and as bit or count vectors. These
+fingerprint types are different from the others in the RDKit in that bits in the
+sparse form of the fingerprint can be directly explained (i.e. the “hashing
+function” used is fully reversible).</p>
+<p>These fingerprints were originally “intended” to be used in count-vectors and
+they seem to work better that way. The default behavior of the explicit
+bit-vector forms of both fingerprints is to use a “count simulation” procedure
+where multiple bits are set for a given feature if it occurs more than once. The
+default behavior is to use 4 fingerprint bits for each feature (so a 2048 bit
+fingerprint actually stores information about the same number of features as a
+512 bit fingerprint that isn’t using count simulation). The bins correspond to
+counts of 1, 2, 4, and 8. As an example of how this works: if a feature occurs 5
+times in a molecule, the bits corresponding to counts 1, 2, and 4 will be set.</p>
+</div>
+<div class="section" id="morgan-and-feature-morgan-fingerprints">
+<h3>Morgan and Feature Morgan Fingerprints<a class="headerlink" href="http://www.rdkit.org/docs/RDKit_Book.html#morgan-and-feature-morgan-fingerprints" title="Permalink to this headline">¶</a></h3>
+<p>These are implemented based on the original paper <a class="footnote-reference brackets" href="http://www.rdkit.org/docs/RDKit_Book.html#morganfp" id="id15">10</a>. The algorithm
+follows the description in the paper as closely as possible with the exception
+of the chemical feature definitions used for the “Feature Morgan” fingerprint -
+the RDKit implementation uses the feature types Donor, Acceptor, Aromatic,
+Halogen, Basic, and Acidic with definitions adapted from those in the paper
+<a class="footnote-reference brackets" href="http://www.rdkit.org/docs/RDKit_Book.html#gobbifeats" id="id16">11</a>. It is possible to provide your own atom types. The fingerprints
+are available as either explicit or sparse count vectors or explicit bit
+vectors.</p>
+</div>
+<div class="section" id="layered-fingerprints">
+<h3>Layered Fingerprints<a class="headerlink" href="http://www.rdkit.org/docs/RDKit_Book.html#layered-fingerprints" title="Permalink to this headline">¶</a></h3>
+<p>These are another “RDKit original” and were developed with the intention of
+using them as a substructure fingerprint. Since the pattern fingerprint is far
+simpler and has proven to be quite effective as a substructure fingerprint, the
+layered fingerprint hasn’t received much attention. It may still be interesting
+for something, so we continue to include it.</p>
+<p>The idea of the fingerprint is generate features using the same subgraph (or
+path) enumeration algorithm used in the RDKit fingerprint. After a subgraph has
+been generated, it is used to set multiple bits based on different atom and bond
+type definitions.</p>
+<p class="rubric">Footnotes</p>
+<dl class="footnote brackets">
+<dt class="label" id="smirks"><span class="brackets"><a class="fn-backref" href="http://www.rdkit.org/docs/RDKit_Book.html#id6">1</a></span></dt>
+<dd><p><a class="reference external" href="http://www.daylight.com/dayhtml/doc/theory/theory.smirks.html">http://www.daylight.com/dayhtml/doc/theory/theory.smirks.html</a></p>
+</dd>
+<dt class="label" id="smiles"><span class="brackets">2</span><span class="fn-backref">(<a href="http://www.rdkit.org/docs/RDKit_Book.html#id1">1</a>,<a href="http://www.rdkit.org/docs/RDKit_Book.html#id7">2</a>)</span></dt>
+<dd><p><a class="reference external" href="http://www.daylight.com/dayhtml/doc/theory/theory.smiles.html">http://www.daylight.com/dayhtml/doc/theory/theory.smiles.html</a></p>
+</dd>
+<dt class="label" id="smarts"><span class="brackets">3</span><span class="fn-backref">(<a href="http://www.rdkit.org/docs/RDKit_Book.html#id4">1</a>,<a href="http://www.rdkit.org/docs/RDKit_Book.html#id8">2</a>,<a href="http://www.rdkit.org/docs/RDKit_Book.html#id11">3</a>)</span></dt>
+<dd><p><a class="reference external" href="http://www.daylight.com/dayhtml/doc/theory/theory.smarts.html">http://www.daylight.com/dayhtml/doc/theory/theory.smarts.html</a></p>
+</dd>
+<dt class="label" id="cxsmiles"><span class="brackets"><a class="fn-backref" href="http://www.rdkit.org/docs/RDKit_Book.html#id3">4</a></span></dt>
+<dd><p><a class="reference external" href="https://docs.chemaxon.com/display/docs/ChemAxon+Extended+SMILES+and+SMARTS+-+CXSMILES+and+CXSMARTS">https://docs.chemaxon.com/display/docs/ChemAxon+Extended+SMILES+and+SMARTS+-+CXSMILES+and+CXSMARTS</a></p>
+</dd>
+<dt class="label" id="intramolrxn"><span class="brackets"><a class="fn-backref" href="http://www.rdkit.org/docs/RDKit_Book.html#id9">5</a></span></dt>
+<dd><p>Thanks to James Davidson for this example.</p>
+</dd>
+<dt class="label" id="chiralrxn"><span class="brackets"><a class="fn-backref" href="http://www.rdkit.org/docs/RDKit_Book.html#id10">6</a></span></dt>
+<dd><p>Thanks to JP Ebejer and Paul Finn for this example.</p>
+</dd>
+<dt class="label" id="daylightfp"><span class="brackets"><a class="fn-backref" href="http://www.rdkit.org/docs/RDKit_Book.html#id12">7</a></span></dt>
+<dd><p><a class="reference external" href="http://www.daylight.com/dayhtml/doc/theory/theory.finger.html">http://www.daylight.com/dayhtml/doc/theory/theory.finger.html</a></p>
+</dd>
+<dt class="label" id="atompairfp"><span class="brackets"><a class="fn-backref" href="http://www.rdkit.org/docs/RDKit_Book.html#id13">8</a></span></dt>
+<dd><p><a class="reference external" href="http://pubs.acs.org/doi/abs/10.1021/ci00046a002">http://pubs.acs.org/doi/abs/10.1021/ci00046a002</a></p>
+</dd>
+<dt class="label" id="ttfp"><span class="brackets"><a class="fn-backref" href="http://www.rdkit.org/docs/RDKit_Book.html#id14">9</a></span></dt>
+<dd><p><a class="reference external" href="http://pubs.acs.org/doi/abs/10.1021/ci00054a008">http://pubs.acs.org/doi/abs/10.1021/ci00054a008</a></p>
+</dd>
+<dt class="label" id="morganfp"><span class="brackets"><a class="fn-backref" href="http://www.rdkit.org/docs/RDKit_Book.html#id15">10</a></span></dt>
+<dd><p><a class="reference external" href="http://pubs.acs.org/doi/abs/10.1021/ci100050t">http://pubs.acs.org/doi/abs/10.1021/ci100050t</a></p>
+</dd>
+<dt class="label" id="gobbifeats"><span class="brackets"><a class="fn-backref" href="http://www.rdkit.org/docs/RDKit_Book.html#id16">11</a></span></dt>
+<dd><p><a class="reference external" href="https://doi.org/10.1002/(SICI)1097-0290(199824)61:1%3C47::AID-BIT9%3E3.0.CO;2-Z">https://doi.org/10.1002/(SICI)1097-0290(199824)61:1%3C47::AID-BIT9%3E3.0.CO;2-Z</a></p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="section" id="license">
+<h2>License<a class="headerlink" href="http://www.rdkit.org/docs/RDKit_Book.html#license" title="Permalink to this headline">¶</a></h2>
+<img alt="_images/picture_5.png" src="./The RDKit Book — The RDKit 2020.03.1 documentation_files/picture_5.png">
+<p>This document is copyright (C) 2007-2019 by Greg Landrum</p>
+<p>This work is licensed under the Creative Commons Attribution-ShareAlike 4.0 License.
+To view a copy of this license, visit <a class="reference external" href="http://creativecommons.org/licenses/by-sa/4.0/">http://creativecommons.org/licenses/by-sa/4.0/</a> or send a letter to Creative Commons, 543 Howard Street, 5th Floor, San Francisco, California, 94105, USA.</p>
+<p>The intent of this license is similar to that of the RDKit itself.
+In simple words: “Do whatever you want with it, but please give us some credit.”</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="http://www.rdkit.org/docs/genindex.html" title="General Index">index</a></li>
+        <li class="right">
+          <a href="http://www.rdkit.org/docs/py-modindex.html" title="Python Module Index">modules</a> |</li>
+        <li class="right">
+          <a href="http://www.rdkit.org/docs/Cookbook.html" title="RDKit Cookbook">next</a> |</li>
+        <li class="right">
+          <a href="http://www.rdkit.org/docs/GettingStartedInPython.html" title="Getting Started with the RDKit in Python">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="http://www.rdkit.org/docs/index.html">The RDKit 2020.03.1 documentation</a> »</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        © Copyright 2020, Greg Landrum.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.4.0.
+    </div>
+  
+</body></html>
