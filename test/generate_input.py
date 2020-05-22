@@ -37,23 +37,36 @@ def clean_prev(current_file):
     return prev_code
 
 
-def generate_new_input(current_file, new_file, reaction_model, include_edge=False):
+def generate_new_input(current_file, new_file, reaction_model, old_species_labels,
+                       include_edge=False):
     new_input = open(new_file, 'w')
     # remove simpleReactor from prev file
     raw_code = clean_prev(current_file)
     new_code = []
     inerts = ['He', 'Ne', "Ar"]
-    for sp in reaction_model.core.species:
+    species = reaction_model.core.species
+    if include_edge:
+        species = species + reaction_model.edge.species
+    # remove list of species in previous generation
+    # because they already exist in the input file
+    species = [sp for sp in species if sp.label not in old_species_labels]
+    species = [sp for sp in species if sp.label not in inerts]
+    '''for sp in species:
         # The inert gases which RMG adds by default must not be saved in the input file
-        if sp.label not in inerts:
-            new_code.append('\n')
-            new_code.append('species(')
-            new_code.append("\tlabel='{0}',".format(sp.label))
-            new_code.append('\treactive=True,')
-            new_code.append(f"\tstructure=SMILES('{sp.smiles}')")
-            new_code.append(')')
-    # if include_edge:
-    # do the same for edge species
+        if sp.label in old_species_labels or sp.label in inerts:
+            print('Removing ' + sp.label)
+            print('List had ' + str(len(species)) + ' species before')
+            species.remove(sp)
+            print(str(len(species)) + ' now')'''
+    for sp in species:
+        new_code.append('\n')
+        new_code.append('species(')
+        # Note: RMG doesn't allow labels to have '+' sign
+        # So don't treat labels as exact SMILES strings
+        new_code.append("\tlabel='{0}',".format(sp.label.replace('+','')))
+        new_code.append('\treactive=True,')
+        new_code.append(f"\tstructure=SMILES('{sp.smiles}')")
+        new_code.append(')')
     # now add a simpleReactor()
 
     new_code.append('\n')
@@ -63,16 +76,14 @@ def generate_new_input(current_file, new_file, reaction_model, include_edge=Fals
     new_code.append(f"\tterminationTime=(1e0,'s'),")  # by default make all reactions run for 1s
     new_code.append("\tinitialMoleFractions={")
 
-    # I'm assuming we won't add edge species
-    # We'll have to expand this method if we do so
 
     # let all species have equal mole fractions initially
     # # i did a -3 there because core.species contains He, Ne and Ar which we wanna exclude
-    average_mol_frac = 1.0 / (len(reaction_model.core.species)-3)
-    for sp in reaction_model.core.species:
+    average_mol_frac = 1.0 / (len(species)-3)
+    for sp in species:
         if sp.label not in inerts:
-            new_code.append(f"\t\t'{sp.label}' : {average_mol_frac},")
-            if reaction_model.core.species.index(sp) == (len(reaction_model.core.species) - 1):
+            new_code.append(f"\t\t'{sp.label.replace('+','')}' : {average_mol_frac},")
+            if species.index(sp) == (len(species) - 1):
                 new_code[len(new_code) - 1].replace(',', '')  # remove the comma for the last item
     new_code.append('\t}')
     new_code.append(')')
@@ -82,5 +93,4 @@ def generate_new_input(current_file, new_file, reaction_model, include_edge=Fals
     for line in new_code:
         new_input.write('\n')
         new_input.write(line)
-
     new_input.close()
