@@ -65,7 +65,7 @@ model(
 
 options(
     units='si',
-    generateOutputHTML=True,
+    generateOutputHTML=False,
     generatePlots=False,
     saveEdgeSpecies=False,
     saveSimulationProfiles=False,
