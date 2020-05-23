@@ -1,4 +1,4 @@
-# Getting started
+# Installations
 I made this tut because I thought some people were having trouble setting MOD up. I made this guide for Ubuntu based builds but I think you can build it on Windows too. A Ubuntu VM might make life easy as well.
 
 Some of the steps might seem like a copy-off from the installation website but I wrote them (with a few added words) to make life easy for others.
@@ -75,10 +75,12 @@ If you have a file you want to run, type the command
 mod -f test.py 
 ```
 
-To be able to import the mod package.
-
-A more permanent fix is to add the folder containing the Python bindings of MOD to your **PYTHONPATH**
-To do this, find the "prefix" by running 
+Now, you might want to be able to import the mod package by writing
+```python
+import mod
+```
+in your code. But as you might figure out that importing it gives you a package not found error. As the solution, you need to add the folder containing the Python bindings of MOD to your **PYTHONPATH**
+. To do this, find the "prefix" by running 
 ```bash
 mod
 ```
