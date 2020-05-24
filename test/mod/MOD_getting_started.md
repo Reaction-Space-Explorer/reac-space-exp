@@ -95,10 +95,11 @@ Global (/usr/local/bin/../share/mod/plugins):
 ```
 As you can see, for me, the prefix was **/usr/local/bin**. Now the Python bindings aren't in the /bin/ folder but in the /lib/ folder.
 So what you want to add to your PYTHONPATH is **/usr/local/lib/**
-You may use the following command in the terminal
+One problem is that if you add to your PYTHONPATH using a terminal in Ubuntu, the addition will be reset once you close that terminal.
+
+For a more permanent addition, go to your $HOME directory and view the hidden files. You'll find a file named **.bashrc** which is a script that is run everytime a terminal is created. Add this line to the bottom of the file.
 ```bash
 export PYTHONPATH=$PYTHONPATH:/usr/local/lib/
 ```
-
 ## Still having trouble?
 Message me on Slack in the #reactionnetworkgeneration channel or personally (whichever you prefer) but public has the advantage that someone else might be struggling with the same problem.
