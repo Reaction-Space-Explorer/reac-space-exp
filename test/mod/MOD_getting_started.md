@@ -6,7 +6,14 @@ Some of the steps might seem like a copy-off from the installation website but I
 First off, install the following (which is a huge list)
 * CMake
     * You can install the GUI version if you'd like (it makes life easier). Note that on Ubuntu (at least on my version), the GUI doesn't run for some reason but even when it doesn't, one can make full use of the command-line way of doing things without any trouble.
+    * The following should install it in Linux
+    ```bash
+    sudo apt install make
+    ```
 * A C++ Compiler with C++14 support. As per the installation website, GCC version 6.1+ should work.
+```bash
+sudo apt-get install g++
+```
 * Boost with Boost.Python
     * Download the .tar.gz containing the source from [here](https://www.boost.org/)
     * After unpacking, open it and use the following bash commands
@@ -21,16 +28,17 @@ First off, install the following (which is a huge list)
 * Some LaTeX distribution (MOD uses LaTeX to generate the PDF output) with some science packages (they were needed in my case)
     * Here are some terminal commands to make it easier for you (I'm unsure if the last one was needed for me)
 ```bash
-sudo apt install texlive-core
-sudo apt install texlive-science
-sudo apt install texlive-latex-extra
+sudo apt install texlive-{base, science, latex-base}
 ```
 * OpenBabel
 ```bash
 sudo apt-get install libopenbabel-dev
 ```
-* Sphinx (for the sake of documentation, I think)
-    * I think I was able to install it using sudo apt-get
+* Sphinx (which is a documentation generator for Python)
+    * I think I used the command-line
+    ```bash
+    sudo apt-get install python3-sphinx
+    ```
 
 ## Clone the GitHub repository
 Once you have all those dependencies installed (which would take a bit of time but there's no alternative), clone the [GitHub repo](https://github.com/jakobandersen/mod) of MOD
@@ -53,7 +61,11 @@ cmake ../ <options>
 make -j 
 make install
 ```
-In the options, you **have to** turn -DBUID_PY_MOD=on and -DBUILD_POST_MOD=on for our purposes. I recommend applying almost all (atleast those which were =on) on the main [installation page](http://jakobandersen.github.io/mod/installation.html)
+In the options, you **have to** turn -DBUILD_PY_MOD=on and -DBUILD_POST_MOD=on for our purposes. I recommend applying almost all (atleast those which were =on) on the main [installation page](http://jakobandersen.github.io/mod/installation.html). For your convenience, here's what I used
+
+```bash
+cmake ../ -DBUILD_DOC=on -DBUILD_POST_MOD=on -DBUILD_PY_MOD=on -DBUILD_TESTING_SANITIZERS=on -DENABLE_SYMBOL_HIDING=on -DENABLE_DEP_SYMBOL_HIDING=on -DENABLE_IPO=on -DUSE_NESTED_GRAPH_CANON=on -DWITH_OPENBABEL=on
+```
 
 *Note: The above process takes quite a bit of time.*
 In case you get some error like "Can't write" or "Can't create" or anything of the sort in the last comman. Try using **sudo** prefix
@@ -65,7 +77,7 @@ This fixed it for me
 ## How to tell if I installed MOD properly
 Type the following command in the terminal
 ```nashorn js
-mod
+mod --version
 ```
 This should give you an output telling you the prefix, version, etc. of the current installation of mod. If this was installed properly, we're all set.
 
@@ -102,4 +114,4 @@ For a more permanent addition, go to your $HOME directory and view the hidden fi
 export PYTHONPATH=$PYTHONPATH:/usr/local/lib/
 ```
 ## Still having trouble?
-Message me on Slack in the #reactionnetworkgeneration channel or personally (whichever you prefer) but public has the advantage that someone else might be struggling with the same problem.
+Message me on Slack in the #reactionnetworkgeneration channel or personally (whichever you prefer).
