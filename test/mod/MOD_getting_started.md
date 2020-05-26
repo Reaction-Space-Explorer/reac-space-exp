@@ -14,8 +14,12 @@ First off, install the following (which is a huge list)
 ```bash
 sudo apt-get install g++
 ```
-* Boost with Boost.Python
-    * Download the .tar.gz containing the source from [here](https://www.boost.org/)
+* Boost with Boost.
+    * **UPDATE:** Some people had trouble installing using source code. Try using the following commands instead
+    ```bash
+    sudo apt-get install libboost-{dev,python-dev,all-dev}
+    ```
+    * To build using source code: Download the .tar.gz containing the source from [here](https://www.boost.org/)
     * After unpacking, open it and use the following bash commands
     ```bash
   ./bootstrap.sh --with-python=python3
@@ -25,6 +29,11 @@ sudo apt-get install g++
 * Graphviz
     * I think I had to build this from the [source](https://graphviz.gitlab.io/_pages/Download/Download_source.html). The link has listed the terminal commands you'll need as well.
     * Note that you need CMake installed for this.
+    * Update: try the above **and** the following two commands
+    ```bash
+sudo apt-get install librsvg2-dev
+sudo apt-get install libpango1.0-dev
+    ```
 * Some LaTeX distribution (MOD uses LaTeX to generate the PDF output) with some science packages (they were needed in my case)
     * Here are some terminal commands to make it easier for you (I'm unsure if the last one was needed for me)
 ```bash
@@ -47,28 +56,28 @@ Once you have all those dependencies installed (which would take a bit of time b
 git clone https://github.com/jakobandersen/mod.git
 ```
 ## Some configs and then make build directories
-Open the folder in which you cloned MOD repo 
+Important: this will fetch some dependencies like graph_cannon (created by Jakob Andersen himself). To be able to do this, you need to have cloned using Git. Open the folder in which you cloned MOD repo 
 ```bash
 git submodule update --init --recursive
 ./bootstrap.sh
 ```
 
 After this, create a directory named build and make the build files usinsg CMake
-```nashorn js
+```bash
 mkdir build
 cd build
 cmake ../ <options>
 make -j 
 make install
 ```
-In the options, you **have to** turn -DBUILD_PY_MOD=on and -DBUILD_POST_MOD=on for our purposes. I recommend applying almost all (atleast those which were =on) on the main [installation page](http://jakobandersen.github.io/mod/installation.html). For your convenience, here's what I used
+In the ```<options>```, you **have to** turn -DBUILD_PY_MOD=on and -DBUILD_POST_MOD=on for our purposes. I recommend passing almost all options (atleast those which were =on) on the main [installation page](http://jakobandersen.github.io/mod/installation.html). For your convenience, here's what I used
 
 ```bash
 cmake ../ -DBUILD_DOC=on -DBUILD_POST_MOD=on -DBUILD_PY_MOD=on -DBUILD_TESTING_SANITIZERS=on -DENABLE_SYMBOL_HIDING=on -DENABLE_DEP_SYMBOL_HIDING=on -DENABLE_IPO=on -DUSE_NESTED_GRAPH_CANON=on -DWITH_OPENBABEL=on
 ```
 
 *Note: The above process takes quite a bit of time.*
-In case you get some error like "Can't write" or "Can't create" or anything of the sort in the last comman. Try using **sudo** prefix
+In case you get some error like "Can't write" or "Can't create" or anything of the sort in the last command. Try using **sudo** prefix
 
 ```bash
 sudo make install
@@ -76,7 +85,7 @@ sudo make install
 This fixed it for me
 ## How to tell if I installed MOD properly
 Type the following command in the terminal
-```nashorn js
+```bash
 mod --version
 ```
 This should give you an output telling you the prefix, version, etc. of the current installation of mod. If this was installed properly, we're all set.
@@ -114,4 +123,4 @@ For a more permanent addition, go to your $HOME directory and view the hidden fi
 export PYTHONPATH=$PYTHONPATH:/usr/local/lib/
 ```
 ## Still having trouble?
-Message me on Slack in the #reactionnetworkgeneration channel or personally (whichever you prefer).
+Some of your problems might be well known, so google your errors and see if you can fix them. Message me on Slack in the #reactionnetworkgeneration channel or personally (whichever you prefer).
