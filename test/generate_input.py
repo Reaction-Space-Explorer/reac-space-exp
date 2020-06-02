@@ -76,10 +76,8 @@ def generate_new_input(current_file, new_file, reaction_model, old_species_label
     new_code.append(f"\tterminationTime=(1e0,'s'),")  # by default make all reactions run for 1s
     new_code.append("\tinitialMoleFractions={")
 
-
     # let all species have equal mole fractions initially
-    # # i did a -3 there because core.species contains He, Ne and Ar which we wanna exclude
-    average_mol_frac = 1.0 / (len(species)-3)
+    average_mol_frac = 1.0 / (len(species))
     for sp in species:
         if sp.label not in inerts:
             new_code.append(f"\t\t'{sp.label.replace('+','')}' : {average_mol_frac},")
