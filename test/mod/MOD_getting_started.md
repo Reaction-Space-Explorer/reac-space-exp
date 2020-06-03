@@ -11,42 +11,42 @@ First off, install the following (which is a huge list)
     sudo apt install make
     ```
 * A C++ Compiler with C++14 support. As per the installation website, GCC version 6.1+ should work.
-```bash
-sudo apt-get install g++
-```
+    ```bash
+    sudo apt install g++ gcc
+    ```
 * Boost with Boost.
     * **UPDATE:** Some people had trouble installing using source code. Try using the following commands instead
     ```bash
-    sudo apt-get install libboost-{dev,python-dev,all-dev}
+    sudo apt install -y libboost-dev libboost-python-dev libboost-all-dev
     ```
     * To build using source code: Download the .tar.gz containing the source from [here](https://www.boost.org/)
     * After unpacking, open it and use the following bash commands
     ```bash
-  ./bootstrap.sh --with-python=python3
-  ./b2
-  ./b2 install
+    ./bootstrap.sh --with-python=python3
+    ./b2
+    ./b2 install
     ```
 * Graphviz
-    * I think I had to build this from the [source](https://graphviz.gitlab.io/_pages/Download/Download_source.html). The link has listed the terminal commands you'll need as well.
-    * Note that you need CMake installed for this.
-    * Update: try the above **and** the following two commands
+    * Update: the distribution for Ubuntu doesn't come with RSVG or Pangocairo. Install them using the commands
     ```bash
-sudo apt-get install librsvg2-dev
-sudo apt-get install libpango1.0-dev
+    sudo apt install -y librsvg2-dev libpango1.0-dev pdf2svg
     ```
+    * After you've installed the above two, you can now build Graphviz from the [source](https://graphviz.gitlab.io/_pages/Download/Download_source.html). The link has listed the terminal commands you'll need as well.
+    * Note that you need CMake installed for building this.
 * Some LaTeX distribution (MOD uses LaTeX to generate the PDF output) with some science packages (they were needed in my case)
     * Here are some terminal commands to make it easier for you (I'm unsure if the last one was needed for me)
 ```bash
-sudo apt install texlive-{base, science, latex-base}
+sudo apt install -y texlive-base tex-livescience texlive-latex-base
 ```
 * OpenBabel
 ```bash
-sudo apt-get install libopenbabel-dev
+sudo apt-get install -y openbabel libopenbabel-dev
 ```
+    * Note: Apparently it wants to use some version of 2.0 series. If "babel -v" prints something like OpenBabel 2.3.2, there should be no problem. There was a problem for those who had 3.0.
 * Sphinx (which is a documentation generator for Python)
     * I think I used the command-line
     ```bash
-    sudo apt-get install python3-sphinx
+    sudo apt install -y python3-sphinx
     ```
 
 ## Clone the GitHub repository
