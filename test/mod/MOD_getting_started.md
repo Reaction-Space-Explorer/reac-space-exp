@@ -35,14 +35,24 @@ First off, install the following (which is a huge list)
     * Note that you need CMake installed for building this.
 * Some LaTeX distribution (MOD uses LaTeX to generate the PDF output) with some science packages (they were needed in my case)
     * Here are some terminal commands to make it easier for you (I'm unsure if the last one was needed for me)
-```bash
-sudo apt install -y texlive-base tex-livescience texlive-latex-base
-```
+    ```bash
+    sudo apt install -y texlive-base tex-livescience texlive-latex-base
+    ```
 * OpenBabel
-```bash
-sudo apt-get install -y openbabel libopenbabel-dev
-```
-    * Note: Apparently it wants to use some version of 2.0 series. If "babel -v" prints something like OpenBabel 2.3.2, there should be no problem. There was a problem for those who had 3.0.
+    ```bash
+    sudo apt-get install -y openbabel libopenbabel-dev
+    ```
+    * Note: Apparently MOD wants to use some version of 2.0 series. If "babel -v" prints something like OpenBabel 2.3.2, there should be no problem. There was a problem for those who had 3.0.
+    * Note 2: In Ubuntu 20.04, older versions of most packages aren't available under ```sudo apt``` (so this applies even to openbabel and libopenbabel-dev as well) but this can be resolved. There is a file named **sources.list** in the folder ```/etc/apt/``` which contains the list of sources where ```apt``` gets its list of packages from. Add this line to the bottom of the file and save
+    ```bash
+    deb http://cz.archive.ubuntu.com/ubuntu eoan main universe
+    ```
+    Then run the following in the terminal
+    Now you should be able to access **eona** packages(Eona Ermine is the name of Ubuntu 19.10 release), which supported the versions we desire. Don't worry, everything's safe.
+    ```bash
+    sudo apt install openbabel=2.4.1+dfsg-3 libopenbabel-dev=2.4.1+dfsg-3
+    ```
+    Note that we have told **apt** to forcefully install specific versions of these packages.
 * Sphinx (which is a documentation generator for Python)
     * I think I used the command-line
     ```bash
