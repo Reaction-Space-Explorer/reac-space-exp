@@ -98,19 +98,18 @@ Type the following command in the terminal
 ```bash
 mod --version
 ```
+This should give you an output telling you the prefix, version, etc. of the current installation of mod. If this was installed properly, we're all set.
 ### **Note**:
-Some people on Ubuntu 20.04 (including myself) or those with problems with Boost received a weird error while trying to run mod
+Some people on Ubuntu 20.04 (including myself) or those with problems with Boost received a weird error while trying to run **mod**.
 ```python
 ImportError: /usr/lib/x86_64-linux-gnu/libboost_python38.so.1.67.0: undefined symbol: _Py_tracemalloc_config
 ```
-Apparently ```sudo``` prefix before the **mod** command seemed to have had fixed it. But that's an illusion: the problem is that the boost libraries were built with python 3.8 (Ubuntu 20.04 comes with 3.8) and a different python version is being used to run it. Don't use ```sudo``` to run any code (as Dr. Andersen himself said). The solution for me was to install Boost using **conda**
+Apparently ```sudo``` prefix before the **mod** command seemed to have had fixed it. But that's an illusion: the problem is that the boost libraries were built with python 3.8 (Ubuntu 20.04 comes with 3.8) and a different python version is being used to run it. Don't use ```sudo``` to run any code (as Dr. Andersen himself said). The solution for me was to install Boost using **conda** and remove the versions you installed through **apt** using the command ```sudo apt remove <package-names>```
 
 ```bash
 conda install -c anaconda boost
 ```
 And pass an additional option to **cmake** to force it to use this version of boost ```-DBOOST_ROOT=~/anaconda3```
-
-This should give you an output telling you the prefix, version, etc. of the current installation of mod. If this was installed properly, we're all set.
 
 ## How to run files with MOD
 If you have a file you want to run, type the command
