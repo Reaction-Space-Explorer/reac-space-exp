@@ -34,9 +34,9 @@ First off, install the following (which is a huge list)
     * After you've installed the above two, you can now build Graphviz from the [source](https://graphviz.gitlab.io/_pages/Download/Download_source.html). The link has listed the terminal commands you'll need as well.
     * Note that you need CMake installed for building this.
 * Some LaTeX distribution (MOD uses LaTeX to generate the PDF output) with some science packages (they were needed in my case)
-    * Here are some terminal commands to make it easier for you (I'm unsure if the last one was needed for me)
+    * Here are some terminal commands to make it easier for you
     ```bash
-    sudo apt install -y texlive-base tex-livescience texlive-latex-base
+    sudo apt install -y texlive-base tex-livescience texlive-latex-base texlive-latex-extra
     ```
 * OpenBabel
     ```bash
@@ -48,7 +48,7 @@ First off, install the following (which is a huge list)
     deb http://cz.archive.ubuntu.com/ubuntu eoan main universe
     ```
     Then run the following in the terminal
-    Now you should be able to access **eona** packages(Eona Ermine is the name of Ubuntu 19.10 release), which supported the versions we desire. Don't worry, everything's safe.
+    Now you should be able to access **eoan** packages(Eoan Ermine is the name of Ubuntu 19.10 release), which supported the versions we desire. Don't worry, everything's safe.
     ```bash
     sudo apt install openbabel=2.4.1+dfsg-3 libopenbabel-dev=2.4.1+dfsg-3
     ```
@@ -98,6 +98,7 @@ Type the following command in the terminal
 ```bash
 mod --version
 ```
+* Note: Some people received a weird error which looked like it perhaps had nothing to do with root privileges but using ```sudo``` prefix before the **mod** command fixed it. Doesn't happen for everyone.
 This should give you an output telling you the prefix, version, etc. of the current installation of mod. If this was installed properly, we're all set.
 
 ## How to run files with MOD
