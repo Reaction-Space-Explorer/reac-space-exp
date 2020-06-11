@@ -1,7 +1,7 @@
-# Installations
-I made this tut because I thought some people were having trouble setting MOD up. I made this guide for Ubuntu based builds but I think you can build it on Windows too. A Ubuntu VM might make life easy as well.
+# Installation
+I made this tut because I thought some people were having trouble setting MOD up. I made this guide for Ubuntu based builds but I think you can build it on Windows too. A Ubuntu VM might work equally well.
 
-Some of the steps might seem like a copy-off from the installation website but I wrote them (with a few added words) to make life easy for others.
+Some of the steps might seem like a copy-off from the installation website but I tried to add a few words to make life easy for others. I've also updated to provide resolutions for many bugs.
 
 First off, install the following (which is a huge list)
 * CMake
@@ -15,7 +15,8 @@ First off, install the following (which is a huge list)
     sudo apt install g++ gcc
     ```
 * Boost with Boost.
-    * **UPDATE:** Some people had trouble installing using source code. Try using the following commands instead
+    * **UPDATE:** People with Ubuntu 20.04 should install Boost using **conda**.
+    * Some people in general had trouble installing using source code. Try using the following commands instead
     ```bash
     sudo apt install -y libboost-dev libboost-python-dev libboost-all-dev
     ```
@@ -104,7 +105,8 @@ Some people on Ubuntu 20.04 (including myself) or those with problems with Boost
 ```python
 ImportError: /usr/lib/x86_64-linux-gnu/libboost_python38.so.1.67.0: undefined symbol: _Py_tracemalloc_config
 ```
-Apparently ```sudo``` prefix before the **mod** command seemed to have had fixed it. But that's an illusion: the problem is that the boost libraries were built with python 3.8 (Ubuntu 20.04 comes with 3.8) and a different python version is being used to run it. Don't use ```sudo``` to run any code (as Dr. Andersen himself said). The solution for me was to install Boost using **conda** and remove the versions you installed through **apt** using the command ```sudo apt remove <package-names>```
+Apparently ```sudo``` prefix before the **mod** command seemed to have had fixed it. But that's an illusion: the problem is that the boost libraries were built with python 3.8 (Ubuntu 20.04 comes with 3.8) and a different python version is being used to run it. This is because ```sudo``` overrides environment variables and aliases (check the difference between ```python3 --version``` and ```sudo python3 --version```)
+Don't use ```sudo``` to run any code (as Dr. Andersen himself said). The solution for me was to install Boost using **conda**.
 
 ```bash
 conda install -c anaconda boost
