@@ -43,14 +43,13 @@ enum = rdMolStandardize.TautomerEnumerator()
 def clean_taut(dg_execute):
     subset = dg_execute.subset
     universe = dg_execute.universe
-    # dictionary value will later be updated to its canonical smiles
+    # A dictionary of Graph objects and the corresponding SMILES string produced by MOD
     subset_mod_smiles = {g: g.smiles for g in subset}
+    # dictionary value will later be updated to its canonical smiles
     mod_rdkit_smiles = {g.smiles: None for g in subset}
-
     # This dictionary will contain {canonical rdkit smiles: [list of taut smiles]}
     smiles_tauts_dict = {}
-
-    # canonical smiles of the ones that need to be removed
+    # list of canonical smiles of the isomers that need to be removed
     to_remove = []
     # for each molecule in the subset
     for mod_smiles in subset_mod_smiles.values():
@@ -63,7 +62,10 @@ def clean_taut(dg_execute):
         all_smiles = tuple(Chem.MolToSmiles(taut) for taut in all_tauts)
         smiles_tauts_dict.update({mod_rdkit_smiles[mod_smiles]: all_smiles})
             #to_remove.append(smiles)
+    # A dictionary containing {the tuple containing all possible tautomers:
+    #  tautomers that were seen in the network} for each possible tautomer class
     taut_pair_dict = {}
+    # Fill this dictionary
     for smiles, taut_list in smiles_tauts_dict.items():
         if taut_list in list(taut_pair_dict.keys()):
             taut_pair_dict[taut_list].append(smiles)
@@ -71,6 +73,7 @@ def clean_taut(dg_execute):
             taut_pair_dict.update({taut_list: [smiles]})
     # The following part has complexity O(n^2)
     # TODO: try to see if you can turn this into O(n logn)
+    # This only removes the tautomers (all except the most stable one in the graph)
     for taut_list, smiles_list in taut_pair_dict.items():
         sorted_smiles = []
         for item in taut_list:
@@ -81,12 +84,13 @@ def clean_taut(dg_execute):
             if index != 0:
                 to_remove.append(smiles)
                 #print(f'Removing {smiles} from tautomer set {sorted_smiles}')
+    #TODO: add fake edges to account for the edges that were washed away with the removed nodes
+    # This needs to be done before the graphs are removed.
     for graph, mod_smiles in subset_mod_smiles.items():
         if mod_rdkit_smiles[mod_smiles] in to_remove:
             subset.remove(graph)
             universe.remove(graph)
             print(f"Removed {graph} from subset and universe")
-    #TODO: add fake edges to account for the edges that were washed away with the removed nodes
     return subset, universe
 
 # Number of generations we want to perform
