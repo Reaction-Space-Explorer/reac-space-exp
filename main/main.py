@@ -1,6 +1,4 @@
 import os
-import mod
-from mod import *
 from rdkit import Chem
 from rdkit.Chem.MolStandardize import rdMolStandardize
 from molvs import tautomer
@@ -8,32 +6,33 @@ from molvs import tautomer
 include(os.path.abspath(os.path.join('..', 'rules/all.py')))
 postChapter('Alkaline Glucose Degradation')
 
-# Create a dictionary of smiles strings (automatically avoids duplicates)
-# with the value being the generation in which the molecule was produced
-molecule_smiles = {}
-cleaned_smiles = {}
-
 # starting molecule
 glucose = smiles('OC[C@H]1O[C@H](O)[C@H](O)[C@@H](O)[C@@H]1O', name='Glucose')
 
-# assign zeroth generation to input molecules
-molecule_smiles.update({glucose.smiles : 0})
-
-# TODO: This only removes the tautomers from a list of smiles sent externally from MOD
-# We need to cause a "side effect" on the derivation graph to safely remove the useless nodes
-# The properties of the DG could be dumped and reloaded to achieve this.
+# Forbidden substructures
+# Three and four membeered rings are unstable
+cyclopropane = smiles('C1CC1')
+cyclobutane = smiles('C1CCC1')
+# make sure these don't get passed as an input
+inputGraphs.remove(cyclopropane)
+inputGraphs.remove(cyclobutane)
 
 strat = (
     addSubset(inputGraphs)
     >> rightPredicate[
-        lambda derivation: all (g.exactMass <= 500 for g in derivation.right)
+        lambda derivation: all (g.exactMass <= 500 and g.monomorphism(cyclopropane) == 0
+                     and g.monomorphism(cyclobutane) == 0 for g in derivation.right)
     ] (repeat[1](inputRules))
 )
 
-canon = tautomer.TautomerCanonicalizer()
-# Let's use RDKit instead of molVs for now
+#canon = tautomer.TautomerCanonicalizer()
+
+# molVs smiles might not be identical to rdkit so let's use RDKit instead of molVs
 enum = rdMolStandardize.TautomerEnumerator()
-# What if none of the existing tautomers is the most stable one? Do keep one based on a score?
+#enum = tautomer.TautomerEnumerator()
+
+# What if none of the existing tautomers is the most stable one?
+# We keep the most stable out of the ones in the network since we can't modify graphs in MOD
 
 # enumerate all possible tautomers for each molecule
 #   find if tautomeric pairs exist for each of them
@@ -116,3 +115,10 @@ with dg.build() as b:
         print('Created final version of DG')
     print('Completed')
 #dg.print()
+p = GraphPrinter()
+p.withColour = True
+p.collapseHydrogens = True
+p.edgesAsBonds = True
+p.simpleCarbons = True
+#for v in dg.vertices:
+#    v.graph.print(p)
