@@ -50,6 +50,8 @@ First off, install the following (which is a huge list)
     ```
     Then run the following in the terminal
     Now you should be able to access **eoan** packages(Eoan Ermine is the name of Ubuntu 19.10 release), which supported the versions we desire. Don't worry, everything's safe.
+
+    Then you need to do ```sudo apt update``` which will refresh the list of packages available (this time, it will include those eoan packages). You can then do:
     ```bash
     sudo apt install openbabel=2.4.1+dfsg-3 libopenbabel-dev=2.4.1+dfsg-3
     ```
@@ -88,7 +90,7 @@ cmake ../ -DBUILD_DOC=on -DBUILD_POST_MOD=on -DBUILD_PY_MOD=on -DBUILD_TESTING_S
 ```
 
 *Note: The above process takes quite a bit of time.*
-In case you get some error like "Can't write" or "Can't create" or anything of the sort in the last command. Try using **sudo** prefix
+In case you get some error like "Can't write/create" or "Permission denied" or anything of the sort in the last command. Try using **sudo** prefix, which is intended to give you root privileges while executing the command
 
 ```bash
 sudo make install
