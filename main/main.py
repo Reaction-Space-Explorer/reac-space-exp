@@ -106,102 +106,22 @@ def clean_taut(dg, dg_execute):
         if len(taut_class) > 1:
             for i in range(1, len(taut_class)):
                 to_remove.add(taut_class[i])
-    for item in to_remove:
-        subset.remove(graphs[mod_subset_smiles.index(item)])
-        universe.remove(graphs[mod_subset_smiles.index(item)])          
-    #for i in range(len(rdkit_subset_smiles)):
-
-    # Merge tautomer classes
-    # Now score each tautomer in each class
-
-    return subset, universe
-# What if none of the existing tautomers is the most stable one?
-# We keep the most stable out of the ones in the network since we can't modify graphs in MOD
-# enumerate all possible tautomers for each molecule
-#   find if tautomeric pairs exist for each of them
-#       if true: sort the tautomers and remove the ones with the lowest score
-# items are to be removed from both subset and universe
-# return the cleaned tautomers once done.
-
-# The code became really ugly while optimizing for performance using dictionaries
-'''def clean_taut(dg, dg_execute):
-    subset = dg_execute.subset
-    universe = dg_execute.universe
-
-    dg_vertices_dict = {v.graph: v for v in dg.vertices if v.graph in subset}
-    # A dictionary of Graph objects and the corresponding SMILES string produced by MOD
-    subset_mod_smiles = {g: g.smiles for g in subset}
-    inv_smiles_graph = dict(zip(subset_mod_smiles.values(), subset_mod_smiles.keys()))
-    # dictionary value will later be updated to its canonical smiles
-    mod_rdkit_smiles = {g.smiles: None for g in subset}
-    # This dictionary will contain {canonical rdkit smiles: [list of taut smiles]}
-    smiles_tauts_dict = {}
-    # dictionary of canonical smiles of the isomers that need to be removed mapped to
-    # the DGVertex of the one that needs to be kept
-    to_remove = {}
-    # for each molecule in the subset
-    for mod_smiles in subset_mod_smiles.values():
-        original_mol = Chem.MolFromSmiles(mod_smiles)
-        # Update the dictionary value to an RDKit canonical smiles for later comparison
-        mod_rdkit_smiles[mod_smiles] = Chem.MolToSmiles(original_mol)
-        # enumerate all tautomers for this molecule
-        all_tauts = enum.Enumerate(original_mol)
-        # convert into smiles
-        all_smiles = tuple(Chem.MolToSmiles(taut) for taut in all_tauts)
-        smiles_tauts_dict.update({mod_rdkit_smiles[mod_smiles]: all_smiles})
-    rdkit_mod_smiles = dict(zip(mod_rdkit_smiles.values(), mod_rdkit_smiles.keys()))
-
-    # A dictionary containing {the tuple containing all possible tautomers:
-    #  tautomers that were seen in the network} for each possible tautomer class
-    taut_pair_dict = {}
-    # Fill this dictionary
-    for smiles, taut_list in smiles_tauts_dict.items():
-        if taut_list in list(taut_pair_dict.keys()):
-            taut_pair_dict[taut_list].append(smiles)
-        else:
-            taut_pair_dict.update({taut_list: [smiles]})
-    # Debugging this region
-    f = open('debug.txt', 'w')
-    for i in range(len(taut_pair_dict.keys())-1):
-        for j in range(1,len(taut_pair_dict.keys())):
-            for item in list(taut_pair_dict.keys())[i]:
-                if item in list(taut_pair_dict.keys())[j] and list(taut_pair_dict.keys())[i] != list(taut_pair_dict.keys())[j]:
-                    #f.write('An item in {0} was found in {1}\n'.format(list(taut_pair_dict.keys())[i], list(taut_pair_dict.keys())[j]))
-    f.close()
-    # The following part has complexity O(n^2)
-    # TODO: try to see if you can turn this into O(n logn)
-    # This only removes the tautomers (all except the most stable one in the graph)
-    for taut_list, smiles_list in taut_pair_dict.items():
-        sorted_smiles = []
-        for item in taut_list:
-            if item in smiles_list:
-                sorted_smiles.append(item)
-        for index, smiles in reversed(list(enumerate(sorted_smiles))):
-            # keep the highest scoring item (which is the first item, i.e. index 0 in the list)
-            if index != 0:
-                # Caution: the following line is very ugly
-                canonical_dgvertex = dg_vertices_dict[inv_smiles_graph[rdkit_mod_smiles[sorted_smiles[0]]]]
-                to_remove.update({smiles: canonical_dgvertex})
-
-    for graph, mod_smiles in subset_mod_smiles.items():
-        if mod_rdkit_smiles[mod_smiles] in to_remove:
-            inEdges = [e for e in dg_vertices_dict[graph].inEdges]
-            # subset only contains the graphs of the recent generation, so the list of outEdges is empty 
-            for e in inEdges:
-                for source in e.sources:
+    for smiles in to_remove:
+        # The DGVertex associated with the molecule to be removed
+        dg_vertex = mod_dgverts[graphs[mod_subset_smiles.index(smiles)]]
+        for e in dg_vertex.inEdges:
+            for source in e.sources:
                     d = Derivations()
                     d.left = [source.graph]
                     d.rules = e.rules
-                    d.right = [to_remove[mod_rdkit_smiles[mod_smiles]].graph]
+                    d.right = [graphs[mod_subset_smiles.index(smiles)]]
                     b.addDerivation(d)
-                    print('Added fake edge', d, 'with rule', [rule.id for rule in e.rules])
-            subset.remove(graph)
-            universe.remove(graph)
-            print(f"Removed {graph} from subset and universe")
-    return subset, universe'''
+        subset.remove(graphs[mod_subset_smiles.index(smiles)])
+        universe.remove(graphs[mod_subset_smiles.index(smiles)])
+    return subset, universe
 
 # Number of generations we want to perform
-generations = 3
+generations = 2
 
 postSection('Final Network')
 dg = DG(graphDatabase=inputGraphs)
