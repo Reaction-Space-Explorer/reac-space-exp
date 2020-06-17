@@ -44,7 +44,9 @@ First off, install the following (which is a huge list)
     sudo apt-get install -y openbabel libopenbabel-dev
     ```
     * Note: Apparently MOD wants to use some version of 2.0 series. If "babel -v" prints something like OpenBabel 2.3.2, there should be no problem. There was a problem for those who had 3.0.
-    * Note 2: In Ubuntu 20.04, older versions of most packages aren't available under ```sudo apt``` (so this applies even to openbabel and libopenbabel-dev as well) but this can be resolved. There is a file named **sources.list** in the folder ```/etc/apt/``` which contains the list of sources where ```apt``` gets its list of packages from. Add this line to the bottom of the file and save
+    * Note 2: In Ubuntu 20.04, older versions of most packages aren't available under ```sudo apt``` (so this applies even to openbabel and libopenbabel-dev as well) but this can be resolved. There is a file named **sources.list** in the folder ```/etc/apt/``` which contains the list of sources where ```apt``` gets its list of packages from. To edit this file, you need root privileges, so perhaps running the text editor using ```sudo``` should help.
+    ```sudo gedit /etc/apt/sources.list```
+    Then add this line to the bottom of the file and save
     ```bash
     deb http://cz.archive.ubuntu.com/ubuntu eoan main universe
     ```
@@ -59,7 +61,15 @@ First off, install the following (which is a huge list)
 * Sphinx (which is a documentation generator for Python)
     * I think I used the command-line
     ```bash
-    sudo apt install -y python3-sphinx
+    pip install -U sphinx
+    ```
+    * Ubuntu 20.04 users might not receive the minimum required version (>=2.3.1) through ```sudo apt``` so pip is preferable (which installed 3.1.1 for me). Otherwise, after adding the following to your **/etc/apt/sources.list** to force 2.4.3
+    ```deb http://cz.archive.ubuntu.com/ubuntu groovy main```
+
+    do
+    ```bash
+    sudo apt update
+    sudo apt install python3-sphinx=2.4.3-2ubuntu2
     ```
 
 ## Clone the GitHub repository
