@@ -1,14 +1,11 @@
 import os
-from rdkit import Chem
-from rdkit.Chem.MolStandardize import rdMolStandardize
-from molvs import tautomer
 
 include(os.path.abspath(os.path.join('..', 'rules/all.py')))
-#postChapter('Alkaline Glucose Degradation')
+include('clean_tautomers.py')
+
+postChapter('Alkaline Glucose Degradation')
 
 # starting molecule
-#some_molecule = smiles('NCC=CO', name = 'starting molecule')
-#some_molecule.print()
 glucose = smiles('OC[C@H]1O[C@H](O)[C@H](O)[C@@H](O)[C@@H]1O', name='Glucose')
 
 # Forbidden substructures
@@ -43,82 +40,6 @@ strat = (
          and (g.monomorphism(fb) == 0 for fb in forbidden) for g in derivation.right)
     ] (inputRules)#repeat[1]()
 )
-
-# molVs smiles might not be identical to rdkit so let's use RDKit instead of molVs
-enum = rdMolStandardize.TautomerEnumerator()
-#enum = tautomer.TautomerEnumerator()
-
-def clean_taut(dg, dg_execute):
-    subset = dg_execute.subset
-    universe = dg_execute.universe
-    # The following line may seem redundant but it really isn't
-    graphs = [g for g in subset]
-    mod_subset_smiles = [g.smiles for g in subset]
-    mod_dgverts = {v.graph: v for v in dg.vertices}
-    rdkit_subset_smiles = []
-    #vertex_dg_vertex = {v.graph: v for v in dg.vertices if v.graph in subset}
-
-    taut_tautset_dict = {}
-    to_remove = set()
-    # Populate all possible tautomers and add to the above empty dict
-    for mod_smiles in mod_subset_smiles:
-        mol = Chem.MolFromSmiles(mod_smiles)
-        # convert into rdkit canonical smiles
-        rdkit_smiles = Chem.MolToSmiles(mol)
-        rdkit_subset_smiles.append(rdkit_smiles)
-        # generate Mol objects of all possible tautomers
-        all_tauts = enum.Enumerate(mol)
-        # convert into smiles
-        all_taut_smiles = tuple(Chem.MolToSmiles(taut) for taut in all_tauts)
-        #print(all_taut_smiles)
-        taut_tautset_dict[mod_smiles] = all_taut_smiles
-
-    list_tautset = tuple(taut_tautset_dict.values())
-    class_ids = {}
-    # create initial class ids
-    for i in range(len(list_tautset)):
-        class_ids.update({list_tautset[i]: i})
-
-    # Make common taut classes
-    # This is worse than O(n^2) but let's see how it goes
-    for i in range(len(list_tautset)):
-        for j in range(i+1, len(list_tautset)):
-            for item in list_tautset[i]:
-                if item in list_tautset[j]:
-                    #print(f'Classes {i} and {j} have common elements')
-                    #class_ids[list_tautset[i]] = class_ids[list_tautset[i]]
-                    class_ids[list_tautset[j]] = class_ids[list_tautset[i]]
-                    #print('Updated class ids to ', class_ids[list_tautset[i]])
-                    break
-    # Now, since we're done finding identical class ids
-    dict_observed_tauts = {}
-    for taut_class, class_id in class_ids.items():
-        for i in range(len(rdkit_subset_smiles)):
-            if rdkit_subset_smiles[i] in taut_class:
-                # the smiles of the mod graph
-                if class_id in dict_observed_tauts.keys():
-                    dict_observed_tauts[class_id].append(mod_subset_smiles[i])
-                else :
-                    dict_observed_tauts[class_id] = [mod_subset_smiles[i]]
-    print('{0} unique tautomer classes in {1} molecules'.format(len(dict_observed_tauts.keys())
-                                , len(subset)))
-    for taut_class in dict_observed_tauts.values():
-        if len(taut_class) > 1:
-            for i in range(1, len(taut_class)):
-                to_remove.add(taut_class[i])
-    for smiles in to_remove:
-        # The DGVertex associated with the molecule to be removed
-        dg_vertex = mod_dgverts[graphs[mod_subset_smiles.index(smiles)]]
-        for e in dg_vertex.inEdges:
-            for source in e.sources:
-                    d = Derivations()
-                    d.left = [source.graph]
-                    d.rules = e.rules
-                    d.right = [graphs[mod_subset_smiles.index(smiles)]]
-                    b.addDerivation(d)
-        subset.remove(graphs[mod_subset_smiles.index(smiles)])
-        universe.remove(graphs[mod_subset_smiles.index(smiles)])
-    return subset, universe
 
 # Number of generations we want to perform
 generations = 2
