@@ -18,8 +18,8 @@ def clean_taut(dg, dg_execute):
     rdkit_subset_smiles = []
 
     taut_tautset_dict = {}
-    # avoid duplicates in to_remove
-    to_remove = set()
+    # a mapping {smiles: smiles} of the tautomer that needs removing to the one that should be kept
+    to_remove = {}
     # Populate all possible tautomers and add to the above empty dict
     for mod_smiles in mod_subset_smiles:
         mol = Chem.MolFromSmiles(mod_smiles)
@@ -64,8 +64,8 @@ def clean_taut(dg, dg_execute):
     for taut_class in dict_observed_tauts.values():
         if len(taut_class) > 1:
             for i in range(1, len(taut_class)):
-                to_remove.add(taut_class[i])
-    for smiles in to_remove:
+                to_remove[taut_class[i]] = taut_class[0]
+    for smiles in to_remove.keys():
         # The DGVertex associated with the molecule to be removed
         dg_vertex = mod_dgverts[graphs[mod_subset_smiles.index(smiles)]]
         # TODO: d.right should point towards the graph that was preserved
@@ -74,7 +74,7 @@ def clean_taut(dg, dg_execute):
                     d = Derivations()
                     d.left = [source.graph]
                     d.rules = e.rules
-                    d.right = [graphs[mod_subset_smiles.index(smiles)]]
+                    d.right = [graphs[mod_subset_smiles.index(to_remove[smiles])]]
                     b.addDerivation(d)
         subset.remove(graphs[mod_subset_smiles.index(smiles)])
         universe.remove(graphs[mod_subset_smiles.index(smiles)])

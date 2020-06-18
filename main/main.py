@@ -1,4 +1,5 @@
 import os
+from rdkit.Chem import MolFromSmiles, MolToSmiles
 
 include(os.path.abspath(os.path.join('..', 'rules/all.py')))
 include('clean_tautomers.py')
@@ -6,29 +7,13 @@ include('clean_tautomers.py')
 postChapter('Alkaline Glucose Degradation')
 
 # starting molecule
-glucose = smiles('OC[C@H]1O[C@H](O)[C@H](O)[C@@H](O)[C@@H]1O', name='Glucose')
+some_molecule = smiles('NCC=CO')
+#glucose = smiles('OC[C@H]1O[C@H](O)[C@H](O)[C@@H](O)[C@@H]1O', name='Glucose')
 
 # Forbidden substructures
 # Three and four membeered rings are unstable
-oxirane = graphGMLString("""graph [
-   node [ id 0 label "C" ]
-   node [ id 1 label "C" ]
-   node [ id 2 label "O" ]
-   edge [ source 0 target 1 label "-"]
-   edge [ source 0 target 2 label "-"]
-   edge [ source 1 target 2 label "-"]
-]""", name='Oxirane')
-
-aziridine = graphGMLString("""graph [
-   node [ id 0 label "C" ]
-   node [ id 1 label "C" ]
-   node [ id 2 label "N" ]
-   edge [ source 0 target 1 label "-"]
-   edge [ source 0 target 2 label "-"]
-   edge [ source 1 target 2 label "-"]
-]""", name='aziridine')
-forbidden = [smiles('C1CC1', name='cyclopropane'), smiles('C1CCC1', name = 'cyclobutane'),
-            oxirane, aziridine]
+forbidden = [smiles('[C]1[C][C]1', name='cyclopropane'), smiles('[C]1[C][C][C]1', name = 'cyclobutane'),
+            smiles('[C]1[C]O1', name='oxirane'), smiles('[C]1[C][N]1',name='aziridine')]
 
 # make sure these don't get passed as an input
 for fb in forbidden:
@@ -58,19 +43,26 @@ with dg.build() as b:
         # This step replaces the previous subset (containing tautomers) with the cleaned subset
         res = b.execute(addSubset(subset) >> addUniverse(universe))
     print('Completed')
-#dg.print()
+dg.print()
 postSection('Individual Vertices')
 p = GraphPrinter()
 p.simpleCarbons = True
 p.withColour = True
 p.collapseHydrogens = True
-'''for fb in forbidden:
+for fb in forbidden:
     fb.print()
 for v in dg.vertices:
     for item in forbidden:
-        if v.graph.monomorphism(item) == 1:
-            print(f'Found substructure {item.name} in {v.graph.name}')'''
-'''for v in dg.vertices:
+        mol = MolFromSmiles(v.graph.smiles)
+        forbidden_sub = MolFromSmiles(item.smiles)
+        # TODO: it can't find substruct using either RDKit or MOD's inbuilt graph.monomorphism() method
+        # Try to make it work
+        if mol.HasSubstructMatch(forbidden_sub):
+            print('Found substruct', forbidden.name, 'in ', v.graph.name)
+#        if v.graph.monomorphism(item) == 0:
+#            print(f'Found substructure {item.name} in {v.graph.name}')
+'''
+for v in dg.vertices:
     v.graph.print(p)
 postSection('Individual Edges')
 for e in dg.edges:
