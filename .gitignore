@@ -6,13 +6,13 @@
 */__pycache__
 
 # Do not upload the big .jar files unnecessarily
-*/*.jar
+**/*.jar
 # Sometimes I like to dump .txt files while debugging
-*/*.txt
+**/*.txt
 
 # Files produced by MOD
-*/out/
-*/summary/
+**/out/
+**/summary/
 
 
 # Files produced when an RMG job is run

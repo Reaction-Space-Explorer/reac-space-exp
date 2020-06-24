@@ -1,0 +1,8 @@
+Radical MOD program
+Run with
+mod -f all6.py
+For proper execution it is required to delete all files previously generated with the use of
+- sudo rm -r Rule * Density * dgdumfile- * Masses * Stage *
+- mod clean
+and create the file again
+Etapa0.txt with the initial molecules that we want.
