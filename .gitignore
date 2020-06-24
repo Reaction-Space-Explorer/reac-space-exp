@@ -3,6 +3,18 @@
 .idea/*
 .vscode/*
 
+*/__pycache__
+
+# Do not upload the big .jar files unnecessarily
+*/*.jar
+# Sometimes I like to dump .txt files while debugging
+*/*.txt
+
+# Files produced by MOD
+*/out/
+*/summary/
+
+
 # Files produced when an RMG job is run
 **.html
 **.xml
