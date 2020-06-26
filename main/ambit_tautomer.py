@@ -1,19 +1,20 @@
+import os
 import jpype
 import jpype.imports
 from jpype.types import *
 
-# Note: this will work if your working directory is reac-space-exp
-# If you're in reac-space-exp/main instead, you need to add a ".." before the paths
-# Prefer doing os.path.join("..", "libs/whatever.jar")
-jpype.startJVM(classpath=['libs/ambit-tautomers-2.0.0-SNAPSHOT.jar', 'libs/cdk-2.3.jar'],
-                convertStrings=False)
+# Note: this will work if your working directory is reac-space-exp/main
+# If your working directory is reac-space-exp/ instead, you need to get rid of the ".."
+# Prefer doing "libs/whatever.jar" instead of the entire os.path.join thing
+jpype.startJVM(classpath=[os.path.join('..','libs/ambit-tautomers-2.0.0-SNAPSHOT.jar'),
+        os.path.join('..','libs/cdk-2.3.jar')], convertStrings=True)
 
 java = jpype.JPackage("java")
 ambit2 = jpype.JPackage("ambit2")
 cdk = jpype.JPackage("org").openscience.cdk
 
-tautomerManager = ambit2.tautomers.TautomerManager()
-
+tautomerManager = JClass('ambit2.tautomers.TautomerManager')()
+silentChemObjectBuilder = JClass('org.openscience.cdk.silent.SilentChemObjectBuilder').getInstance()
 
 def generateTautomers(smiles, mode="IA-DFS"):
     """
@@ -33,10 +34,9 @@ def generateTautomers(smiles, mode="IA-DFS"):
 
     Returns: a list of SMILES strings of the possible tautomers
     """
-    silentChemObjectBuilder = cdk.silent.SilentChemObjectBuilder.getInstance()
     try:
         smilesParser = cdk.smiles.SmilesParser(silentChemObjectBuilder)
-        mol = smilesParser.parseSmiles('CC=O')
+        mol = smilesParser.parseSmiles(smiles)
     except cdk.exception.CDKException as e:
         e.printStackTrace()
 
@@ -93,7 +93,7 @@ def use17Rules(flag):
     #tautomerManager.getRuleSelector().setSelectionMode(RSM.valueOf(args))
 
 def setRuleNumberLimit(limit):
-    tautomerManager.getRuleSelector().setRuleNumberLimit(limit)
+    tautomerManager_tautomer.getRuleSelector().setRuleNumberLimit(limit)
 
 
 def useDuplicationIsomorphismCheck(flag):
@@ -104,3 +104,5 @@ def useDuplicationIsomorphismCheck(flag):
 def useDuplicationCheckInChI(flag):
     # TODO: same as above.
     tautomerManager.tautomerFilter.setFlagApplyDuplicationCheckInChI(flag)
+
+#jpype.shutdownJVM()
