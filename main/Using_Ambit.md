@@ -55,16 +55,38 @@ Based on what I understood from their [example code](https://github.com/ideacons
     * IA-DFS using tautomerManager.generateTautomersIncrementally()
 * These return a ```List<IAtomContainer>``` (a Java object)
 ### Flags:
-TODO
-## Problems:
+One can customize a lot of things, such as the rules that we want Ambit to use, the algorithm we want it to utilize, etc. I have added methods (untested) for customizing the following in ambit_tautomer.py:
+* set maximum number of back tracks
+* set maximum number of subcombinations (I have to read what this means)
+* toggle the use of (1,3), (1,5) and (1,7) shift tautomerisation rules
+* set a rule number limit
+* there's a **rule selection** possibility.
+* MoleculeFilter (I have to read how this works)
+* apply duplication checks (by isomorphism or InChI; I have to see when these are done)
+
+## Problems and Resolutions:
+### Package not callable
+If you get an error like
+```bash
+raise TypeError("Package {0} is not Callable".format(self._name))
+TypeError: Package <Java package org.openscience.cdk.tautomers.TautomerConst._name> is not Callable
+```
+despite the fact that the object you're referring to is a Java class or method, then it's likely because it couldn't locate the file properly. Check if the classpath of the libraries is correct (relative to the directory you're working in, it should allow accessing those directories), and check if the package names are correct and/or if there are any typos). 
+
 ### Creating instances of Java Interfaces
-For some purpose, I had to do something along the lines of
+If you were doing something like
+```python
+silentChemObjectBuilder = jpype.JPackage("org").openscience.cdk.silent.SilentChemObjectBuilder()
+```
+and it threw a ```TypeError: Cannot create Interface instances``` then that's because **SilentChemObjectBuilder** is a Java [Interface](https://docs.oracle.com/javase/tutorial/java/concepts/interface.html) and you cannot instantiate it this way. A [workaround](https://jpype.readthedocs.io/en/latest/userguide.html#case-3-interactive-java) has been suggested in the user guide.
+In the above case, there was an in-built method for creating an instance
 ```python
 silentChemObjectBuilder = jpype.JPackage("org").openscience.cdk.silent.SilentChemObjectBuilder.getInstance()
 ```
-And it threw a ```TypeError: Cannot create Interface instances``` because **SilentChemObjectBuilder** is a Java [Interface](https://docs.oracle.com/javase/tutorial/java/concepts/interface.html) and you cannot instantiate it this way. A [workaround](https://jpype.readthedocs.io/en/latest/userguide.html#case-3-interactive-java) has been suggested in the user guide. Nevertheless, I'm still having some trouble myself.
 ### Accessing subclasses
 ```python
 GAT = jpype.JPackage("ambit2").tautomers.TautomerConst.GAT
 ```
 throws ```AttributeError: type object 'ambit2.tautomers.TautomerConst' has no attribute 'GAT'```
+
+Resolution: #TODO
