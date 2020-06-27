@@ -1,0 +1,8 @@
+rxn_id,reactant_1,reactant_2,product,
+0,A,C,B,
+1,B,C,D,
+2,D,E,F,
+3,E,F,G,
+4,E,G,C,
+5,C,G,H,
+6,H,I,A,
