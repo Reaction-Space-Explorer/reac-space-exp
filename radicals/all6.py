@@ -204,7 +204,46 @@ while ciclo:
 			the_file.write(v.graph.smiles+'\n')
 		with open('Masas'+str(etapa)+'.txt', 'a') as the_file2:
 			the_file2.write(str(v.graph.exactMass)+'\n')
-
+	
+	
+	
+	""" get export files for importing into Neo4j by iterating across the hypergraph's nodes (molecules) and rels (edges) """
+	dg_files_path = "Neo4j_Imports"
+	generation_num = str(etapa)
+	
+	# write nodes txt file
+	with open(dg_files_path + '/nodes/nodes_' + generation_num + '.txt', 'a') as nodes_file:
+		for v in dg1.vertices:
+			# node_id, smiles_str, exact_mass, node_label
+			nodes_file.write(str(v.graph.id) + "," + v.graph.smiles + "," + str(v.graph.exactMass) + ",Molecule" "\n")
+	
+	# write relationships (rels) text file	
+	with open(dg_files_path + "/rels/rels_" + generation_num + ".txt", 'a') as rels_file:
+		for e in dg1.edges:
+			print(e)
+			for r in e.rules:
+				print("\tRule:" + str(r))
+			for s in e.sources:
+				print("\tSource:" + str(s) + "," + str(s.graph.smiles))
+			for t in e.targets:
+				print("\tTarget:" + str(t) + "," + str(t.graph.smiles))
+			
+			# only one target per edge, but is collected in a list; same with reaction rule
+			target = list(e.targets)[0]
+			rule = list(e.rules)[0]
+			
+			# write line for each target molecule
+			for source in e.sources:
+				source_smiles = str(source.graph.smiles)
+				target_smiles = str(target.graph.smiles)
+				reaction_rule = str(rule)
+				# edge_id, source_smiles_str, target_smiles_str, reaction_rule_str
+				rels_file.write(str(e.id) + "," + source_smiles + "," + target_smiles + "," + reaction_rule + "\n")
+	
+	""" end Neo4j export block """
+	
+	
+	
 
 	inputGraphs=[] # We need this to avoid isomorphism problems between new outputs
 	
