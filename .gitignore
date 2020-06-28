@@ -32,3 +32,8 @@ test/restart_from_seed.py
 **/plot
 **/pdep
 **/kinetics-database
+
+
+
+# Ignore Neo4j_Imports folders
+radicals/Neo4j_Imports
