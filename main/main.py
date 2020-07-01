@@ -7,22 +7,36 @@ include('clean_tautomers.py')
 postChapter('Alkaline Glucose Degradation')
 
 # starting molecule
-some_molecule = smiles('NCC=CO')
-#glucose = smiles('OC[C@H]1O[C@H](O)[C@H](O)[C@@H](O)[C@@H]1O', name='Glucose')
+glucose = smiles('OC[C@H]1O[C@H](O)[C@H](O)[C@@H](O)[C@@H]1O', name='Glucose')
 
 # Forbidden substructures
-# Three and four membeered rings are unstable
+# Three and four membeered rings are unstable, C=C=C is forbidden
 forbidden = [smiles('[C]1[C][C]1', name='cyclopropane'), smiles('[C]1[C][C][C]1', name = 'cyclobutane'),
-            smiles('[C]1[C]O1', name='oxirane'), smiles('[C]1[C][N]1',name='aziridine')]
+            smiles('[C]1[C]O1', name='oxirane'), smiles('[C]1[C][N]1',name='aziridine'), smiles('[C]=[C]=[C]', name="Two double bonds")]
 
 # make sure these don't get passed as an input
 for fb in forbidden:
     inputGraphs.remove(fb)
+
+def pred(derivation):
+    """
+    Keyword arguments:
+    d --- a derivation graph object
+    """
+    for g in derivation.right:
+        if g.exactMass >= 500:
+            return False
+        for fb in forbidden:
+            if fb.monomorphism(g) > 0:
+                print(f"Found {fb} in {g}")
+                return False
+    return True
 strat = (
     addSubset(inputGraphs)
     >> rightPredicate[
-        lambda derivation: all (g.exactMass <= 500
-         and (g.monomorphism(fb) == 0 for fb in forbidden) for g in derivation.right)
+        pred
+        #lambda derivation: all (g.exactMass <= 500
+        # and (fb.monomorphism(g) == 0 for fb in forbidden) for g in derivation.right)
     ] (inputRules)#repeat[1]()
 )
 
@@ -43,24 +57,12 @@ with dg.build() as b:
         # This step replaces the previous subset (containing tautomers) with the cleaned subset
         res = b.execute(addSubset(subset) >> addUniverse(universe))
     print('Completed')
-dg.print()
+#dg.print()
 postSection('Individual Vertices')
 p = GraphPrinter()
 p.simpleCarbons = True
 p.withColour = True
 p.collapseHydrogens = True
-for fb in forbidden:
-    fb.print()
-for v in dg.vertices:
-    for item in forbidden:
-        mol = MolFromSmiles(v.graph.smiles)
-        forbidden_sub = MolFromSmiles(item.smiles)
-        # TODO: it can't find substruct using either RDKit or MOD's inbuilt graph.monomorphism() method
-        # Try to make it work
-        if mol.HasSubstructMatch(forbidden_sub):
-            print('Found substruct', forbidden.name, 'in ', v.graph.name)
-#        if v.graph.monomorphism(item) == 0:
-#            print(f'Found substructure {item.name} in {v.graph.name}')
 '''
 for v in dg.vertices:
     v.graph.print(p)
