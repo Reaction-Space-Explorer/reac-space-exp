@@ -1,4 +1,5 @@
 import os
+import compare_ms
 from rdkit.Chem import MolFromSmiles, MolToSmiles
 
 include(os.path.abspath(os.path.join('..', 'rules/all.py')))
@@ -18,19 +19,23 @@ forbidden = [smiles('[C]1[C][C]1', name='cyclopropane'), smiles('[C]1[C][C][C]1'
 for fb in forbidden:
     inputGraphs.remove(fb)
 
+
 def pred(derivation):
     """
     Keyword arguments:
     d --- a derivation graph object
     """
     for g in derivation.right:
-        if g.exactMass >= 500:
-            return False
+        # Allow masses > 500 for
+        #if g.exactMass >= 500:
+        #    return False
         for fb in forbidden:
             if fb.monomorphism(g) > 0:
-                print(f"Found {fb} in {g}")
+                #print(f"Found {fb} in {g}")
                 return False
     return True
+
+
 strat = (
     addSubset(inputGraphs)
     >> rightPredicate[
@@ -41,22 +46,28 @@ strat = (
 )
 
 # Number of generations we want to perform
-generations = 2
+generations = 3
 
 postSection('Final Network')
 dg = DG(graphDatabase=inputGraphs)
+
+subset = universe = inputGraphs
 with dg.build() as b:
-    res = b.execute(strat, verbosity=2, ignoreRuleLabelTypes=True)
-    subset, universe = clean_taut(dg, res)
-    for gen in range(generations-1):
+    for gen in range(generations):
         res = b.execute(addSubset(subset) >> addUniverse(universe) >> strat,
                             verbosity=2, ignoreRuleLabelTypes=True)
         print('Original subset size:', len(res.subset))
-        subset, universe = clean_taut(dg, res)
+
+        #subset, universe = clean_taut(dg, res)
+        subset, universe = res.subset, res.universe
         print('Subset size after removal:', len(subset))
         # This step replaces the previous subset (containing tautomers) with the cleaned subset
-        res = b.execute(addSubset(subset) >> addUniverse(universe))
+        #res = b.execute(addSubset(subset) >> addUniverse(universe))
+        # now compare how many of these simulations were found in the MS data.
+        compare_ms.compare_sims([v.graph.smiles for v in dg.vertices], gen+1)
     print('Completed')
+# Make a mass spectra (a histogram of the masses) of the molecules
+compare_ms.make_mass_spectra([v.graph.smiles for v in dg.vertices])
 #dg.print()
 postSection('Individual Vertices')
 p = GraphPrinter()
