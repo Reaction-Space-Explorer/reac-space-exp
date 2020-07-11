@@ -1,7 +1,6 @@
 import os
 import time
 import compare_ms
-from rdkit.Chem import MolFromSmiles, MolToSmiles
 
 include(os.path.abspath(os.path.join('..', 'rules/all.py')))
 include('clean_tautomers.py')
@@ -12,14 +11,11 @@ postChapter('Alkaline Glucose Degradation')
 #glucose = smiles('OC[C@H]1O[C@H](O)[C@H](O)[C@@H](O)[C@@H]1O', name='Glucose')
 open_glucose = smiles("O=C[C@H](O)[C@H](O)[C@H](O)[C@H](O)[C@@H](O)")
 
-# Forbidden substructures
+# Forbidden substructures (don't add them to inputGraphs)
 # Three and four membeered rings are unstable, C=C=C is forbidden
-forbidden = [smiles('[C]1[C][C]1', name='cyclopropane'), smiles('[C]1[C][C][C]1', name = 'cyclobutane'),
-            smiles('[C]1[C]O1', name='oxirane'), smiles('[C]1[C][N]1',name='aziridine'), smiles('[C]=[C]=[C]', name="Two double bonds")]
-
-# make sure these don't get passed as an input
-for fb in forbidden:
-    inputGraphs.remove(fb)
+forbidden = [smiles('[C]1[C][C]1', name='cyclopropane', add=False), smiles('[C]1[C][C][C]1', name = 'cyclobutane', add=False),
+            smiles('[C]1[C]O1', name='oxirane', add=False), smiles('[C]1[C][N]1',name='aziridine', add=False),
+             smiles('[C]=[C]=[C]', name="Two double bonds", add=False)]
 
 
 def pred(derivation):
@@ -35,7 +31,7 @@ def pred(derivation):
             if fb.monomorphism(g) > 0:
                 print(f"Found {fb} in {g}")
                 return False
-        print(g)
+        #print(g)
     return True
 
 
@@ -61,7 +57,7 @@ with dg.build() as b:
         start_time = time.time()
         print(f"Starting round {gen+1}")
         res = b.execute(addSubset(subset) >> addUniverse(universe) >> strat,
-                            verbosity=2, ignoreRuleLabelTypes=True)
+                            verbosity=8, ignoreRuleLabelTypes=True)
         end_time = time.time()
         print(f"Took {end_time - start_time} seconds to complete round {gen+1}")
         print('Original subset size:', len(res.subset))
@@ -83,9 +79,4 @@ p = GraphPrinter()
 p.simpleCarbons = True
 p.withColour = True
 p.collapseHydrogens = True
-
-for v in dg.vertices:
-    v.graph.print(p)
-postSection('Individual Edges')
-for e in dg.edges:
-    e.print()'''
+'''
