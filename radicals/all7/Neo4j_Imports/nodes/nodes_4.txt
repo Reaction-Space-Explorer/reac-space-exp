@@ -1,0 +1,11 @@
+0,[Md],Mass of the most abundat,Termolecular
+1,[Hf],Without mass,Radiation
+2,O,18.010564684,Molecule
+3,[OH.],17.002739652,Molecule
+4,[H.],1.007825032,Molecule
+5,[O],15.99491462,Molecule
+6,O=O,31.98982924,Molecule
+7,O[O.],32.997654272,Molecule
+8,[H][H],2.015650064,Molecule
+11,OO,34.005479304,Molecule
+17,O=[O+][O-],47.984743859999995,Molecule
