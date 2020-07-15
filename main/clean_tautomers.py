@@ -1,30 +1,67 @@
 from rdkit import Chem
 from rdkit.Chem.MolStandardize import rdMolStandardize
 
+import time
 import ambit_tautomer
 
 # molVs' smiles might not be identical to rdkit's so I used RDKit instead of molVs
 enum = rdMolStandardize.TautomerEnumerator()
 
-def clean_taut(dg, dg_execute):
+def clean_taut(dg, dg_execute, algorithm="CMI"):
+	"""
+	Remove tautomeric pairs produced in a given generation.
+	Note: this doesn't remove tautomers in the parent generation and does not consider
+	whether or not one of the parent molecules was a tautomer.
+
+	Keyword Arguments:
+
+	dg			-- the DG (DerivationGraph) of the network to look at
+	dg_execute	-- an instance of the DGExecute object of the generation in context
+	algorthm	-- the algorithm to be used for enumerating tautomers
+	
+	Available  algorithms include:
+        "CM" for Simple Combinatorial,
+        "CMI" for Improved Combinatorial,
+        "IA-DFS" for Incremental Algorithm - Depth First Search
+        "combined" doesn't work is intended for a combination of CMI and IA-DFS
+    See https://onlinelibrary.wiley.com/doi/abs/10.1002/minf.201200133 for a detailed discussion
+        of the algorithms
+
+	Returns: the cleaned subset, universe
+	"""
+	init_subset = time.time()
 	subset = dg_execute.subset
+	end_subset = time.time()
+	print(f"Took {end_subset - init_subset} seconds to initialize subset")
 	universe = dg_execute.universe
+	end_universe = time.time()
+	print(f"Took {end_universe - end_subset} seconds to create universe")
 	# The following line may seem redundant but it is needed for retaining the indices of subset
 	graphs = [g for g in subset]
+	end_graphs = time.time()
+	print(f"Took {end_graphs - end_universe} seconds to create list of graphs")
 	# list  of smiles associated with each Graph object
 	mod_subset_smiles = [g.smiles for g in subset]
+	
 
 	cdk_molecules = [ambit_tautomer.smilesToMolecule(smiles) for smiles in mod_subset_smiles]
 	# convert to cdk unique smiles TODO: these smiles are perhaps not canonical.
 	cdk_smiles = [ambit_tautomer.smiles_from_molecule(mol) for mol in cdk_molecules]
+	end_canonicalization = time.time()
+	print(f"Took {end_canonicalization - end_graphs} to canonicalize SMILES")
 	# a mapping of the Graph objects with their corresponding DGVertex objects
 	mod_dgverts = {v.graph: v for v in dg.vertices if v.graph in subset}
+	end_dgverts = time.time()
+	print(f"Took {end_dgverts - end_canonicalization} to create dg vertices")
 	# a mapping {smiles: tuple(smiles)} between the smiles of a given molecule
 	# and those of all possible tautomers for that molecule
 	taut_tautset_dict = {}
 	for smiles in cdk_smiles:
-		taut_tautset_dict[smiles] = ambit_tautomer.generateTautomers(smiles, "CMI")
+		taut_tautset_dict[smiles] = ambit_tautomer.generateTautomers(smiles, mode)
 	tautomer_sets = tuple(taut_tautset_dict.values())
+	complete_enumeration = time.time()
+	print(f"Took {complete_enumeration-end_dgverts} to create tautomer classes")
+	start_whatever = time.time()
 	class_ids = {}
 	# create initial class ids
 	for i in range(len(tautomer_sets)):
@@ -60,12 +97,12 @@ def clean_taut(dg, dg_execute):
 		if len(seen_tautomers) > 1:
 			for i in range(1, len(seen_tautomers)):
 				to_remove[seen_tautomers[0]] = seen_tautomers[i]
-
+	print(f"My part took {time.time() - start_whatever} to complete")
 	p = GraphPrinter()
 	p.simpleCarbons = True
 	p.withColour = True
 	p.collapseHydrogens = True
-
+	start_removing = time.time()
 	# for each list of redundant tautomer smiles and the corresponding one tautomer to be kept
 	for to_keep, item_to_remove in to_remove.items():
 		# for each item in the list
@@ -79,6 +116,7 @@ def clean_taut(dg, dg_execute):
 		# The DGVertex associated with the molecule to be removed
 		dg_vertex = mod_dgverts[graphs[index]]
 		# add a fake edge to the preserved graph to account for the removed graph (to avoid loss of reaction info)
+		start_adding_edge = time.time()
 		for e in dg_vertex.inEdges:
 			for source in e.sources:
 				d = Derivations()
@@ -86,10 +124,12 @@ def clean_taut(dg, dg_execute):
 				d.rules = e.rules
 				d.right = [graphs[index_to_keep]]
 				b.addDerivation(d)
+				print(f"Took {time.time()-start_adding_edge} to add edge {d}")
 				#print(f"Addded fake edge {d}")
 		subset.remove(graphs[index])
 		universe.remove(graphs[index])
-		print(f"Removing {graphs[index]} and keeping {graphs[index_to_keep]}")
+		#print(f"Removing {graphs[index]} and keeping {graphs[index_to_keep]}")
+	print(f"Took {time.time() - start_removing} to remove tautomers from the network")
 	return subset, universe
 
 def clean_taut_rdkit(dg, dg_execute):

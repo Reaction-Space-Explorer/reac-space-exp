@@ -1,6 +1,7 @@
 import os
 import time
-#import compare_ms
+import compare_ms
+from rdkit.Chem import SDMolSupplier, MolToSmiles
 
 include(os.path.abspath(os.path.join('..', 'rules/all.py')))
 #include('clean_tautomers.py')
@@ -12,10 +13,11 @@ postChapter('Alkaline Glucose Degradation')
 open_glucose = smiles("O=C[C@H](O)[C@H](O)[C@H](O)[C@H](O)[C@@H](O)", "Open Chain Glucose")
 water = smiles("O", name="Water")
 # Forbidden substructures (don't add them to inputGraphs)
-# Three and four membeered rings are unstable, C=C=C is forbidden
+# Three and four membeered rings are unstable, any atom with two double bonds is forbidden
+# Note: the latter means that even O=C=O (carbon dioxide) will also be forbidden
 forbidden = [smiles('[C]1[C][C]1', name='cyclopropane', add=False), smiles('[C]1[C][C][C]1', name = 'cyclobutane', add=False),
             smiles('[C]1[C]O1', name='oxirane', add=False), smiles('[C]1[C][N]1',name='aziridine', add=False),
-             smiles('[C]=[C]=[C]', name="Two double bonds", add=False)]
+             smiles('[*]=[*]=[*]', name="Two double bonds", add=False)]
 
 
 def pred(derivation):
@@ -25,11 +27,12 @@ def pred(derivation):
     """
     for g in derivation.right:
         # Allow masses only < 1200
-        if g.exactMass >= 1200:
+        if g.exactMass >= 500:
             return False
         for fb in forbidden:
-            if fb.monomorphism(g) > 0:
-                print(f"Found {fb} in {g}")
+            if fb.monomorphism(g, labelSettings=
+            LabelSettings(LabelType.Term, LabelRelation.Specialisation)) > 0:
+                #print(f"Found {fb} in {g}")
                 return False
         #print(g)
     return True
@@ -45,10 +48,13 @@ strat = (
 )
 
 # Number of generations we want to perform
-generations = 2
+generations = 3
 
-postSection('Final Network')
+#postSection('Final Network')
 dg = DG(graphDatabase=inputGraphs)
+
+'''dg = dgDump(inputGraphs, inputRules, "000_DG.dg")
+print("Finished loading from dump file")'''
 
 subset = inputGraphs
 universe = []
@@ -63,45 +69,75 @@ with dg.build() as b:
         print('Original subset size:', len(res.subset))
 
         # The returned subset and universe do not contain redundant tautomers
-        #subset, universe = clean_taut(dg, res)
+        #subset, universe = clean_taut(dg, res, algorithm="CMI")
         subset, universe = res.subset, res.universe
         #print('Subset size after removal:', len(subset))
         # This step replaces the previous subset (containing tautomers) with the cleaned subset
         #res = b.execute(addSubset(subset) >> addUniverse(universe))
         # now compare how many of these simulations were found in the MS data.
-        #compare_ms.compare_sims([v.graph.smiles for v in dg.vertices], gen+1)
+        compare_ms.compare_sims([v.graph.smiles for v in dg.vertices], gen+1)
     print('Completed')
 
+# compare structures with what the Y&M paper has
+sdfile = SDMolSupplier(os.path.join("..", "data/NewAlkalineHydrolysisStructures.sdf"))
+
+matching_structs = []
+not_matching = []
+
+print("Checking for matches with Y&M's structures")
+
+for mol in sdfile:
+    mol_graph = smiles(MolToSmiles(mol), add=False)
+    for g in universe:
+        if g.isomorphism(mol_graph) > 0:
+            matching_structs.append(mol_graph)
+            print("Structure {0} of the SDF found in the network!".format(mol_graph.smiles))
+        else:
+            not_matching.append(mol_graph)
+
+print(f"{100* len(matching_structs)/len(sdfile)}% structures in the SDF are in the reaction network.")
+
+f = dg.dump()
+print("Dump file: ", f)
+
+rules_count = []
 for e in dg.edges:
     for rule in e.rules:
-        if "Benzilic" in rule.name:
-            dg2 = DG(graphDatabase=inputGraphs)
-            with dg2.build() as b:
-                d = Derivations()
-                sources = [source.graph for source in e.sources]
-                targets = [target.graph for target in e.targets]
-                d.left = sources
-                d.rules = [rule]
-                d.right = targets
-                fake_edge = b.addDerivation(d)
-            dg2.print()
+        rules_count.append(rule.name)
+print("Aldol condensation reaction count: ", rules_count.count("Aldol Condensation"))
 
-print("Reaction rules that were used in this network generation were:")
-rules_dict = {}
-'''for e in dg.edges:
-    for rule in e.rules:
-        rules_dict[rule] = True
-for rule in rules_dict.keys():
-    print(rule)'''
+print("Rules used: {0}".format(dict({rule:True for rule in rules_count}).keys()))
+# Make a mass spectra (a histogram of the masses) of the molecules
+compare_ms.make_mass_spectra([v.graph.smiles for v in dg.vertices])
 
-# Print reactions of just the Benzilic Acid Rearrangement reaction alone
+# Compare structures with 
+
+# Print reactions of just the one reaction alone, in separate DGs
+'''count = 0
+for e in dg.edges:
+    if count > 100:
+        pass
+    #    break
+    else:
+        for rule in e.rules:
+            if "Aldol Condensation" == rule.name:
+                count += 1
+                dg2 = DG(graphDatabase=inputGraphs)
+                with dg2.build() as b:
+                    d = Derivations()
+                    sources = [source.graph for source in e.sources]
+                    targets = [target.graph for target in e.targets]
+                    d.left = sources
+                    d.rules = [rule]
+                    d.right = targets
+                    fake_edge = b.addDerivation(d)
+                    print("Printing reaction: ", fake_edge)
+                dg2.print()'''
 # dump smiles
 '''with open("dump_smiles.txt", "w") as dump:
     for v in dg.vertices:
         dump.write(f'{v.graph.smiles}\n')'''
 
-# Make a mass spectra (a histogram of the masses) of the molecules
-#compare_ms.make_mass_spectra([v.graph.smiles for v in dg.vertices])
 #dg.print()
 '''postSection('Individual Vertices')
 p = GraphPrinter()
