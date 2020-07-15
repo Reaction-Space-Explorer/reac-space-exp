@@ -15,10 +15,9 @@ water = smiles("O", name="Water")
 # Forbidden substructures (don't add them to inputGraphs)
 # Three and four membeered rings are unstable, any atom with two double bonds is forbidden
 # Note: the latter means that even O=C=O (carbon dioxide) will also be forbidden
-forbidden = [smiles('[C]1[C][C]1', name='cyclopropane', add=False), smiles('[C]1[C][C][C]1', name = 'cyclobutane', add=False),
-            smiles('[C]1[C]O1', name='oxirane', add=False), smiles('[C]1[C][N]1',name='aziridine', add=False),
+forbidden = [smiles('[*]1[*][*]1', name="Three membered ring", add=False),
+             smiles("[*]1[*][*][*]1", name="Four membered ring", add=False),
              smiles('[*]=[*]=[*]', name="Two double bonds", add=False)]
-
 
 def pred(derivation):
     """
@@ -32,7 +31,6 @@ def pred(derivation):
         for fb in forbidden:
             if fb.monomorphism(g, labelSettings=
             LabelSettings(LabelType.Term, LabelRelation.Specialisation)) > 0:
-                #print(f"Found {fb} in {g}")
                 return False
         #print(g)
     return True
@@ -48,10 +46,11 @@ strat = (
 )
 
 # Number of generations we want to perform
-generations = 3
+generations = 2
 
 #postSection('Final Network')
-dg = DG(graphDatabase=inputGraphs)
+dg = DG(graphDatabase=inputGraphs,
+    labelSettings=LabelSettings(LabelType.Term, LabelRelation.Specialisation))
 
 '''dg = dgDump(inputGraphs, inputRules, "000_DG.dg")
 print("Finished loading from dump file")'''
@@ -62,8 +61,7 @@ with dg.build() as b:
     for gen in range(generations):
         start_time = time.time()
         print(f"Starting round {gen+1}")
-        res = b.execute(addSubset(subset) >> addUniverse(universe) >> strat,
-                            verbosity=2, ignoreRuleLabelTypes=True)
+        res = b.execute(addSubset(subset) >> addUniverse(universe) >> strat, verbosity=2)
         end_time = time.time()
         print(f"Took {end_time - start_time} seconds to complete round {gen+1}")
         print('Original subset size:', len(res.subset))
@@ -104,35 +102,49 @@ rules_count = []
 for e in dg.edges:
     for rule in e.rules:
         rules_count.append(rule.name)
-print("Aldol condensation reaction count: ", rules_count.count("Aldol Condensation"))
 
-print("Rules used: {0}".format(dict({rule:True for rule in rules_count}).keys()))
+rules_used = dict({rule:True for rule in rules_count})
+for rule in rules_used.keys():
+    print(f"{rule} reaction count: {rules_count.count(rule)}")
+#print("Aldol condensation reaction count: ", rules_count.count("Aldol Condensation"))
+
+#print("Rules used: {0}".format(dict({rule:True for rule in rules_count}).keys()))
 # Make a mass spectra (a histogram of the masses) of the molecules
 compare_ms.make_mass_spectra([v.graph.smiles for v in dg.vertices])
 
 # Compare structures with 
 
 # Print reactions of just the one reaction alone, in separate DGs
-'''count = 0
-for e in dg.edges:
-    if count > 100:
-        pass
-    #    break
-    else:
-        for rule in e.rules:
-            if "Aldol Condensation" == rule.name:
-                count += 1
-                dg2 = DG(graphDatabase=inputGraphs)
-                with dg2.build() as b:
-                    d = Derivations()
-                    sources = [source.graph for source in e.sources]
-                    targets = [target.graph for target in e.targets]
-                    d.left = sources
-                    d.rules = [rule]
-                    d.right = targets
-                    fake_edge = b.addDerivation(d)
-                    print("Printing reaction: ", fake_edge)
-                dg2.print()'''
+to_print = ['Cannizarro', 'Knoevenagel, C, C(=O)A, OR, H |, HC', 'Ester Formation Hydrolysis Exchange',
+            'Knoevenagel, C, C(=O)A, OR, H |, CC', 'Ring Closure']
+
+dgprint = DGPrinter()
+dgprint.withRuleName = True
+dgprint.withShortcutEdges = True
+
+for item_to_print in to_print:
+    count = 0
+    postSection(f"{item_to_print} reactions")
+    for e in dg.edges:
+        # Don't print more than 35 of any category
+        if count > 35:
+            pass
+        #    break
+        else:
+            for rule in e.rules:
+                if item_to_print in rule.name:
+                    count += 1
+                    dg2 = DG(graphDatabase=inputGraphs)
+                    with dg2.build() as b:
+                        d = Derivations()
+                        sources = [source.graph for source in e.sources]
+                        targets = [target.graph for target in e.targets]
+                        d.left = sources
+                        d.rules = [rule]
+                        d.right = targets
+                        fake_edge = b.addDerivation(d)
+                        print("Printing reaction: ", fake_edge)
+                    dg2.print(dgprint)
 # dump smiles
 '''with open("dump_smiles.txt", "w") as dump:
     for v in dg.vertices:
