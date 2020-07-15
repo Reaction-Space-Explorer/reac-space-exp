@@ -1,0 +1,4 @@
+5,[Hf],[OH.],'foto O2 '
+5,O,[OH.],'foto O2 '
+5,[Hf],[H.],'foto O2 '
+5,O,[H.],'foto O2 '
