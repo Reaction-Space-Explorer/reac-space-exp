@@ -21,8 +21,8 @@ elimination2 = [ruleGMLString("""rule [
 		edge [ source 2 target 4 label "-" ]
 	]
 	constrainAdj [ id 1 op "=" count 0
-		# This one should not be double bonded in general
-		edgeLabels [ label "=" ]
+		nodeLabels [ label "O" ]
+		edgeLabels [ label "-" ]
 	]
 	# Avoid carbon bonded to N or S
 	constrainAdj [ id 3 op "=" count 0
