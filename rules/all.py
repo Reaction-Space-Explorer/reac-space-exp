@@ -15,9 +15,9 @@ if True:
 	include("ketoEnolisation.py")
 	include("hemiacetalFormation.py")
 	# The following were taken from the HCN folder
-	include("alkeneAdditionElimination.py")
+	#include("alkeneAdditionElimination.py")
 	include("alkyneAddition.py")
-	include("knoevenagel.py")
+	#include("knoevenagel.py")
 	include("damnScission.py")
 	include("cyanogenAmmonolysis.py")
 	include("cyanamideHydration.py")

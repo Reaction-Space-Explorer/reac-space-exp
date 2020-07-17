@@ -1,7 +1,8 @@
 # Reaction Space Explorer
 
 ## TODO:
-* For some reason, comparison of molecules in the SDF that contain Y&M's reported structures isn't working correctly. Fix the comparison method.
+* Try to match all the possible structures in the Y&M paper.
+* ~~For some reason, comparison of molecules in the SDF that contain Y&M's reported structures isn't working correctly, fix that.~~
 * ~~Get rid of molecules containing unstable substructures (three or four membered rings)~~
     * ~~Currently only a few substructures are forbidden, make the library of unstable/impossible substructures more complete~~. Made all three and four membered rings, atoms with two double bonds forbidden using wildcards.
 * ~~Fix the reaction rules that aren't currently invertible for some reason~~.
