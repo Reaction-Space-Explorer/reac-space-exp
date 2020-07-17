@@ -1,0 +1,1970 @@
+Compound 1
+Actelion Java MolfileCreator 2.0
+
+  0  0  0  0  0  0              0 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 3 2 0 0 0
+M  V30 BEGIN ATOM
+M  V30 1 O 0.0 0.0 0.0 0
+M  V30 2 C 1.2933 0.7801 0.0 0
+M  V30 3 O 2.5866 0.041 0.0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 2 1 2
+M  V30 2 1 2 3
+M  V30 END BOND
+M  V30 END CTAB
+M  END
+>  <Molecule Name>
+Compound 1
+
+>  <Structure No>
+35
+
+>  <Monoisotopic Mass>
+46.0054800
+
+$$$$
+Compound 2
+Actelion Java MolfileCreator 2.0
+
+  0  0  0  0  0  0              0 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 4 3 0 0 0
+M  V30 BEGIN ATOM
+M  V30 1 O 0.0 0.0 0.0 0
+M  V30 2 C 1.2793 0.7652 0.0 0
+M  V30 3 O 1.2554 2.2956 0.0 0
+M  V30 4 C 2.5587 0.0239 0.0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 2 1 2
+M  V30 2 1 2 3
+M  V30 3 1 2 4
+M  V30 END BOND
+M  V30 END CTAB
+M  END
+>  <Molecule Name>
+Compound 2
+
+>  <Structure No>
+45
+
+>  <Monoisotopic Mass>
+60.0211300
+
+$$$$
+Compound 3
+Actelion Java MolfileCreator 2.0
+
+  0  0  0  0  0  0              0 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 5 4 0 0 0
+M  V30 BEGIN ATOM
+M  V30 1 O 0.0 0.0 0.0 0
+M  V30 2 C -0.0237 1.5192 0.0 0
+M  V30 3 O -1.3412 2.2907 0.0 0
+M  V30 4 C 1.2462 2.2907 0.0 0
+M  V30 5 C 2.5162 1.5548 0.0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 2 1 2
+M  V30 2 1 2 3
+M  V30 3 1 2 4
+M  V30 4 1 4 5
+M  V30 END BOND
+M  V30 END CTAB
+M  END
+>  <Molecule Name>
+Compound 3
+
+>  <Structure No>
+1
+
+>  <Monoisotopic Mass>
+74.0367800
+
+$$$$
+Compound 4
+Actelion Java MolfileCreator 2.0
+
+  0  0  0  0  0  0              0 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 5 4 0 0 0
+M  V30 BEGIN ATOM
+M  V30 1 O 0.0 0.0 0.0 0
+M  V30 2 C -0.0237 1.5192 0.0 0
+M  V30 3 O -1.3412 2.2907 0.0 0
+M  V30 4 C 1.2462 2.2907 0.0 0
+M  V30 5 O 2.5162 1.5548 0.0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 2 1 2
+M  V30 2 1 2 3
+M  V30 3 1 2 4
+M  V30 4 1 4 5
+M  V30 END BOND
+M  V30 END CTAB
+M  END
+>  <Molecule Name>
+Compound 4
+
+>  <Structure No>
+15
+
+>  <Monoisotopic Mass>
+76.0160450
+
+$$$$
+Compound 5
+Actelion Java MolfileCreator 2.0
+
+  0  0  0  0  0  0              0 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 6 5 0 0 0
+M  V30 BEGIN ATOM
+M  V30 1 O 0.0 0.0 0.0 0
+M  V30 2 C -0.0238 1.5249 0.0 0
+M  V30 3 O -1.3462 2.2993 0.0 0
+M  V30 4 C 1.2509 2.2993 0.0 0
+M  V30 5 C 2.5257 1.5607 0.0 0
+M  V30 6 O 2.5018 0.0833 0.0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 2 1 2
+M  V30 2 1 2 3
+M  V30 3 1 2 4
+M  V30 4 1 4 5
+M  V30 5 1 5 6
+M  V30 END BOND
+M  V30 END CTAB
+M  END
+>  <Molecule Name>
+Compound 5
+
+>  <Structure No>
+10
+
+>  <Monoisotopic Mass>
+90.0316950
+
+$$$$
+Compound 6
+Actelion Java MolfileCreator 2.0
+
+  0  0  0  0  0  0              0 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 6 5 0 0 0
+M  V30 BEGIN ATOM
+M  V30 1 O 0.0 0.0 0.0 0
+M  V30 2 C 1.2828 0.7672 0.0 0
+M  V30 3 O 1.2588 2.3018 0.0 0
+M  V30 4 C 2.5656 0.0239 0.0 0 CFG=1
+M  V30 5 O 2.5416 -1.4626 0.0 0
+M  V30 6 C 3.8484 0.8032 0.0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 2 1 2
+M  V30 2 1 2 3
+M  V30 3 1 2 4
+M  V30 4 1 4 5 CFG=3
+M  V30 5 1 4 6
+M  V30 END BOND
+M  V30 BEGIN COLLECTION
+M  V30 MDLV30/STERAC1 ATOMS=(1 4)
+M  V30 END COLLECTION
+M  V30 END CTAB
+M  END
+>  <Molecule Name>
+Compound 6
+
+>  <Structure No>
+49
+
+>  <Monoisotopic Mass>
+90.0316950
+
+$$$$
+Compound 7
+Actelion Java MolfileCreator 2.0
+
+  0  0  0  0  0  0              0 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 7 7 0 0 0
+M  V30 BEGIN ATOM
+M  V30 1 O 0.0 0.0 0.0 0
+M  V30 2 C -0.0236 1.5106 0.0 0
+M  V30 3 C -1.3336 2.266 0.0 0
+M  V30 4 C 1.2392 2.266 0.0 0
+M  V30 5 C -1.3572 3.7767 0.0 0
+M  V30 6 C 1.2156 3.7767 0.0 0
+M  V30 7 C -0.0944 4.532 0.0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 1 1 2
+M  V30 2 2 2 3
+M  V30 3 1 2 4
+M  V30 4 1 3 5
+M  V30 5 2 4 6
+M  V30 6 2 5 7
+M  V30 7 1 6 7
+M  V30 END BOND
+M  V30 END CTAB
+M  END
+>  <Molecule Name>
+Compound 7
+
+>  <Structure No>
+6
+
+>  <Monoisotopic Mass>
+94.0418650
+
+$$$$
+Compound 8
+Actelion Java MolfileCreator 2.0
+
+  0  0  0  0  0  0              0 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 7 7 0 0 0
+M  V30 BEGIN ATOM
+M  V30 1 O 0.0 0.0 0.0 0
+M  V30 2 C 1.4216 -0.4383 0.0 0
+M  V30 3 O 2.63 0.4857 0.0 0
+M  V30 4 C 1.8599 -1.8599 0.0 0
+M  V30 5 C 3.8383 -0.3909 0.0 0
+M  V30 6 C 3.3526 -1.8362 0.0 0
+M  V30 7 O 4.2293 -3.0446 0.0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 2 1 2
+M  V30 2 1 2 3
+M  V30 3 1 2 4
+M  V30 4 1 3 5
+M  V30 5 1 4 6
+M  V30 6 2 6 7
+M  V30 7 1 5 6
+M  V30 END BOND
+M  V30 END CTAB
+M  END
+>  <Molecule Name>
+Compound 8
+
+>  <Structure No>
+37
+
+>  <Monoisotopic Mass>
+100.016045
+
+$$$$
+Compound 9
+Actelion Java MolfileCreator 2.0
+
+  0  0  0  0  0  0              0 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 7 6 0 0 0
+M  V30 BEGIN ATOM
+M  V30 1 O 0.0 0.0 0.0 0
+M  V30 2 C 1.2861 0.7693 0.0 0
+M  V30 3 O 1.2621 2.3079 0.0 0
+M  V30 4 C 2.5723 0.024 0.0 0 CFG=1
+M  V30 5 O 2.5483 -1.4665 0.0 0
+M  V30 6 C 3.8585 0.7933 0.0 0
+M  V30 7 C 5.1447 0.048 0.0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 2 1 2
+M  V30 2 1 2 3
+M  V30 3 1 2 4
+M  V30 4 1 4 5 CFG=3
+M  V30 5 1 4 6
+M  V30 6 1 6 7
+M  V30 END BOND
+M  V30 BEGIN COLLECTION
+M  V30 MDLV30/STERAC1 ATOMS=(1 4)
+M  V30 END COLLECTION
+M  V30 END CTAB
+M  END
+>  <Molecule Name>
+Compound 9
+
+>  <Structure No>
+42
+
+>  <Monoisotopic Mass>
+104.047345
+
+$$$$
+Compound 10
+Actelion Java MolfileCreator 2.0
+
+  0  0  0  0  0  0              0 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 7 6 0 0 0
+M  V30 BEGIN ATOM
+M  V30 1 O 0.0 0.0 0.0 0
+M  V30 2 C 1.2861 0.7693 0.0 0
+M  V30 3 O 1.2621 2.3079 0.0 0
+M  V30 4 C 2.5723 0.024 0.0 0 CFG=1
+M  V30 5 O 2.5483 -1.4665 0.0 0
+M  V30 6 C 3.8585 0.7933 0.0 0
+M  V30 7 O 5.1447 0.048 0.0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 2 1 2
+M  V30 2 1 2 3
+M  V30 3 1 2 4
+M  V30 4 1 4 5 CFG=3
+M  V30 5 1 4 6
+M  V30 6 1 6 7
+M  V30 END BOND
+M  V30 BEGIN COLLECTION
+M  V30 MDLV30/STERAC1 ATOMS=(1 4)
+M  V30 END COLLECTION
+M  V30 END CTAB
+M  END
+>  <Molecule Name>
+Compound 10
+
+>  <Structure No>
+19
+
+>  <Monoisotopic Mass>
+106.026610
+
+$$$$
+Compound 11
+Actelion Java MolfileCreator 2.0
+
+  0  0  0  0  0  0              0 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 8 8 0 0 0
+M  V30 BEGIN ATOM
+M  V30 1 O 0.0 0.0 0.0 0
+M  V30 2 C -0.0236 1.5157 0.0 0
+M  V30 3 C 1.2434 2.2736 0.0 0
+M  V30 4 C -1.3381 2.2736 0.0 0
+M  V30 5 O 2.5105 1.5394 0.0 0
+M  V30 6 C 1.2197 3.7894 0.0 0
+M  V30 7 C -1.3618 3.7894 0.0 0
+M  V30 8 C -0.0947 4.5473 0.0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 1 1 2
+M  V30 2 2 2 3
+M  V30 3 1 2 4
+M  V30 4 1 3 5
+M  V30 5 1 3 6
+M  V30 6 2 4 7
+M  V30 7 2 6 8
+M  V30 8 1 7 8
+M  V30 END BOND
+M  V30 END CTAB
+M  END
+>  <Molecule Name>
+Compound 11
+
+>  <Structure No>
+8
+
+>  <Monoisotopic Mass>
+110.036780
+
+$$$$
+Compound 12
+Actelion Java MolfileCreator 2.0
+
+  0  0  0  0  0  0              0 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 8 8 0 0 0
+M  V30 BEGIN ATOM
+M  V30 1 O 0.0 0.0 0.0 0
+M  V30 2 C -1.445 -0.4382 0.0 0
+M  V30 3 C -2.6768 0.4619 0.0 0
+M  V30 4 C -1.9306 -1.8358 0.0 0 CFG=2
+M  V30 5 O -2.7005 1.978 0.0 0
+M  V30 6 C -3.9086 -0.3908 0.0 0
+M  V30 7 C -3.4467 -1.8121 0.0 0
+M  V30 8 C -1.0778 -3.0203 0.0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 2 1 2
+M  V30 2 1 2 3
+M  V30 3 1 2 4
+M  V30 4 2 3 5
+M  V30 5 1 3 6
+M  V30 6 1 4 7
+M  V30 7 1 4 8 CFG=1
+M  V30 8 1 6 7
+M  V30 END BOND
+M  V30 BEGIN COLLECTION
+M  V30 MDLV30/STERAC1 ATOMS=(1 4)
+M  V30 END COLLECTION
+M  V30 END CTAB
+M  END
+>  <Molecule Name>
+Compound 12
+
+>  <Structure No>
+46
+
+>  <Monoisotopic Mass>
+112.052430
+
+$$$$
+Compound 13
+Actelion Java MolfileCreator 2.0
+
+  0  0  0  0  0  0              0 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 8 8 0 0 0
+M  V30 BEGIN ATOM
+M  V30 1 O 0.0 0.0 0.0 0
+M  V30 2 C -0.0236 -1.4874 0.0 0
+M  V30 3 O -1.2749 -2.3609 0.0 0
+M  V30 4 C 1.1804 -2.3609 0.0 0
+M  V30 5 C -0.8381 -3.7775 0.0 0
+M  V30 6 O 2.597 -1.8769 0.0 0
+M  V30 7 C 0.6964 -3.7775 0.0 0
+M  V30 8 O 1.57 -4.9817 0.0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 2 1 2
+M  V30 2 1 2 3
+M  V30 3 1 2 4
+M  V30 4 1 3 5
+M  V30 5 1 4 6
+M  V30 6 1 4 7
+M  V30 7 1 7 8
+M  V30 8 1 5 7
+M  V30 END BOND
+M  V30 END CTAB
+M  END
+>  <Molecule Name>
+Compound 13
+
+>  <Structure No>
+36
+
+>  <Monoisotopic Mass>
+118.026610
+
+$$$$
+Compound 14
+Actelion Java MolfileCreator 2.0
+
+  0  0  0  0  0  0              0 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 8 7 0 0 0
+M  V30 BEGIN ATOM
+M  V30 1 O 0.0 0.0 0.0 0
+M  V30 2 C 0.7368 1.3192 0.0 0
+M  V30 3 O -0.0237 2.6384 0.0 0
+M  V30 4 C 2.2106 1.343 0.0 0 CFG=1
+M  V30 5 O 2.1868 -0.1307 0.0 0
+M  V30 6 C 2.1868 2.8642 0.0 0
+M  V30 7 C 3.6843 1.3667 0.0 0
+M  V30 8 O 0.8676 3.6249 0.0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 2 1 2
+M  V30 2 1 2 3
+M  V30 3 1 2 4
+M  V30 4 1 4 5 CFG=3
+M  V30 5 1 4 6
+M  V30 6 1 4 7
+M  V30 7 1 6 8
+M  V30 END BOND
+M  V30 BEGIN COLLECTION
+M  V30 MDLV30/STERAC1 ATOMS=(1 4)
+M  V30 END COLLECTION
+M  V30 END CTAB
+M  END
+>  <Molecule Name>
+Compound 14
+
+>  <Structure No>
+3
+
+>  <Monoisotopic Mass>
+120.042260
+
+$$$$
+Compound 15
+Actelion Java MolfileCreator 2.0
+
+  0  0  0  0  0  0              0 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 8 7 0 0 0
+M  V30 BEGIN ATOM
+M  V30 1 O 0.0 0.0 0.0 0
+M  V30 2 C 1.2865 0.7695 0.0 0
+M  V30 3 O 1.2625 2.3086 0.0 0
+M  V30 4 C 2.5731 0.024 0.0 0 CFG=1
+M  V30 5 O 2.549 -1.4669 0.0 0
+M  V30 6 C 3.8597 0.8056 0.0 0
+M  V30 7 C 5.1462 0.0601 0.0 0
+M  V30 8 O 5.1222 -1.4308 0.0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 2 1 2
+M  V30 2 1 2 3
+M  V30 3 1 2 4
+M  V30 4 1 4 5 CFG=3
+M  V30 5 1 4 6
+M  V30 6 1 6 7
+M  V30 7 1 7 8
+M  V30 END BOND
+M  V30 BEGIN COLLECTION
+M  V30 MDLV30/STERAC1 ATOMS=(1 4)
+M  V30 END COLLECTION
+M  V30 END CTAB
+M  END
+>  <Molecule Name>
+Compound 15
+
+>  <Structure No>
+4
+
+>  <Monoisotopic Mass>
+120.042260
+
+$$$$
+Compound 16
+Actelion Java MolfileCreator 2.0
+
+  0  0  0  0  0  0              0 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 8 7 0 0 0
+M  V30 BEGIN ATOM
+M  V30 1 O 0.0 0.0 0.0 0
+M  V30 2 C -0.0239 1.53 0.0 0
+M  V30 3 O -1.3507 2.307 0.0 0
+M  V30 4 C 1.2551 2.307 0.0 0
+M  V30 5 C 2.5341 1.5659 0.0 0 CFG=2
+M  V30 6 O 2.5102 0.0836 0.0 0
+M  V30 7 C 3.8132 2.3429 0.0 0
+M  V30 8 O 5.0923 1.6018 0.0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 2 1 2
+M  V30 2 1 2 3
+M  V30 3 1 2 4
+M  V30 4 1 4 5
+M  V30 5 1 5 6 CFG=1
+M  V30 6 1 5 7
+M  V30 7 1 7 8
+M  V30 END BOND
+M  V30 BEGIN COLLECTION
+M  V30 MDLV30/STERAC1 ATOMS=(1 5)
+M  V30 END COLLECTION
+M  V30 END CTAB
+M  END
+>  <Molecule Name>
+Compound 16
+
+>  <Structure No>
+5
+
+>  <Monoisotopic Mass>
+120.042260
+
+$$$$
+Compound 17
+Actelion Java MolfileCreator 2.0
+
+  0  0  0  0  0  0              0 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 8 7 0 0 0
+M  V30 BEGIN ATOM
+M  V30 1 O 0.0 0.0 0.0 0
+M  V30 2 C -0.0236 1.5113 0.0 0
+M  V30 3 C -1.3342 2.2787 0.0 0
+M  V30 4 C 1.2397 2.2787 0.0 0
+M  V30 5 O -2.6447 1.5467 0.0 0
+M  V30 6 C -1.3578 3.79 0.0 0
+M  V30 7 O 2.5031 1.5467 0.0 0
+M  V30 8 O -2.6684 4.5575 0.0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 1 1 2
+M  V30 2 1 2 3
+M  V30 3 1 2 4
+M  V30 4 1 3 5
+M  V30 5 1 3 6
+M  V30 6 1 4 7
+M  V30 7 1 6 8
+M  V30 END BOND
+M  V30 END CTAB
+M  END
+>  <Molecule Name>
+Compound 17
+
+>  <Structure No>
+20
+
+>  <Monoisotopic Mass>
+122.057910
+
+$$$$
+Compound 18
+Actelion Java MolfileCreator 2.0
+
+  0  0  0  0  0  0              0 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 9 9 0 0 0
+M  V30 BEGIN ATOM
+M  V30 1 O 0.0 0.0 0.0 0
+M  V30 2 C -1.3111 0.7559 0.0 0
+M  V30 3 C -1.3347 2.2679 0.0 0
+M  V30 4 C -2.6222 0.0236 0.0 0
+M  V30 5 O -0.0708 3.0238 0.0 0
+M  V30 6 C -2.6459 3.0238 0.0 0
+M  V30 7 C -3.9334 0.7914 0.0 0
+M  V30 8 C -2.6459 -1.441 0.0 0
+M  V30 9 C -3.957 2.2915 0.0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 1 1 2
+M  V30 2 2 2 3
+M  V30 3 1 2 4
+M  V30 4 1 3 5
+M  V30 5 1 3 6
+M  V30 6 2 4 7
+M  V30 7 1 4 8
+M  V30 8 2 6 9
+M  V30 9 1 7 9
+M  V30 END BOND
+M  V30 END CTAB
+M  END
+>  <Molecule Name>
+Compound 18
+
+>  <Structure No>
+38
+
+>  <Monoisotopic Mass>
+124.052430
+
+$$$$
+Compound 19
+Actelion Java MolfileCreator 2.0
+
+  0  0  0  0  0  0              0 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 9 9 0 0 0
+M  V30 BEGIN ATOM
+M  V30 1 O 0.0 0.0 0.0 0
+M  V30 2 C 1.2886 -0.7448 0.0 0
+M  V30 3 C 1.265 -2.2344 0.0 0
+M  V30 4 C 2.5773 0.0354 0.0 0
+M  V30 5 O -0.0709 -2.9793 0.0 0
+M  V30 6 C 2.5536 -2.9793 0.0 0
+M  V30 7 C 3.866 -0.6975 0.0 0
+M  V30 8 C 3.8423 -2.199 0.0 0
+M  V30 9 C 5.1546 0.0827 0.0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 1 1 2
+M  V30 2 2 2 3
+M  V30 3 1 2 4
+M  V30 4 1 3 5
+M  V30 5 1 3 6
+M  V30 6 2 4 7
+M  V30 7 2 6 8
+M  V30 8 1 7 9
+M  V30 9 1 7 8
+M  V30 END BOND
+M  V30 END CTAB
+M  END
+>  <Molecule Name>
+Compound 19
+
+>  <Structure No>
+39
+
+>  <Monoisotopic Mass>
+124.052430
+
+$$$$
+Compound 20
+Actelion Java MolfileCreator 2.0
+
+  0  0  0  0  0  0              0 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 9 9 0 0 0
+M  V30 BEGIN ATOM
+M  V30 1 O 0.0 0.0 0.0 0
+M  V30 2 C -1.306 0.753 0.0 0
+M  V30 3 C -2.6121 0.0235 0.0 0
+M  V30 4 C -1.3295 2.2591 0.0 0
+M  V30 5 C -3.9181 0.7765 0.0 0
+M  V30 6 C -2.6356 -1.4354 0.0 0
+M  V30 7 C -2.6356 3.0121 0.0 0
+M  V30 8 C -3.9416 2.2826 0.0 0
+M  V30 9 O -5.2477 3.0474 0.0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 1 1 2
+M  V30 2 2 2 3
+M  V30 3 1 2 4
+M  V30 4 1 3 5
+M  V30 5 1 3 6
+M  V30 6 2 4 7
+M  V30 7 2 5 8
+M  V30 8 1 8 9
+M  V30 9 1 7 8
+M  V30 END BOND
+M  V30 END CTAB
+M  END
+>  <Molecule Name>
+Compound 20
+
+>  <Structure No>
+40
+
+>  <Monoisotopic Mass>
+124.052430
+
+$$$$
+Compound 21
+Actelion Java MolfileCreator 2.0
+
+  0  0  0  0  0  0              0 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 9 9 0 0 0
+M  V30 BEGIN ATOM
+M  V30 1 O 0.0 0.0 0.0 0
+M  V30 2 C 1.4182 -0.4447 0.0 0
+M  V30 3 C 1.8629 -1.8629 0.0 0
+M  V30 4 C 2.6202 0.4687 0.0 0
+M  V30 5 C 3.3533 -1.8389 0.0 0
+M  V30 6 C 0.9495 -3.0649 0.0 0
+M  V30 7 C 3.8221 -0.3966 0.0 0
+M  V30 8 C 2.5961 2.0072 0.0 0
+M  V30 9 O 4.2187 -3.0408 0.0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 2 1 2
+M  V30 2 1 2 3
+M  V30 3 1 2 4
+M  V30 4 1 3 5
+M  V30 5 1 3 6
+M  V30 6 1 4 7
+M  V30 7 1 4 8
+M  V30 8 2 5 9
+M  V30 9 1 5 7
+M  V30 END BOND
+M  V30 END CTAB
+M  END
+>  <Molecule Name>
+Compound 21
+
+>  <Structure No>
+47
+
+>  <Monoisotopic Mass>
+126.068080
+
+$$$$
+Compound 22
+Actelion Java MolfileCreator 2.0
+
+  0  0  0  0  0  0              0 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 9 9 0 0 0
+M  V30 BEGIN ATOM
+M  V30 1 O 0.0 0.0 0.0 0
+M  V30 2 C -1.4424 -0.4374 0.0 0
+M  V30 3 C -2.6719 0.461 0.0 0
+M  V30 4 C -1.9271 -1.8325 0.0 0
+M  V30 5 O -2.6956 1.9744 0.0 0
+M  V30 6 C -3.9015 -0.3901 0.0 0
+M  V30 7 C -3.4404 -1.8089 0.0 0
+M  V30 8 C -1.0758 -3.0148 0.0 0
+M  V30 9 C -5.3439 0.0945 0.0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 2 1 2
+M  V30 2 1 2 3
+M  V30 3 1 2 4
+M  V30 4 2 3 5
+M  V30 5 1 3 6
+M  V30 6 1 4 7
+M  V30 7 1 4 8
+M  V30 8 1 6 9
+M  V30 9 1 6 7
+M  V30 END BOND
+M  V30 END CTAB
+M  END
+>  <Molecule Name>
+Compound 22
+
+>  <Structure No>
+48
+
+>  <Monoisotopic Mass>
+126.068080
+
+$$$$
+Compound 23
+Actelion Java MolfileCreator 2.0
+
+  0  0  0  0  0  0              0 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 9 9 0 0 0
+M  V30 BEGIN ATOM
+M  V30 1 O 0.0 0.0 0.0 0
+M  V30 2 C 1.4093 -0.4345 0.0 0
+M  V30 3 O 1.8439 -1.8439 0.0 0
+M  V30 4 C 2.6073 0.4815 0.0 0 CFG=1
+M  V30 5 C 3.3237 -1.8204 0.0 0
+M  V30 6 O 3.8405 1.3388 0.0 0
+M  V30 7 C 3.8052 -0.3875 0.0 0
+M  V30 8 C 1.515 1.5737 0.0 0
+M  V30 9 O 1.8791 3.0536 0.0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 2 1 2
+M  V30 2 1 2 3
+M  V30 3 1 2 4
+M  V30 4 1 3 5
+M  V30 5 1 4 6 CFG=1
+M  V30 6 1 4 7
+M  V30 7 1 4 8
+M  V30 8 1 8 9
+M  V30 9 1 5 7
+M  V30 END BOND
+M  V30 BEGIN COLLECTION
+M  V30 MDLV30/STERAC1 ATOMS=(1 4)
+M  V30 END COLLECTION
+M  V30 END CTAB
+M  END
+>  <Molecule Name>
+Compound 23
+
+>  <Structure No>
+16
+
+>  <Monoisotopic Mass>
+132.042260
+
+$$$$
+Compound 24
+Actelion Java MolfileCreator 2.0
+
+  0  0  0  0  0  0              0 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 9 9 0 0 0
+M  V30 BEGIN ATOM
+M  V30 1 O 0.0 0.0 0.0 0
+M  V30 2 C 1.42 -0.4378 0.0 0
+M  V30 3 O 2.627 0.4851 0.0 0
+M  V30 4 C 1.8578 -1.8578 0.0 0
+M  V30 5 C 3.834 -0.3905 0.0 0
+M  V30 6 O 0.9348 -3.0648 0.0 0
+M  V30 7 C 3.3488 -1.8341 0.0 0
+M  V30 8 C 5.254 0.0946 0.0 0
+M  V30 9 O 6.3545 -0.8993 0.0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 2 1 2
+M  V30 2 1 2 3
+M  V30 3 1 2 4
+M  V30 4 1 3 5
+M  V30 5 1 4 6
+M  V30 6 1 4 7
+M  V30 7 1 5 8
+M  V30 8 1 8 9
+M  V30 9 1 5 7
+M  V30 END BOND
+M  V30 END CTAB
+M  END
+>  <Molecule Name>
+Compound 24
+
+>  <Structure No>
+17
+
+>  <Monoisotopic Mass>
+132.042260
+
+$$$$
+Compound 25
+Actelion Java MolfileCreator 2.0
+
+  0  0  0  0  0  0              0 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 9 9 0 0 0
+M  V30 BEGIN ATOM
+M  V30 1 O 0.0 0.0 0.0 0
+M  V30 2 C 0.8805 -1.2137 0.0 0
+M  V30 3 O 2.3798 -1.1899 0.0 0
+M  V30 4 C 0.3926 -2.6415 0.0 0
+M  V30 5 C 2.82 -2.6177 0.0 0
+M  V30 6 C 1.6063 -3.5221 0.0 0
+M  V30 7 C 4.2479 -3.058 0.0 0
+M  V30 8 O 1.5825 -5.0214 0.0 0
+M  V30 9 O 4.5335 -4.5216 0.0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 2 1 2
+M  V30 2 1 2 3
+M  V30 3 1 2 4
+M  V30 4 1 3 5
+M  V30 5 1 4 6
+M  V30 6 1 5 7
+M  V30 7 1 6 8
+M  V30 8 1 7 9
+M  V30 9 1 5 6
+M  V30 END BOND
+M  V30 END CTAB
+M  END
+>  <Molecule Name>
+Compound 25
+
+>  <Structure No>
+25
+
+>  <Monoisotopic Mass>
+132.042260
+
+$$$$
+Compound 26
+Actelion Java MolfileCreator 2.0
+
+  0  0  0  0  0  0              0 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 9 9 0 0 0
+M  V30 BEGIN ATOM
+M  V30 1 O 0.0 0.0 0.0 0
+M  V30 2 C -0.0236 -1.4871 0.0 0
+M  V30 3 O -1.2747 -2.3606 0.0 0
+M  V30 4 C 1.1803 -2.3606 0.0 0
+M  V30 5 C -0.838 -3.7769 0.0 0
+M  V30 6 O 2.337 -3.2812 0.0 0
+M  V30 7 C 0.6963 -3.7769 0.0 0
+M  V30 8 C 1.8412 -0.9914 0.0 0
+M  V30 9 O 1.5698 -4.9808 0.0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 2 1 2
+M  V30 2 1 2 3
+M  V30 3 1 2 4
+M  V30 4 1 3 5
+M  V30 5 1 4 6
+M  V30 6 1 4 7
+M  V30 7 1 4 8
+M  V30 8 1 7 9
+M  V30 9 1 5 7
+M  V30 END BOND
+M  V30 END CTAB
+M  END
+>  <Molecule Name>
+Compound 26
+
+>  <Structure No>
+50
+
+>  <Monoisotopic Mass>
+132.042260
+
+$$$$
+Compound 27
+Actelion Java MolfileCreator 2.0
+
+  0  0  0  0  0  0              0 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 9 8 0 0 0
+M  V30 BEGIN ATOM
+M  V30 1 O 0.0 0.0 0.0 0
+M  V30 2 C 1.2815 0.7665 0.0 0
+M  V30 3 O 1.2575 2.2995 0.0 0
+M  V30 4 C 2.563 0.0239 0.0 0 CFG=1
+M  V30 5 O 2.539 -1.4611 0.0 0
+M  V30 6 C 3.8445 0.7904 0.0 0
+M  V30 7 C 3.8206 2.3235 0.0 0
+M  V30 8 C 5.1021 3.102 0.0 0
+M  V30 9 O 6.3836 2.3594 0.0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 2 1 2
+M  V30 2 1 2 3
+M  V30 3 1 2 4
+M  V30 4 1 4 5 CFG=3
+M  V30 5 1 4 6
+M  V30 6 1 6 7
+M  V30 7 1 7 8
+M  V30 8 1 8 9
+M  V30 END BOND
+M  V30 BEGIN COLLECTION
+M  V30 MDLV30/STERAC1 ATOMS=(1 4)
+M  V30 END COLLECTION
+M  V30 END CTAB
+M  END
+>  <Molecule Name>
+Compound 27
+
+>  <Structure No>
+9
+
+>  <Monoisotopic Mass>
+134.057910
+
+$$$$
+Compound 28
+Actelion Java MolfileCreator 2.0
+
+  0  0  0  0  0  0              0 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 9 8 0 0 0
+M  V30 BEGIN ATOM
+M  V30 1 O 0.0 0.0 0.0 0
+M  V30 2 C 1.2815 0.7665 0.0 0
+M  V30 3 O 1.2575 2.2995 0.0 0
+M  V30 4 C 2.563 0.0239 0.0 0
+M  V30 5 O 2.539 -1.4611 0.0 0
+M  V30 6 C 3.8445 0.7904 0.0 0
+M  V30 7 O 5.126 0.0479 0.0 0
+M  V30 8 C 3.8206 2.3235 0.0 0
+M  V30 9 O 5.1021 3.102 0.0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 2 1 2
+M  V30 2 1 2 3
+M  V30 3 1 2 4
+M  V30 4 1 4 5
+M  V30 5 1 4 6
+M  V30 6 1 6 7
+M  V30 7 1 6 8
+M  V30 8 1 8 9
+M  V30 END BOND
+M  V30 END CTAB
+M  END
+>  <Molecule Name>
+Compound 28
+
+>  <Structure No>
+26
+
+>  <Monoisotopic Mass>
+136.037175
+
+$$$$
+Compound 30
+Actelion Java MolfileCreator 2.0
+
+  0  0  0  0  0  0              0 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 10 10 0 0 0
+M  V30 BEGIN ATOM
+M  V30 1 O 0.0 0.0 0.0 0
+M  V30 2 C -1.3311 -0.7303 0.0 0
+M  V30 3 C -1.3546 -2.2145 0.0 0
+M  V30 4 C -2.6857 -2.9566 0.0 0
+M  V30 5 C -0.0706 -2.9566 0.0 0
+M  V30 6 O -4.0168 -2.1792 0.0 0
+M  V30 7 C -2.7093 -4.4409 0.0 0
+M  V30 8 C -0.0942 -4.4409 0.0 0
+M  V30 9 C -1.4253 -5.1712 0.0 0
+M  V30 10 O -1.4488 -6.6555 0.0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 2 1 2
+M  V30 2 1 2 3
+M  V30 3 2 3 4
+M  V30 4 1 3 5
+M  V30 5 1 4 6
+M  V30 6 1 4 7
+M  V30 7 2 5 8
+M  V30 8 2 7 9
+M  V30 9 1 9 10
+M  V30 10 1 8 9
+M  V30 END BOND
+M  V30 END CTAB
+M  END
+>  <Molecule Name>
+Compound 30
+
+>  <Structure No>
+7
+
+>  <Monoisotopic Mass>
+138.031695
+
+$$$$
+Compound 31
+Actelion Java MolfileCreator 2.0
+
+  0  0  0  0  0  0              0 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 10 10 0 0 0
+M  V30 BEGIN ATOM
+M  V30 1 O 0.0 0.0 0.0 0
+M  V30 2 C -1.3094 0.7549 0.0 0
+M  V30 3 C 1.2622 0.7549 0.0 0
+M  V30 4 C -2.6188 0.0235 0.0 0
+M  V30 5 C -1.333 2.2649 0.0 0
+M  V30 6 C -3.9283 0.7785 0.0 0
+M  V30 7 C -2.6424 -1.4392 0.0 0
+M  V30 8 C -2.6424 3.0317 0.0 0
+M  V30 9 O -5.2377 0.0471 0.0 0
+M  V30 10 C -3.9519 2.2885 0.0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 1 1 2
+M  V30 2 1 1 3
+M  V30 3 2 2 4
+M  V30 4 1 2 5
+M  V30 5 1 4 6
+M  V30 6 1 4 7
+M  V30 7 2 5 8
+M  V30 8 1 6 9
+M  V30 9 2 6 10
+M  V30 10 1 8 10
+M  V30 END BOND
+M  V30 END CTAB
+M  END
+>  <Molecule Name>
+Compound 31
+
+>  <Structure No>
+41
+
+>  <Monoisotopic Mass>
+138.068080
+
+$$$$
+Compound 32
+Actelion Java MolfileCreator 2.0
+
+  0  0  0  0  0  0              0 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 10 10 0 0 0
+M  V30 BEGIN ATOM
+M  V30 1 O 0.0 0.0 0.0 0
+M  V30 2 C 1.4208 -0.438 0.0 0
+M  V30 3 O 2.6285 0.4854 0.0 0
+M  V30 4 C 1.8589 -1.8589 0.0 0
+M  V30 5 C 3.8363 -0.3907 0.0 0
+M  V30 6 O 0.9353 -3.0666 0.0 0
+M  V30 7 C 3.3508 -1.8352 0.0 0
+M  V30 8 C 5.2571 0.0947 0.0 0
+M  V30 9 O 4.227 -3.0429 0.0 0
+M  V30 10 O 6.3583 -0.8998 0.0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 2 1 2
+M  V30 2 1 2 3
+M  V30 3 1 2 4
+M  V30 4 1 3 5
+M  V30 5 1 4 6
+M  V30 6 1 4 7
+M  V30 7 1 5 8
+M  V30 8 1 7 9
+M  V30 9 1 8 10
+M  V30 10 1 5 7
+M  V30 END BOND
+M  V30 END CTAB
+M  END
+>  <Molecule Name>
+Compound 32
+
+>  <Structure No>
+24
+
+>  <Monoisotopic Mass>
+148.037175
+
+$$$$
+Compound 33
+Actelion Java MolfileCreator 2.0
+
+  0  0  0  0  0  0              0 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 10 9 0 0 0
+M  V30 BEGIN ATOM
+M  V30 1 O 0.0 0.0 0.0 0
+M  V30 2 C -0.0238 1.5244 0.0 0
+M  V30 3 O -1.3458 2.2867 0.0 0
+M  V30 4 C 1.2505 2.2867 0.0 0 CFG=1
+M  V30 5 O 1.9889 1.0123 0.0 0
+M  V30 6 C 0.4883 3.6087 0.0 0
+M  V30 7 C 2.5249 3.0608 0.0 0
+M  V30 8 O -1.0361 3.6325 0.0 0
+M  V30 9 C 3.7992 2.3224 0.0 0
+M  V30 10 O 3.7754 0.8456 0.0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 2 1 2
+M  V30 2 1 2 3
+M  V30 3 1 2 4
+M  V30 4 1 4 5
+M  V30 5 1 4 6 CFG=3
+M  V30 6 1 4 7
+M  V30 7 1 6 8
+M  V30 8 1 7 9
+M  V30 9 1 9 10
+M  V30 END BOND
+M  V30 BEGIN COLLECTION
+M  V30 MDLV30/STERAC1 ATOMS=(1 4)
+M  V30 END COLLECTION
+M  V30 END CTAB
+M  END
+>  <Molecule Name>
+Compound 33
+
+>  <Structure No>
+11
+
+>  <Monoisotopic Mass>
+150.052825
+
+$$$$
+Compound 34
+Actelion Java MolfileCreator 2.0
+
+  0  0  0  0  0  0              0 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 10 9 0 0 0
+M  V30 BEGIN ATOM
+M  V30 1 O 0.0 0.0 0.0 0
+M  V30 2 C 1.2873 0.7699 0.0 0
+M  V30 3 O 1.2632 2.3099 0.0 0
+M  V30 4 C 2.5746 0.024 0.0 0
+M  V30 5 O 2.5505 -1.4677 0.0 0
+M  V30 6 C 3.8619 0.806 0.0 0
+M  V30 7 C 5.1492 0.0601 0.0 0
+M  V30 8 O 5.1251 -1.4316 0.0 0
+M  V30 9 C 6.4365 0.8421 0.0 0
+M  V30 10 O 7.7238 0.0962 0.0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 2 1 2
+M  V30 2 1 2 3
+M  V30 3 1 2 4
+M  V30 4 1 4 5
+M  V30 5 1 4 6
+M  V30 6 1 6 7
+M  V30 7 1 7 8
+M  V30 8 1 7 9
+M  V30 9 1 9 10
+M  V30 END BOND
+M  V30 END CTAB
+M  END
+>  <Molecule Name>
+Compound 34
+
+>  <Structure No>
+18
+
+>  <Monoisotopic Mass>
+150.052825
+
+$$$$
+Compound 35
+Actelion Java MolfileCreator 2.0
+
+  0  0  0  0  0  0              0 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 10 9 0 0 0
+M  V30 BEGIN ATOM
+M  V30 1 O 0.0 0.0 0.0 0
+M  V30 2 C -0.0238 1.5284 0.0 0
+M  V30 3 O -1.3493 2.3046 0.0 0
+M  V30 4 C 1.2537 2.3046 0.0 0
+M  V30 5 C 2.5314 1.5642 0.0 0
+M  V30 6 O 2.5075 0.0835 0.0 0
+M  V30 7 C 3.8091 2.3284 0.0 0
+M  V30 8 O 5.0868 1.5881 0.0 0
+M  V30 9 C 3.7852 3.8569 0.0 0
+M  V30 10 O 5.0629 4.6211 0.0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 2 1 2
+M  V30 2 1 2 3
+M  V30 3 1 2 4
+M  V30 4 1 4 5
+M  V30 5 1 5 6
+M  V30 6 1 5 7
+M  V30 7 1 7 8
+M  V30 8 1 7 9
+M  V30 9 1 9 10
+M  V30 END BOND
+M  V30 END CTAB
+M  END
+>  <Molecule Name>
+Compound 35
+
+>  <Structure No>
+22
+
+>  <Monoisotopic Mass>
+150.052825
+
+$$$$
+Compound 36
+Actelion Java MolfileCreator 2.0
+
+  0  0  0  0  0  0              0 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 10 9 0 0 0
+M  V30 BEGIN ATOM
+M  V30 1 O 0.0 0.0 0.0 0
+M  V30 2 C 1.4844 0.0239 0.0 0
+M  V30 3 O 2.2266 1.3527 0.0 0
+M  V30 4 C 2.2266 -1.2569 0.0 0
+M  V30 5 O 0.8978 -1.9991 0.0 0
+M  V30 6 C 3.5075 -0.4788 0.0 0
+M  V30 7 C 2.9688 -2.5379 0.0 0
+M  V30 8 O 3.4836 1.0534 0.0 0
+M  V30 9 C 4.7885 -1.221 0.0 0
+M  V30 10 O 6.0694 -0.4429 0.0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 2 1 2
+M  V30 2 1 2 3
+M  V30 3 1 2 4
+M  V30 4 1 4 5
+M  V30 5 1 4 6
+M  V30 6 1 4 7
+M  V30 7 1 6 8
+M  V30 8 1 6 9
+M  V30 9 1 9 10
+M  V30 END BOND
+M  V30 END CTAB
+M  END
+>  <Molecule Name>
+Compound 36
+
+>  <Structure No>
+51
+
+>  <Monoisotopic Mass>
+150.052825
+
+$$$$
+Compound 37
+Actelion Java MolfileCreator 2.0
+
+  0  0  0  0  0  0              0 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 11 11 0 0 0
+M  V30 BEGIN ATOM
+M  V30 1 O 0.0 0.0 0.0 0
+M  V30 2 C 1.272 0.7608 0.0 0
+M  V30 3 C 1.2482 2.2826 0.0 0
+M  V30 4 C 2.5441 0.0237 0.0 0
+M  V30 5 C 2.5203 3.0434 0.0 0
+M  V30 6 C -0.0713 3.0434 0.0 0
+M  V30 7 O 3.7924 2.3063 0.0 0
+M  V30 8 C 2.4965 4.5652 0.0 0
+M  V30 9 C -0.0951 4.5652 0.0 0
+M  V30 10 O 3.7686 5.3379 0.0 0
+M  V30 11 C 1.1769 5.3379 0.0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 2 1 2
+M  V30 2 1 2 3
+M  V30 3 1 2 4
+M  V30 4 2 3 5
+M  V30 5 1 3 6
+M  V30 6 1 5 7
+M  V30 7 1 5 8
+M  V30 8 2 6 9
+M  V30 9 1 8 10
+M  V30 10 2 8 11
+M  V30 11 1 9 11
+M  V30 END BOND
+M  V30 END CTAB
+M  END
+>  <Molecule Name>
+Compound 37
+
+>  <Structure No>
+43
+
+>  <Monoisotopic Mass>
+152.047345
+
+$$$$
+Compound 38
+Actelion Java MolfileCreator 2.0
+
+  0  0  0  0  0  0              0 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 11 11 0 0 0
+M  V30 BEGIN ATOM
+M  V30 1 O 0.0 0.0 0.0 0
+M  V30 2 C 1.2675 0.7699 0.0 0
+M  V30 3 C 1.2438 2.2863 0.0 0
+M  V30 4 C 2.535 0.0355 0.0 0
+M  V30 5 C 2.5113 3.0563 0.0 0
+M  V30 6 C -0.071 3.0563 0.0 0
+M  V30 7 O 3.7789 2.3218 0.0 0
+M  V30 8 C 2.4876 4.5726 0.0 0
+M  V30 9 C -0.0947 4.5726 0.0 0
+M  V30 10 C 1.1727 5.3426 0.0 0
+M  V30 11 O -1.4096 5.3426 0.0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 2 1 2
+M  V30 2 1 2 3
+M  V30 3 1 2 4
+M  V30 4 2 3 5
+M  V30 5 1 3 6
+M  V30 6 1 5 7
+M  V30 7 1 5 8
+M  V30 8 2 6 9
+M  V30 9 2 8 10
+M  V30 10 1 9 11
+M  V30 11 1 9 10
+M  V30 END BOND
+M  V30 END CTAB
+M  END
+>  <Molecule Name>
+Compound 38
+
+>  <Structure No>
+44
+
+>  <Monoisotopic Mass>
+152.047345
+
+$$$$
+Compound 39
+Actelion Java MolfileCreator 2.0
+
+  0  0  0  0  0  0              0 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 11 11 0 0 0
+M  V30 BEGIN ATOM
+M  V30 1 O 0.0 0.0 0.0 0
+M  V30 2 C 1.411 -0.435 0.0 0
+M  V30 3 O 1.8461 -1.8461 0.0 0
+M  V30 4 C 2.6104 0.4821 0.0 0
+M  V30 5 C 3.3277 -1.8226 0.0 0
+M  V30 6 O 3.8451 1.3405 0.0 0
+M  V30 7 C 3.8099 -0.388 0.0 0
+M  V30 8 C 1.5169 1.5756 0.0 0
+M  V30 9 O 5.2209 0.094 0.0 0
+M  V30 10 C 1.8814 3.0573 0.0 0
+M  V30 11 O 3.316 3.4688 0.0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 2 1 2
+M  V30 2 1 2 3
+M  V30 3 1 2 4
+M  V30 4 1 3 5
+M  V30 5 1 4 6
+M  V30 6 1 4 7
+M  V30 7 1 4 8
+M  V30 8 1 7 9
+M  V30 9 1 8 10
+M  V30 10 1 10 11
+M  V30 11 1 5 7
+M  V30 END BOND
+M  V30 END CTAB
+M  END
+>  <Molecule Name>
+Compound 39
+
+>  <Structure No>
+13
+
+>  <Monoisotopic Mass>
+162.052825
+
+$$$$
+Compound 40
+Actelion Java MolfileCreator 2.0
+
+  0  0  0  0  0  0              0 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 11 11 0 0 0
+M  V30 BEGIN ATOM
+M  V30 1 O 0.0 0.0 0.0 0
+M  V30 2 C 0.8774 -1.2094 0.0 0
+M  V30 3 O 2.3714 -1.1857 0.0 0
+M  V30 4 C 0.3912 -2.6323 0.0 0
+M  V30 5 C 2.8101 -2.6086 0.0 0
+M  V30 6 O -1.079 -3.071 0.0 0
+M  V30 7 C 1.6007 -3.5097 0.0 0
+M  V30 8 C 4.233 -3.0473 0.0 0
+M  V30 9 O 4.5176 -4.5057 0.0 0
+M  V30 10 C 5.3358 -2.0038 0.0 0
+M  V30 11 O 6.7586 -2.4426 0.0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 2 1 2
+M  V30 2 1 2 3
+M  V30 3 1 2 4
+M  V30 4 1 3 5
+M  V30 5 1 4 6
+M  V30 6 1 4 7
+M  V30 7 1 5 8
+M  V30 8 1 8 9
+M  V30 9 1 8 10
+M  V30 10 1 10 11
+M  V30 11 1 5 7
+M  V30 END BOND
+M  V30 END CTAB
+M  END
+>  <Molecule Name>
+Compound 40
+
+>  <Structure No>
+21
+
+>  <Monoisotopic Mass>
+162.052825
+
+$$$$
+Compound 41
+Actelion Java MolfileCreator 2.0
+
+  0  0  0  0  0  0              0 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 11 11 0 0 0
+M  V30 BEGIN ATOM
+M  V30 1 O 0.0 0.0 0.0 0
+M  V30 2 C 0.8795 -1.2124 0.0 0
+M  V30 3 O 2.3772 -1.1886 0.0 0
+M  V30 4 C 0.3922 -2.6387 0.0 0
+M  V30 5 C 2.817 -2.6149 0.0 0
+M  V30 6 C 1.6046 -3.5183 0.0 0
+M  V30 7 C 4.2434 -3.0547 0.0 0
+M  V30 8 O 1.5808 -5.016 0.0 0
+M  V30 9 O 4.5286 -4.5167 0.0 0
+M  V30 10 C 5.3488 -2.0087 0.0 0
+M  V30 11 O 6.7751 -2.4485 0.0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 2 1 2
+M  V30 2 1 2 3
+M  V30 3 1 2 4
+M  V30 4 1 3 5
+M  V30 5 1 4 6
+M  V30 6 1 5 7
+M  V30 7 1 6 8
+M  V30 8 1 7 9
+M  V30 9 1 7 10
+M  V30 10 1 10 11
+M  V30 11 1 5 6
+M  V30 END BOND
+M  V30 END CTAB
+M  END
+>  <Molecule Name>
+Compound 41
+
+>  <Structure No>
+31
+
+>  <Monoisotopic Mass>
+162.052825
+
+$$$$
+Compound 42
+Actelion Java MolfileCreator 2.0
+
+  0  0  0  0  0  0              0 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 11 10 0 0 0
+M  V30 BEGIN ATOM
+M  V30 1 O 0.0 0.0 0.0 0
+M  V30 2 C 1.2762 0.7633 0.0 0
+M  V30 3 O 1.2524 2.2901 0.0 0
+M  V30 4 C 2.5525 0.0238 0.0 0
+M  V30 5 O 2.5287 -1.4551 0.0 0
+M  V30 6 C 3.8288 0.7872 0.0 0
+M  V30 7 O 5.1051 0.0477 0.0 0
+M  V30 8 C 3.8049 2.314 0.0 0
+M  V30 9 O 5.0812 3.0773 0.0 0
+M  V30 10 C 2.4809 3.0773 0.0 0
+M  V30 11 O 2.4571 4.6041 0.0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 2 1 2
+M  V30 2 1 2 3
+M  V30 3 1 2 4
+M  V30 4 1 4 5
+M  V30 5 1 4 6
+M  V30 6 1 6 7
+M  V30 7 1 6 8
+M  V30 8 1 8 9
+M  V30 9 1 8 10
+M  V30 10 1 10 11
+M  V30 END BOND
+M  V30 END CTAB
+M  END
+>  <Molecule Name>
+Compound 42
+
+>  <Structure No>
+32
+
+>  <Monoisotopic Mass>
+166.047740
+
+$$$$
+Compound 43
+Actelion Java MolfileCreator 2.0
+
+  0  0  0  0  0  0              0 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 12 11 0 0 0
+M  V30 BEGIN ATOM
+M  V30 1 O 0.0 0.0 0.0 0
+M  V30 2 C -0.0238 1.5278 0.0 0
+M  V30 3 O -1.3487 2.2917 0.0 0
+M  V30 4 C 1.2532 2.2917 0.0 0
+M  V30 5 O 1.9933 1.0145 0.0 0
+M  V30 6 C 0.4893 3.6166 0.0 0
+M  V30 7 C 2.5304 3.0675 0.0 0
+M  V30 8 O -1.0384 3.6404 0.0 0
+M  V30 9 C 3.8075 2.3275 0.0 0
+M  V30 10 O 3.7837 0.8474 0.0 0
+M  V30 11 C 5.0847 3.1033 0.0 0
+M  V30 12 O 6.3618 2.3633 0.0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 2 1 2
+M  V30 2 1 2 3
+M  V30 3 1 2 4
+M  V30 4 1 4 5
+M  V30 5 1 4 6
+M  V30 6 1 4 7
+M  V30 7 1 6 8
+M  V30 8 1 7 9
+M  V30 9 1 9 10
+M  V30 10 1 9 11
+M  V30 11 1 11 12
+M  V30 END BOND
+M  V30 END CTAB
+M  END
+>  <Molecule Name>
+Compound 43
+
+>  <Structure No>
+2
+
+>  <Monoisotopic Mass>
+180.063390
+
+$$$$
+Compound 44
+Actelion Java MolfileCreator 2.0
+
+  0  0  0  0  0  0              0 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 12 11 0 0 0
+M  V30 BEGIN ATOM
+M  V30 1 O 0.0 0.0 0.0 0
+M  V30 2 C -1.3138 0.7575 0.0 0
+M  V30 3 O -2.6276 0.0236 0.0 0
+M  V30 4 C -1.3374 2.2725 0.0 0
+M  V30 5 O 0.1301 2.2962 0.0 0
+M  V30 6 C -2.8525 2.2962 0.0 0
+M  V30 7 C -1.3611 3.7875 0.0 0
+M  V30 8 O -3.6218 1.0297 0.0 0
+M  V30 9 C -3.6218 3.61 0.0 0
+M  V30 10 C -0.0946 4.5569 0.0 0
+M  V30 11 O -5.1368 3.6336 0.0 0
+M  V30 12 O 1.1717 3.823 0.0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 2 1 2
+M  V30 2 1 2 3
+M  V30 3 1 2 4
+M  V30 4 1 4 5
+M  V30 5 1 4 6
+M  V30 6 1 4 7
+M  V30 7 1 6 8
+M  V30 8 1 6 9
+M  V30 9 1 7 10
+M  V30 10 1 9 11
+M  V30 11 1 10 12
+M  V30 END BOND
+M  V30 END CTAB
+M  END
+>  <Molecule Name>
+Compound 44
+
+>  <Structure No>
+14
+
+>  <Monoisotopic Mass>
+180.063390
+
+$$$$
+Compound 45
+Actelion Java MolfileCreator 2.0
+
+  0  0  0  0  0  0              0 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 12 11 0 0 0
+M  V30 BEGIN ATOM
+M  V30 1 O 0.0 0.0 0.0 0
+M  V30 2 C -1.3114 -0.7325 0.0 0
+M  V30 3 O -1.335 -2.1975 0.0 0
+M  V30 4 C -2.6229 0.0236 0.0 0
+M  V30 5 O -2.6465 1.5359 0.0 0
+M  V30 6 C -3.9343 -0.697 0.0 0
+M  V30 7 C -5.2458 0.059 0.0 0
+M  V30 8 O -5.2694 1.5713 0.0 0
+M  V30 9 C -6.5573 -0.6734 0.0 0
+M  V30 10 O -7.8687 0.0827 0.0 0
+M  V30 11 C -6.5809 -2.1385 0.0 0
+M  V30 12 O -7.8924 -2.871 0.0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 2 1 2
+M  V30 2 1 2 3
+M  V30 3 1 2 4
+M  V30 4 1 4 5
+M  V30 5 1 4 6
+M  V30 6 1 6 7
+M  V30 7 1 7 8
+M  V30 8 1 7 9
+M  V30 9 1 9 10
+M  V30 10 1 9 11
+M  V30 11 1 11 12
+M  V30 END BOND
+M  V30 END CTAB
+M  END
+>  <Molecule Name>
+Compound 45
+
+>  <Structure No>
+23
+
+>  <Monoisotopic Mass>
+180.063390
+
+$$$$
+Compound 46
+Actelion Java MolfileCreator 2.0
+
+  0  0  0  0  0  0              0 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 12 11 0 0 0
+M  V30 BEGIN ATOM
+M  V30 1 O 0.0 0.0 0.0 0
+M  V30 2 C -0.0238 -1.4761 0.0 0
+M  V30 3 O 1.2499 -2.2141 0.0 0
+M  V30 4 C -1.3451 -2.2141 0.0 0
+M  V30 5 C -2.6665 -1.4403 0.0 0
+M  V30 6 O -2.6903 0.0833 0.0 0
+M  V30 7 C -3.9878 -2.1784 0.0 0
+M  V30 8 O -5.3092 -1.4046 0.0 0
+M  V30 9 C -4.0116 -3.6545 0.0 0
+M  V30 10 O -5.333 -4.3925 0.0 0
+M  V30 11 C -2.7379 -4.3925 0.0 0
+M  V30 12 O -2.7617 -5.8687 0.0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 2 1 2
+M  V30 2 1 2 3
+M  V30 3 1 2 4
+M  V30 4 1 4 5
+M  V30 5 1 5 6
+M  V30 6 1 5 7
+M  V30 7 1 7 8
+M  V30 8 1 7 9
+M  V30 9 1 9 10
+M  V30 10 1 9 11
+M  V30 11 1 11 12
+M  V30 END BOND
+M  V30 END CTAB
+M  END
+>  <Molecule Name>
+Compound 46
+
+>  <Structure No>
+28
+
+>  <Monoisotopic Mass>
+180.063390
+
+$$$$
+Compound 47
+Actelion Java MolfileCreator 2.0
+
+  0  0  0  0  0  0              0 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 12 12 0 0 0
+M  V30 BEGIN ATOM
+M  V30 1 O 0.0 0.0 0.0 0
+M  V30 2 C -0.0236 1.5106 0.0 0
+M  V30 3 C -1.3099 -0.7317 0.0 0
+M  V30 4 O 1.2391 2.2659 0.0 0
+M  V30 5 C -1.3335 2.2659 0.0 0
+M  V30 6 C -2.6199 0.0236 0.0 0
+M  V30 7 C -1.3335 -2.1951 0.0 0
+M  V30 8 O -1.3571 3.7765 0.0 0
+M  V30 9 C -2.6435 1.5342 0.0 0
+M  V30 10 O -3.9299 -0.6962 0.0 0
+M  V30 11 O -2.6435 -2.9268 0.0 0
+M  V30 12 O -3.9535 2.2895 0.0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 1 1 2
+M  V30 2 1 1 3
+M  V30 3 1 2 4
+M  V30 4 1 2 5
+M  V30 5 1 3 6
+M  V30 6 1 3 7
+M  V30 7 1 5 8
+M  V30 8 1 5 9
+M  V30 9 1 6 10
+M  V30 10 1 7 11
+M  V30 11 1 9 12
+M  V30 12 1 6 9
+M  V30 END BOND
+M  V30 END CTAB
+M  END
+>  <Molecule Name>
+Compound 47
+
+>  <Structure No>
+30
+
+>  <Monoisotopic Mass>
+180.063390
+
+$$$$
+Compound 48
+Actelion Java MolfileCreator 2.0
+
+  0  0  0  0  0  0              0 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 12 11 0 0 0
+M  V30 BEGIN ATOM
+M  V30 1 O 0.0 0.0 0.0 0
+M  V30 2 C 1.2796 -0.7414 0.0 0
+M  V30 3 C 1.2557 -2.2244 0.0 0
+M  V30 4 O -0.0717 -2.9658 0.0 0
+M  V30 5 C 2.5353 -2.9658 0.0 0
+M  V30 6 O 2.5114 -4.4488 0.0 0
+M  V30 7 C 3.8149 -2.2004 0.0 0
+M  V30 8 O 5.0946 -2.9419 0.0 0
+M  V30 9 C 3.791 -0.6697 0.0 0
+M  V30 10 O 5.0707 0.0956 0.0 0
+M  V30 11 C 2.4636 0.0956 0.0 0
+M  V30 12 O 2.4396 1.6264 0.0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 2 1 2
+M  V30 2 1 2 3
+M  V30 3 1 3 4
+M  V30 4 1 3 5
+M  V30 5 1 5 6
+M  V30 6 1 5 7
+M  V30 7 1 7 8
+M  V30 8 1 7 9
+M  V30 9 1 9 10
+M  V30 10 1 9 11
+M  V30 11 1 11 12
+M  V30 END BOND
+M  V30 END CTAB
+M  END
+>  <Molecule Name>
+Compound 48
+
+>  <Structure No>
+34
+
+>  <Monoisotopic Mass>
+180.063390
+
+$$$$
+Compound 49
+Actelion Java MolfileCreator 2.0
+
+  0  0  0  0  0  0              0 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 12 11 0 0 0
+M  V30 BEGIN ATOM
+M  V30 1 O 0.0 0.0 0.0 0
+M  V30 2 C -0.7619 -1.2738 0.0 0
+M  V30 3 O -0.0357 -2.5476 0.0 0
+M  V30 4 C -2.2857 -1.2499 0.0 0
+M  V30 5 O -2.3095 0.2738 0.0 0
+M  V30 6 C -2.3095 -2.7261 0.0 0
+M  V30 7 C -3.8095 -1.2261 0.0 0
+M  V30 8 O -1.0357 -3.4642 0.0 0
+M  V30 9 C -3.6309 -3.4642 0.0 0
+M  V30 10 O -3.6547 -4.9404 0.0 0
+M  V30 11 C -4.9523 -2.7023 0.0 0
+M  V30 12 O -6.2737 -3.4404 0.0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 2 1 2
+M  V30 2 1 2 3
+M  V30 3 1 2 4
+M  V30 4 1 4 5
+M  V30 5 1 4 6
+M  V30 6 1 4 7
+M  V30 7 1 6 8
+M  V30 8 1 6 9
+M  V30 9 1 9 10
+M  V30 10 1 9 11
+M  V30 11 1 11 12
+M  V30 END BOND
+M  V30 END CTAB
+M  END
+>  <Molecule Name>
+Compound 49
+
+>  <Structure No>
+52
+
+>  <Monoisotopic Mass>
+180.063390
+
+$$$$
+Compound 50
+Actelion Java MolfileCreator 2.0
+
+  0  0  0  0  0  0              0 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 12 11 0 0 0
+M  V30 BEGIN ATOM
+M  V30 1 O 0.0 0.0 0.0 0
+M  V30 2 C -1.3081 0.7542 0.0 0
+M  V30 3 C -2.6162 0.0235 0.0 0
+M  V30 4 C -1.3317 2.2627 0.0 0
+M  V30 5 O -2.6398 -1.4377 0.0 0
+M  V30 6 C -3.9244 0.7778 0.0 0
+M  V30 7 O -0.0707 3.0287 0.0 0
+M  V30 8 C -2.6398 3.0287 0.0 0
+M  V30 9 O -5.2325 0.0589 0.0 0
+M  V30 10 C -3.948 2.2863 0.0 0
+M  V30 11 O -2.6634 4.5372 0.0 0
+M  V30 12 O -5.2561 3.0405 0.0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 1 1 2
+M  V30 2 1 2 3
+M  V30 3 1 2 4
+M  V30 4 1 3 5
+M  V30 5 1 3 6
+M  V30 6 1 4 7
+M  V30 7 1 4 8
+M  V30 8 1 6 9
+M  V30 9 1 6 10
+M  V30 10 1 8 11
+M  V30 11 1 10 12
+M  V30 END BOND
+M  V30 END CTAB
+M  END
+>  <Molecule Name>
+Compound 50
+
+>  <Structure No>
+33
+
+>  <Monoisotopic Mass>
+182.079040
+
+$$$$
