@@ -2,6 +2,7 @@ import os
 import time
 import compare_ms
 from rdkit.Chem import SDMolSupplier, MolToSmiles
+from mod_to_neo4j_exporter import export_to_neo4j
 
 include(os.path.abspath(os.path.join('..', 'rules/all.py')))
 #include('clean_tautomers.py')
@@ -74,6 +75,7 @@ with dg.build() as b:
         #res = b.execute(addSubset(subset) >> addUniverse(universe))
         # now compare how many of these simulations were found in the MS data.
         compare_ms.compare_sims([v.graph.smiles for v in dg.vertices], gen+1)
+        export_to_neo4j(dg_obj = dg, generation_num = gen)
     print('Completed')
 
 # compare structures with what the Y&M paper has
