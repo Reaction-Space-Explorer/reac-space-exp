@@ -10,8 +10,9 @@ postChapter('Alkaline Glucose Degradation')
 
 # starting molecule
 #glucose = smiles('OC[C@H]1O[C@H](O)[C@H](O)[C@@H](O)[C@@H]1O', name='Glucose')
-open_glucose = smiles("O=C[C@H](O)[C@H](O)[C@H](O)[C@H](O)[C@@H](O)", "Open Chain Glucose")
+open_glucose = smiles("O=CC(O)C(O)C(O)C(O)C(O)", "Open Chain Glucose")
 water = smiles("O", name="Water")
+
 # Forbidden substructures (don't add them to inputGraphs)
 # Three and four membeered rings are unstable, any atom with two double bonds is forbidden
 # Note: the latter means that even O=C=O (carbon dioxide) will also be forbidden
@@ -85,15 +86,17 @@ not_matching = []
 print("Checking for matches with Y&M's structures")
 
 for mol in sdfile:
-    mol_graph = smiles(MolToSmiles(mol), add=False)
-    for g in universe:
-        if g.isomorphism(mol_graph) > 0:
+    smi = MolToSmiles(mol)
+    #smi.replace("", "")
+    mol_graph = smiles(smi, add=False)
+    for v in dg.vertices:
+        if v.graph.isomorphism(mol_graph) == 1:
             matching_structs.append(mol_graph)
             print("Structure {0} of the SDF found in the network!".format(mol_graph.smiles))
         else:
             not_matching.append(mol_graph)
 
-print(f"{100* len(matching_structs)/len(sdfile)}% structures in the SDF are in the reaction network.")
+print(f"{len(matching_structs)} of {len(sdfile)} ({100* len(matching_structs)/len(sdfile)}%)  total structures in the SDF are in the reaction network.")
 
 f = dg.dump()
 print("Dump file: ", f)
@@ -110,7 +113,7 @@ for rule in rules_used.keys():
 
 #print("Rules used: {0}".format(dict({rule:True for rule in rules_count}).keys()))
 # Make a mass spectra (a histogram of the masses) of the molecules
-compare_ms.make_mass_spectra([v.graph.smiles for v in dg.vertices])
+#compare_ms.make_mass_spectra([v.graph.smiles for v in dg.vertices])
 
 # Compare structures with 
 
@@ -122,29 +125,30 @@ dgprint = DGPrinter()
 dgprint.withRuleName = True
 dgprint.withShortcutEdges = True
 
-for item_to_print in to_print:
-    count = 0
-    postSection(f"{item_to_print} reactions")
-    for e in dg.edges:
+#for item_to_print in to_print:
+#    count = 0
+#postSection(f"{item_to_print} reactions")
+# print all reactions
+'''for e in dg.edges:
         # Don't print more than 35 of any category
-        if count > 35:
-            pass
+#        if count > 35:
+#            pass
         #    break
-        else:
-            for rule in e.rules:
-                if item_to_print in rule.name:
-                    count += 1
-                    dg2 = DG(graphDatabase=inputGraphs)
-                    with dg2.build() as b:
-                        d = Derivations()
-                        sources = [source.graph for source in e.sources]
-                        targets = [target.graph for target in e.targets]
-                        d.left = sources
-                        d.rules = [rule]
-                        d.right = targets
-                        fake_edge = b.addDerivation(d)
-                        print("Printing reaction: ", fake_edge)
-                    dg2.print(dgprint)
+#        else:
+    for rule in e.rules:
+#        if item_to_print in rule.name:
+#        count += 1
+        dg2 = DG(graphDatabase=inputGraphs)
+        with dg2.build() as b:
+            d = Derivations()
+            sources = [source.graph for source in e.sources]
+            targets = [target.graph for target in e.targets]
+            d.left = sources
+            d.rules = [rule]
+            d.right = targets
+            fake_edge = b.addDerivation(d)
+            print("Printing reaction: ", fake_edge)
+        dg2.print(dgprint)'''
 # dump smiles
 '''with open("dump_smiles.txt", "w") as dump:
     for v in dg.vertices:
