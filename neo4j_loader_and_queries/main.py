@@ -192,7 +192,8 @@ def import_data_from_MOD_exports(folder_path):
 
 # import_mock_data()
 
-mod_exports_folder_path = "../radicals/all7/Neo4j_Imports"
+# mod_exports_folder_path = "../radicals/all7/Neo4j_Imports"
+mod_exports_folder_path = "../main/Neo4j_Imports"
 import_data_from_MOD_exports(mod_exports_folder_path)
 
 
