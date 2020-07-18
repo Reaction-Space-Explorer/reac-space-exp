@@ -204,6 +204,9 @@ def get_tabulated_possible_autocatalytic_cycles(ring_size_range = (3,7),
     if min_ring_size > max_ring_size:
         print("The minimum ring size must not exceed the maximum.")
         quit()
+    if min_ring_size <= 2:
+        print("The minimum ring size must be above 2.")
+        quit()
     
     if feeder_molecule_generation_range != None:
         min_feeder_gen = feeder_molecule_generation_range[0]
