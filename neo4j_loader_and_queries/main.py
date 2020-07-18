@@ -181,24 +181,82 @@ def import_data_from_MOD_exports(folder_path):
                                                   to_smiles = rel_data[2],
                                                   rule = rel_data[3],
                                                   generation_formed = generation_num)
-        # merge_query = rxn_query_str(reactant=row['from_node'],
-        #                             product=row['to_node'],
-        #                             rxn_id=row['rxn_id'])
-
-
-# load_graph()
-
-# import_molecules()
-
-# import_mock_data()
-
-mod_exports_folder_path = "../radicals/all7/Neo4j_Imports"
-import_data_from_MOD_exports(mod_exports_folder_path)
 
 
 
+def get_tabulated_possible_autocatalytic_cycles(ring_size_range = (3,7),
+                                                feeder_molecule_generation_range = None
+                                                ):
+    """
+    After the graph has been loaded with data, let's execute a query and export
+    the tabulated results.
+    
+    An input of "None" to any of the params means no limit. By default the ring
+    size will be from 3 molecules to 7.
+    """
+    
+    # make sure inputs are okay
+    min_ring_size = ring_size_range[0]
+    max_ring_size = ring_size_range[1]
+    if min_ring_size < 0 or max_ring_size < 0:
+        print("Ring sizes can not be negative.")
+        quit()
+    if min_ring_size > max_ring_size:
+        print("The minimum ring size must not exceed the maximum.")
+        quit()
+    if min_ring_size <= 2:
+        print("The minimum ring size must be above 2.")
+        quit()
+    
+    if feeder_molecule_generation_range != None:
+        min_feeder_gen = feeder_molecule_generation_range[0]
+        max_feeder_gen = feeder_molecule_generation_range[1]
+        if min_feeder_gen < 0 or max_feeder_gen < 0:
+            print("The feeder generation can not be negative.")
+            quit()
+        if min_feeder_gen > max_feeder_gen:
+            print("The minimum feeder generation must not exceed the maximum.")
+            quit()
+    
+    # load query and insert params
+    query_txt = open("graph_queries/_FINAL_QUERY_PARAMETERIZED.txt",'r').read()
+    query_txt = query_txt.replace("{{MIN_RING_SIZE}}", str(min_ring_size))
+    query_txt = query_txt.replace("{{MAX_RING_SIZE}}", str(max_ring_size))
+    
+    
+    if feeder_molecule_generation_range == None:
+        query_txt = query_txt.replace("{{COMMENT_OUT}}", "//")
+    else:
+        query_txt = query_txt.replace("{{MIN_FEEDER_GENERATION}}", str(min_feeder_gen))
+        query_txt = query_txt.replace("{{MAX_FEEDER_GENERATION}}", str(max_feeder_gen))
+    print(query_txt)
+    
+    
+    # execute query in Neo4j
 
 
+
+def analyze_possible_autocatalytic_cycles():
+    """
+    Now that we have the tabulated results of the graph queries, let's do some
+    analysis on what's going on.
+    
+    1. Calculate the the count of cycles found per generation
+    2. Total mass per cycle per generation
+    3. 
+    """
+    pass
+
+
+
+
+
+
+if __name__ == "__main__":
+    mod_exports_folder_path = "../main/Neo4j_Imports"
+    # import_data_from_MOD_exports(mod_exports_folder_path)
+    get_tabulated_possible_autocatalytic_cycles()
+    
 
 
 

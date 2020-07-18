@@ -1,0 +1,30 @@
+MATCH
+// search for ring patterns
+ringPath=(beginMol:Molecule)-[:FORMS*3..6]-(molInRing:Molecule)-[:FORMS]->(beginMol:Molecule),
+// also collect any molecule attached to ring pattern above, limited to 1 hop
+attachedPath=(reactant:Molecule)-[:FORMS]->(molInRing:Molecule)-[:FORMS]->(product:Molecule),
+// also collect the molecule that the beginMol is consuming (this makes the loop more likely to be a useful autocatalytic cycle)
+branchedBeginMolPath=(beginMol:Molecule)-[:FORMS]->(consumerMol:Molecule)
+//WHERE beginMol.generation_formed = 1
+RETURN DISTINCT
+
+// extract info from ringPath
+EXTRACT(n in NODES(ringPath)|n.smiles_str) AS molsInRingSmiles,
+EXTRACT(n in NODES(ringPath)|n.generation_formed) AS molsInRingGeneration,
+length(ringPath)+1 AS lengthMolsInRing,
+
+// extract info from attachedPath
+EXTRACT(n in NODES(attachedPath)|n.smiles_str) AS attachedMolsSmiles,
+EXTRACT(n in NODES(attachedPath)|n.generation_formed) AS attachedMolsGeneration,
+
+// extract info from the consumer molecule that is using a product of the autocatalytic loop
+EXTRACT(n in NODES(branchedBeginMolPath)|n.smiles_str) AS consumerMolSmiles,
+EXTRACT(n in NODES(branchedBeginMolPath)|n.generation_formed) AS consumerMolGeneration
+//reactant.smiles_str AS feederMolecule,
+//product.smiles_str AS producedMolecule,
+//consumerMol.smiles_str AS consumerMolecule
+
+// order by smallest rings first (as the loops get bigger they become more difficult to maintain;
+// the smallest are most stable)
+ORDER BY length(molsInRingSmiles) ASC
+LIMIT 10
