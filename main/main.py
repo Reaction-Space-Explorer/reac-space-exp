@@ -54,7 +54,9 @@ generations = 1
     labelSettings=LabelSettings(LabelType.Term, LabelRelation.Specialisation))'''
 
 # store the rules in a separate list
-rules_list = inputRules
+rules_list = []
+for rule in inputRules:
+    rules_list.append(rule)
 # now load Cannizarro2 into inputRules so that loading the DG doesn't give an error (rule not found)
 # because the dumped dg had Cannizarro 2 reactions in it.
 include(os.path.join("..", "rules/cannizarro2.py"))
@@ -143,7 +145,7 @@ print(f"{len(matching_structs)} of {len(sdfile)} ({100* len(matching_structs)/le
 
 postSection("Molecules with possible incomplete valencies")
 #postSection("All vertices")
-for v in dg.vertices:
+for v in dg_new.vertices:
     if '[C' in v.graph.smiles:
         v.graph.print(p)
 

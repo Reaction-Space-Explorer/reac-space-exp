@@ -42,7 +42,8 @@ def smiles_from_molecule(molecule):
 
     Returns: an *RDKit* canonical SMILES
     """
-    smi_flavor = cdk.smiles.SmiFlavor
+    # I wanted to use SmiFlavor.Unique as an argument to the SmilesGenerator constructor
+    #smi_flavor = cdk.smiles.SmiFlavor
     smilesGenerator = cdk.smiles.SmilesGenerator(True)
     smiles = smilesGenerator.createSMILES(molecule)
     # Note: this method may not create canonical SMILES prefer using RDKit for canonicalization
@@ -52,13 +53,13 @@ def smiles_from_molecule(molecule):
     return smiles
 
 
-def generateTautomers(smiles, mode="IA-DFS"):
+def generateTautomers(smiles, mode="CMI"):
     """
     Generate the list of possible tautomers for a given molecule
 
     Keyword arguments:
     smiles -- the SMILES string of the molecule
-    mode -- The generation algorithm to use (default: "IA-DFS")
+    mode -- The generation algorithm to use (default: "CMI")
 
     Available  algorithms include:
         "CM" for Simple Combinatorial,
