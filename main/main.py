@@ -1,6 +1,7 @@
 import os
 import time
 from rdkit.Chem import SDMolSupplier, MolToSmiles
+from mod_to_neo4j_exporter import export_to_neo4j
 
 include(os.path.abspath(os.path.join('..', 'rules/all.py')))
 # including these files using MOD's include() so that MOD's functions are callable in them
@@ -116,9 +117,9 @@ with dg.build() as b:
         #print('Subset size after removal:', len(subset))
         # This step replaces the previous subset (containing tautomers) with the cleaned subset
         #res = b.execute(addSubset(subset) >> addUniverse(universe))
-        # now compare how man
-        # y of these simulations were found in the MS data.
+        # now compare how many of these simulations were found in the MS data.
         compare_sims(dg, gen+1, print_extra=False)
+        export_to_neo4j(dg_obj = dg, generation_num = gen)
     print('Completed')'''
 
 # compare structures with what the Y&M paper has
