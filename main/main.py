@@ -1,10 +1,11 @@
 import os
 import time
-import compare_ms
 from rdkit.Chem import SDMolSupplier, MolToSmiles
 from mod_to_neo4j_exporter import export_to_neo4j
 
 include(os.path.abspath(os.path.join('..', 'rules/all.py')))
+# including these files using MOD's include() so that MOD's functions are callable in them
+include("compare_ms.py")
 #include('clean_tautomers.py')
 
 postChapter('Alkaline Glucose Degradation')
@@ -27,8 +28,8 @@ def pred(derivation):
     d --- a derivation graph object
     """
     for g in derivation.right:
-        # Allow masses only < 1200
-        if g.exactMass >= 500:
+        # Allow masses only lower than a certain maximum
+        if g.exactMass >= 185:
             return False
         for fb in forbidden:
             if fb.monomorphism(g, labelSettings=
@@ -36,7 +37,6 @@ def pred(derivation):
                 return False
         #print(g)
     return True
-
 
 strat = (
     addSubset(inputGraphs)
@@ -48,22 +48,65 @@ strat = (
 )
 
 # Number of generations we want to perform
-generations = 2
+generations = 1
 
 #postSection('Final Network')
-dg = DG(graphDatabase=inputGraphs,
+'''dg = DG(graphDatabase=inputGraphs,
+    labelSettings=LabelSettings(LabelType.Term, LabelRelation.Specialisation))'''
+
+# store the rules in a separate list
+rules_list = []
+for rule in inputRules:
+    rules_list.append(rule)
+# now load Cannizarro2 into inputRules so that loading the DG doesn't give an error (rule not found)
+# because the dumped dg had Cannizarro 2 reactions in it.
+include(os.path.join("..", "rules/cannizarro2.py"))
+
+dg = dgDump(inputGraphs, inputRules, "round3_185.dg")
+print("Finished loading from dump file")
+
+p = GraphPrinter()
+p.simpleCarbons = True
+p.withColour = True
+p.collapseHydrogens = True
+
+dg_new = DG(graphDatabase=inputGraphs,
     labelSettings=LabelSettings(LabelType.Term, LabelRelation.Specialisation))
 
-'''dg = dgDump(inputGraphs, inputRules, "000_DG.dg")
-print("Finished loading from dump file")'''
+with dg_new.build() as b:
+    for v in dg.vertices:
+        if v.graph not in inputGraphs:
+            #print(f"Adding {v.graph}")
+            inputGraphs.append(v.graph)
+        else:
+            pass
+    # add everything in dg to dg_new
+    for e in dg.edges:
+        sources = [source.graph for source in e.sources]
+        targets = [target.graph for target in e.targets]
+        d = Derivations()
+        d.left = sources
+        d.rules = e.rules
+        d.right = targets
+        b.addDerivation(d)
+    # Confirming that everything in dg was added to dg_new
+    print("Checking for differences")
+    diffDGs(dg, dg_new)
+    print("If nothing was printed, the two DGs are identical")
+    #once done, now we can do our stuff
+    b.execute(addSubset(inputGraphs) >> rightPredicate[pred](rules_list), verbosity=8)
 
-subset = inputGraphs
+'''subset = inputGraphs
 universe = []
+
+# In the following block, apart from generating the reactions, we may print structures
+# and reactions forming them that are not in the MS
+#postSection("Structures not found in MS")
 with dg.build() as b:
     for gen in range(generations):
         start_time = time.time()
         print(f"Starting round {gen+1}")
-        res = b.execute(addSubset(subset) >> addUniverse(universe) >> strat, verbosity=2)
+        res = b.execute(addSubset(subset) >> addUniverse(universe) >> strat, verbosity=8)
         end_time = time.time()
         print(f"Took {end_time - start_time} seconds to complete round {gen+1}")
         print('Original subset size:', len(res.subset))
@@ -75,37 +118,44 @@ with dg.build() as b:
         # This step replaces the previous subset (containing tautomers) with the cleaned subset
         #res = b.execute(addSubset(subset) >> addUniverse(universe))
         # now compare how many of these simulations were found in the MS data.
-        compare_ms.compare_sims([v.graph.smiles for v in dg.vertices], gen+1)
+        compare_sims(dg, gen+1, print_extra=False)
         export_to_neo4j(dg_obj = dg, generation_num = gen)
-    print('Completed')
+    print('Completed')'''
 
 # compare structures with what the Y&M paper has
 sdfile = SDMolSupplier(os.path.join("..", "data/NewAlkalineHydrolysisStructures.sdf"))
 
 matching_structs = []
 not_matching = []
+postSection('Matching Structures')
 
 print("Checking for matches with Y&M's structures")
-
 for mol in sdfile:
     smi = MolToSmiles(mol)
     #smi.replace("", "")
     mol_graph = smiles(smi, add=False)
-    for v in dg.vertices:
+    for v in dg_new.vertices: #dg.vertices
         if v.graph.isomorphism(mol_graph) == 1:
             matching_structs.append(mol_graph)
             print("Structure {0} of the SDF found in the network!".format(mol_graph.smiles))
+            v.graph.print(p)
         else:
             not_matching.append(mol_graph)
 
 print(f"{len(matching_structs)} of {len(sdfile)} ({100* len(matching_structs)/len(sdfile)}%)  total structures in the SDF are in the reaction network.")
 
+postSection("Molecules with possible incomplete valencies")
+#postSection("All vertices")
+for v in dg_new.vertices:
+    if '[C' in v.graph.smiles:
+        v.graph.print(p)
+
 f = dg.dump()
 print("Dump file: ", f)
 
-rules_count = []
+'''rules_count = []
 for e in dg.edges:
-    for rule in e.rules:
+    for rule in e.rules:raphs
         rules_count.append(rule.name)
 
 rules_used = dict({rule:True for rule in rules_count})
@@ -127,11 +177,12 @@ dgprint = DGPrinter()
 dgprint.withRuleName = True
 dgprint.withShortcutEdges = True
 
+postSection("Reactions")
 #for item_to_print in to_print:
 #    count = 0
 #postSection(f"{item_to_print} reactions")
 # print all reactions
-'''for e in dg.edges:
+for e in dg.edges:
         # Don't print more than 35 of any category
 #        if count > 35:
 #            pass
@@ -150,16 +201,12 @@ dgprint.withShortcutEdges = True
             d.right = targets
             fake_edge = b.addDerivation(d)
             print("Printing reaction: ", fake_edge)
-        dg2.print(dgprint)'''
+        dg2.print(dgprint)
 # dump smiles
-'''with open("dump_smiles.txt", "w") as dump:
+with open("dump_smiles.txt", "w") as dump:
     for v in dg.vertices:
         dump.write(f'{v.graph.smiles}\n')'''
 
 #dg.print()
-'''postSection('Individual Vertices')
-p = GraphPrinter()
-p.simpleCarbons = True
-p.withColour = True
-p.collapseHydrogens = True
+'''
 '''
