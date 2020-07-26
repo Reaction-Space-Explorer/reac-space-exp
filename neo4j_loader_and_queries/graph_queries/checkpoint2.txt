@@ -1,0 +1,9 @@
+MATCH ringPath=(beginMol:Molecule)-[:FORMS*1..6]->(beginMol:Molecule)
+UNWIND nodes(ringPath) as ringMol
+WITH collect(distinct ringMol.smiles_str) AS ringMols, ringPath, relationships(ringPath) as ringRels
+//WITH ringPath, relationships(ringPath) as ringRels, collect(distinct nodes(ringPath)) as ringMols, size(relationships(ringPath)) as num_rels_in_ring, size(collect(distinct nodes(ringPath.smiles_str))) as num_mols_in_ring
+//WHERE num_rels_in_ring > 4
+WHERE size(ringMols) > 2
+AND size(ringRels) = size(ringMols)
+RETURN *
+LIMIT 1

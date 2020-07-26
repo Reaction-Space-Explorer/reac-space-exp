@@ -1,0 +1,64 @@
+//
+// Assert patterns to look for
+//
+MATCH
+
+// First, search for the ring pattern. I.e., begin and end at the same molecule,
+// with an arbitrary number (*) of hops. (The number of hops can be controlled below
+// with length(ringPath) filter.)
+ringPath=(beginMol:Molecule)-[:FORMS*]->(beginMol:Molecule),
+
+// Next, collect any molecule attached to ring pattern above, limited to 1 hop.
+// This attachment consists of a feeder and consumer molecule, where the molecule in the ring
+// is the intermediate molecule. The feeder molecule what drives the cycle to begin.
+attachedPath=(feederMol:Molecule)-[:FORMS]->(intermediateMol:Molecule)-[:FORMS]->(consumerMol:Molecule),
+
+// Next, collect the molecule that is consuming beginMol.
+// This makes the loop more likely to be a useful autocatalytic cycle.
+branchedBeginMolPath=(beginMol:Molecule)-[:FORMS]->(beginMolConsumer:Molecule)
+
+
+
+//
+// Set some filter conditions
+//
+
+
+// The feeder and consumer molecule shouldn't be in the ringPath.
+WHERE NOT feederMol IN NODES(ringPath)
+AND NOT consumerMol IN NODES(ringPath)
+AND beginMol <> beginMolConsumer
+
+// The intermediate molecule in the attachedPath must be in the ringPath.
+AND intermediateMol IN NODES(ringPath)
+
+// The feeder molecule in the attachedPath can't be the same as the consumer molecule.
+AND feederMol <> consumerMol
+
+// assert that ring must travel in same direction (no flipping directions in the middle of the ring)
+AND NOT (beginMol:Molecule)-[:FORMS]->(beginMol:Molecule)<-[:FORMS]-(beginMol:Molecule)
+
+// Assert that the number of relationships in the ring must equal the number of nodes in the ring.
+// This will prevent constriction points in the ring, i.e. prevent the path from traveling over the same
+// molecule twice. Length(ringPath) returns the number of relationships in the ring path, and
+// size(nodes(ringPath)) returns the count of nodes.
+AND length(ringPath) = size(NODES(ringPath))
+
+// only filter for rings of a certain count of molecules in the ringPath
+// AND length(ringPath) > 4
+
+// control the generation at which the feeder molecule is formed
+// (this means that the cycle begins operating at or after the generation)
+// AND feederMol.generation_formed = 3
+
+
+
+
+//
+// Finally, return a limited number of distinct patterns that match the query
+//
+RETURN *
+LIMIT 1
+
+// Or, return the size of the longest ring
+// RETURN max(nodes(ringPath))

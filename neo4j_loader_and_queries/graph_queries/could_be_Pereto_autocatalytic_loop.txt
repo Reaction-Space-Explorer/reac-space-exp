@@ -1,0 +1,20 @@
+MATCH
+
+// search for ring patterns
+ringPath=(beginMol:Molecule)-[:FORMS*]->(beginMol:Molecule),
+
+// also collect any molecule attached to ring pattern above, limited to 1 hop
+attachedPath=(feederMol:Molecule)-[:FORMS]->(intermediateMol:Molecule)-[:FORMS]->(consumerMol:Molecule),
+
+// also collect the molecule that the beginMol is consuming (this makes the loop more likely to be a useful autocatalytic cycle)
+branchedBeginMolPath=(beginMol:Molecule)-[:FORMS]->(beginMolConsumer:Molecule)
+
+// set some filter conditions, i.e. the feeder molecule in the attachedPath can't be the same as the consumer molecule
+WHERE NOT feederMol IN NODES(ringPath)
+AND NOT consumerMol IN NODES(ringPath)
+AND intermediateMol IN NODES(ringPath)
+AND feederMol <> consumerMol
+
+// return nodes & rels that match the query
+RETURN DISTINCT *
+LIMIT 1
