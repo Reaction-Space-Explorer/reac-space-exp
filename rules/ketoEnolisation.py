@@ -22,5 +22,9 @@ ketoEnolisation = [ruleGMLString("""rule [
 		edge [ source 1 target 6 label "-" ]
 		edge [ source 2 target 3 label "=" ]
 	]
+	constrainAdj [ id 1 op "=" count 0 
+		nodeLabels [ label "O" label "N" label "S" ]
+		edgeLabels [ label "-" ]
+	]
 ]
 """)]
