@@ -29,6 +29,14 @@ def create_hemiacetal_formation(ring_size):
 		'# close the ring by joining O and C',
 		'edge [ source 4 target 2 label "-" ]'])
 
+	# avoid applying if the C=O is part of an amide/carboxylic/thiocarboxylic acid
+	rule.constraints.extend([
+		'constrainAdj [ id 4 op "=" count 0',
+		'\tnodeLabels [ label "O" label "N" label "S" ]',
+		'\tedgeLabels [ label "-" ]'
+		']'
+	]
+	)
 	return rule.loadRule()
 
 hemiacetal_formation = [create_hemiacetal_formation(ring_size) for ring_size in (5, 6, 7)]
