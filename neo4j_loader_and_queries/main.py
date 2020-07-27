@@ -2,12 +2,18 @@ import pandas as pd
 import numpy as np
 import os
 from py2neo import Graph, Node, Relationship, NodeMatcher, RelationshipMatcher
+import json
+import datetime
+import matplotlib.pyplot as plt
 
 url = "bolt://neo4j:0000@localhost:7687"
 graph = Graph(url)
 matcher = NodeMatcher(graph)
 rel_matcher = RelationshipMatcher(graph)
 
+
+def get_timestamp():
+    return str(datetime.datetime.now()).replace(":","-").replace(" ","_").replace(".","-")
 
 def rxn_query_str(reactant, product, rxn_id):
     """
@@ -185,7 +191,8 @@ def import_data_from_MOD_exports(folder_path):
 
 
 def get_tabulated_possible_autocatalytic_cycles(ring_size_range = (3,7),
-                                                feeder_molecule_generation_range = None
+                                                feeder_molecule_generation_range = None,
+                                                num_structures_limit = 100
                                                 ):
     """
     After the graph has been loaded with data, let's execute a query and export
@@ -194,8 +201,10 @@ def get_tabulated_possible_autocatalytic_cycles(ring_size_range = (3,7),
     An input of "None" to any of the params means no limit. By default the ring
     size will be from 3 molecules to 7.
     """
+    print("\tPreparing query for cycles...")
     
     # make sure inputs are okay
+    print("\t\tChecking input parameters...")
     min_ring_size = ring_size_range[0]
     max_ring_size = ring_size_range[1]
     if min_ring_size < 0 or max_ring_size < 0:
@@ -217,24 +226,43 @@ def get_tabulated_possible_autocatalytic_cycles(ring_size_range = (3,7),
         if min_feeder_gen > max_feeder_gen:
             print("The minimum feeder generation must not exceed the maximum.")
             quit()
+    else:
+        min_feeder_gen = None
+        max_feeder_gen = None
     
     # load query and insert params
+    print("\t\tReplacing query parameters in query string...")
     query_txt = open("graph_queries/_FINAL_QUERY_PARAMETERIZED.txt",'r').read()
     query_txt = query_txt.replace("{{MIN_RING_SIZE}}", str(min_ring_size))
     query_txt = query_txt.replace("{{MAX_RING_SIZE}}", str(max_ring_size))
     
     
     if feeder_molecule_generation_range == None:
-        query_txt = query_txt.replace("{{COMMENT_OUT}}", "//")
+        query_txt = query_txt.replace("{{COMMENT_OUT_FEEDER_GEN_LOGIC}}", "//")
     else:
+        query_txt = query_txt.replace("{{COMMENT_OUT_FEEDER_GEN_LOGIC}}", "")
         query_txt = query_txt.replace("{{MIN_FEEDER_GENERATION}}", str(min_feeder_gen))
         query_txt = query_txt.replace("{{MAX_FEEDER_GENERATION}}", str(max_feeder_gen))
-    print(query_txt)
     
+    query_txt = query_txt.replace("{{NUM_STRUCTURES_LIMIT}}", str(num_structures_limit))
+    # print("\t\t\t" + query_txt)
     
     # execute query in Neo4j
-
-
+    print("\t\tExecuting query and collecting results (this may take awhile)...")
+    query_result = graph.run(query_txt).data()
+    # print("\t\tQuery results:")
+    # print(query_result[0])
+    print("\t\tSaving query results and meta info...")
+    this_out_folder = get_timestamp()
+    os.mkdir("output/" + this_out_folder)
+    with open('output/' + this_out_folder + '/query_results.json', 'w') as file_data_out:
+        json.dump(query_result, file_data_out)
+    with open("output/" + this_out_folder + "/query.txt", 'w') as file_query_out:
+        file_query_out.write(query_txt)
+    query_params = pd.DataFrame( {"parameter": ["min_ring_size","max_ring_size","min_feeder_gen","max_feeder_gen","num_structures_limit"],
+                                  "value": [min_ring_size, max_ring_size, min_feeder_gen, max_feeder_gen, num_structures_limit] } )
+    query_params.to_csv("output/" + this_out_folder + "/query_parameters.csv", index=False)
+    return this_out_folder
 
 def analyze_possible_autocatalytic_cycles():
     """
@@ -242,10 +270,32 @@ def analyze_possible_autocatalytic_cycles():
     analysis on what's going on.
     
     1. Calculate the the count of cycles found per generation
-    2. Total mass per cycle per generation
+    2. Total/avg mass per cycle per generation
     3. 
     """
-    pass
+    
+    print("Preparing graph query:")
+    query_results_folder = get_tabulated_possible_autocatalytic_cycles(ring_size_range = (3, 8),
+                                                                       feeder_molecule_generation_range = None,
+                                                                       num_structures_limit = 20)
+    # query_results_folder = "2020-07-27_15-48-35-964434" # manually override for debugging
+    
+    print("Generating some plots on cycle size distribution / stats by generation...")
+    query_data = pd.read_json("output/" + query_results_folder + "/query_results.json")
+    # print(query_data.describe())
+    # print(query_data.head())
+    # cycle distribution (y axis is frequency, x axis is ring size)
+    fig, ax = plt.subplots()
+    query_data['countMolsInRing'].value_counts().plot(ax = ax,
+                                                      kind='bar',
+                                                      title = "Ring Size Frequency Distribution")
+    
+    plt.show()
+    #
+    
+    print("Saving plots...")
+    
+    print("Network analysis done.")
 
 
 
@@ -255,7 +305,7 @@ def analyze_possible_autocatalytic_cycles():
 if __name__ == "__main__":
     mod_exports_folder_path = "../main/Neo4j_Imports"
     # import_data_from_MOD_exports(mod_exports_folder_path)
-    get_tabulated_possible_autocatalytic_cycles()
+    analyze_possible_autocatalytic_cycles()
     
 
 

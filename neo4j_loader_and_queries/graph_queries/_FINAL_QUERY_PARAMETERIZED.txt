@@ -31,10 +31,10 @@ AND beginMolConsumer <> consumerMol
 AND intermediateMol <> beginMol
 AND NOT (beginMol:Molecule)-[:FORMS]->(beginMol:Molecule)<-[:FORMS]-(beginMol:Molecule) // Assert that the relationships in the ringPath must travel all in the same direction
 // control the generation range at which the cycle is formed by assuming it can't exist until after the feederMol is formed
-{{COMMENT_OUT}}AND feederMol.generation_formed >= {{MIN_FEEDER_GENERATION}} 
-{{COMMENT_OUT}}AND feederMol.generation_formed <= {{MAX_FEEDER_GENERATION}}
+{{COMMENT_OUT_FEEDER_GEN_LOGIC}}AND feederMol.generation_formed >= {{MIN_FEEDER_GENERATION}} 
+{{COMMENT_OUT_FEEDER_GEN_LOGIC}}AND feederMol.generation_formed <= {{MAX_FEEDER_GENERATION}}
 
 
 // Finally, return 1 matching structure to look at! (Tabulate results of many using a different query)
-RETURN ringMols, size(ringMols) as countMolsInRing, ringPath, ringRels, branchedBeginMolPath, attachedPath, beginMol, beginMolConsumer, feederMol, intermediateMol, consumerMol
-LIMIT 1
+RETURN ringMols, size(ringMols) as countMolsInRing, ringRels, beginMol, beginMolConsumer, feederMol, intermediateMol, consumerMol // ringPath, branchedBeginMolPath, attachedPath
+LIMIT {{NUM_STRUCTURES_LIMIT}}
