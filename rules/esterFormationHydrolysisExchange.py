@@ -1,7 +1,43 @@
 include("common.py")
 
-def esterFormationHydrolysisExchangeGen():
-	r = RuleGen("Ester Formation Hydrolysis Exchange")
+ester_hydrolysis = ruleGMLString("""rule [
+	ruleID "Ester Hydrolysis"
+	labelType "term"
+	left [
+		edge [ source 2 target 4 label "-" ]
+		edge [ source 6 target 8 label "-" ]
+	]
+	context [
+		# The ester
+		node [ id 1 label "C" ]
+		node [ id 2 label "C" ]
+		node [ id 3 label "O" ]
+		node [ id 4 label "O" ]
+		node [ id 5 label "C" ]
+		# H2O
+		node [ id 6 label "O" ]
+		node [ id 7 label "H" ]
+		node [ id 8 label "H" ]
+		edge [ source 1 target 2 label "-" ]
+		edge [ source 2 target 3 label "=" ]
+		edge [ source 4 target 5 label "-" ]
+		edge [ source 6 target 7 label "-" ]
+	]
+	right [
+		edge [ source 2 target 6 label "-" ]
+		edge [ source 4 target 8 label "-" ]
+	]
+	# solely to avoid this rule from being inverible for now
+	constrainAdj [ id 2 op "=" count 1
+		nodeLabels [ label "O"]
+		edgeLabels [ label "-" ]
+	]
+]""")
+	
+
+# Temporarily turn off ester formation (happens less often in basic medium)
+'''def esterFormationHydrolysisExchangeGen():
+	r = RuleGen("Ester Formation")
 	r.label = "term"
 	r.left.extend([
 		'# OC(A)OR',
@@ -40,4 +76,5 @@ def esterFormationHydrolysisExchangeGen():
 	for r1 in attach_H_C(r, 3, 4):
 		yield r1.loadRule()
 
-esterFormationHydrolysisExchange = [a for a in esterFormationHydrolysisExchangeGen()]
+
+esterFormationHydrolysisExchange = [a for a in esterFormationHydrolysisExchangeGen()]'''
