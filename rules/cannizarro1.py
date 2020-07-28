@@ -26,5 +26,9 @@ cannizarro1 = [ruleGMLString("""rule [
 		edge [ source 3 target 6 label "-" ]
 		edge [ source 2 target 7 label "-" ]
 		edge [ source 4 target 8 label "-" ]
-	]   
+	]
+	constrainAdj [ id 2 op "=" count 0 
+		nodeLabels [ label "O" label "N" label "S" ]
+		edgeLabels [ label "-" ]
+	]
 ]""")]

@@ -30,7 +30,12 @@ benzilicAcidRearrangement = [ruleGMLString("""rule [
 		edge [ source 6 target 9 label "-" ]
 		edge [ source 8 target 2 label "-" ]
 	]
+	# neither carbonyl should be a part of a carboxylic acid, amide, etc.
 	constrainAdj [ id 2 op "=" count 0
+		nodeLabels [ label "N" label "O" label "S" ]
+		edgeLabels [ label "-" ]
+	]
+	constrainAdj [ id 3 op "=" count 0
 		nodeLabels [ label "N" label "O" label "S" ]
 		edgeLabels [ label "-" ]
 	]
