@@ -302,9 +302,9 @@ def analyze_possible_autocatalytic_cycles(mod_exports_folder_path):
     
     print("Preparing graph query:")
     query_results_folder = get_tabulated_possible_autocatalytic_cycles(mod_exports_folder_path = mod_exports_folder_path,
-                                                                       ring_size_range = (3, 8),
+                                                                       ring_size_range = (3, 6),
                                                                        feeder_molecule_generation_range = None,
-                                                                       num_structures_limit = 100)
+                                                                       num_structures_limit = 10)
     # query_results_folder = "2020-07-27_15-48-35-964434" # manually override for debugging
     
     print("Generating some plots on cycle size distribution / stats by generation...")
@@ -331,7 +331,7 @@ def analyze_possible_autocatalytic_cycles(mod_exports_folder_path):
 if __name__ == "__main__":
     # mod_exports_folder_path = "../main/Neo4j_Imports"
     mod_exports_folder_path = "../radicals/all7/Neo4j_Imports"
-    import_data_from_MOD_exports(mod_exports_folder_path = mod_exports_folder_path)
+    # import_data_from_MOD_exports(mod_exports_folder_path = mod_exports_folder_path)
     analyze_possible_autocatalytic_cycles(mod_exports_folder_path = mod_exports_folder_path)
     
 
