@@ -5,6 +5,7 @@ from py2neo import Graph, Node, Relationship, NodeMatcher, RelationshipMatcher
 import json
 import datetime
 import matplotlib.pyplot as plt
+from shutil import copytree
 
 url = "bolt://neo4j:0000@localhost:7687"
 graph = Graph(url)
@@ -145,7 +146,7 @@ def import_mock_data():
         
 
 
-def import_data_from_MOD_exports(folder_path):
+def import_data_from_MOD_exports(mod_exports_folder_path):
     """
     Import simple fake dataset to test queries out on.
     """
@@ -154,15 +155,22 @@ def import_data_from_MOD_exports(folder_path):
     graph.run("MATCH (n) DETACH DELETE n")
     
     # read in data
-    nodes_folder = folder_path + "/nodes"
-    rels_folder = folder_path + "/rels"
+    nodes_folder = mod_exports_folder_path + "/nodes"
+    rels_folder = mod_exports_folder_path + "/rels"
 
     # create nodes by iterating through each generation's file
     print("Importing nodes...")
     nodes_all_generation_file_names = os.listdir(nodes_folder)
+    # first get all generation numbers and sort them in order so the import
+    # doesn't go out of order
+    all_gens = []
     for generation_file in nodes_all_generation_file_names:
         generation_num = int(generation_file.split("_")[1].split(".")[0])
+        all_gens.append(generation_num)
+    all_gens.sort()
+    for generation_num in all_gens:
         print(f"\tGeneration number {generation_num}...")
+        generation_file = "nodes_" + str(generation_num) + ".txt"
         nodes = open(nodes_folder + "/" + generation_file,'r').read().split('\n')
         for node in nodes:
             if node != "":
@@ -175,9 +183,16 @@ def import_data_from_MOD_exports(folder_path):
     # create relationships by iterating through each generation's file
     print("Importing relationships...")
     rels_all_generation_file_names = os.listdir(rels_folder)
+    # first get all generation numbers and sort them in order so the import
+    # doesn't go out of order
+    all_rel_gens = []
     for generation_file in rels_all_generation_file_names:
         generation_num = int(generation_file.split("_")[1].split(".")[0])
+        all_rel_gens.append(generation_num)
+    all_rel_gens.sort()
+    for generation_num in all_rel_gens:
         print(f"\tGeneration number {generation_num}...")
+        generation_file = "rels_" + str(generation_num) + ".txt"
         rels = open(rels_folder + "/" + generation_file,'r').read().split('\n')
         for rel in rels:
             if rel != "":
@@ -190,7 +205,8 @@ def import_data_from_MOD_exports(folder_path):
 
 
 
-def get_tabulated_possible_autocatalytic_cycles(ring_size_range = (3,7),
+def get_tabulated_possible_autocatalytic_cycles(mod_exports_folder_path,
+                                                ring_size_range = (3,7),
                                                 feeder_molecule_generation_range = None,
                                                 num_structures_limit = 100
                                                 ):
@@ -247,16 +263,30 @@ def get_tabulated_possible_autocatalytic_cycles(ring_size_range = (3,7),
     query_txt = query_txt.replace("{{NUM_STRUCTURES_LIMIT}}", str(num_structures_limit))
     # print("\t\t\t" + query_txt)
     
-    # execute query in Neo4j
+    # Execute query in Neo4j. If out of memory error occurs, need to change DB settings:
+    # I used heap initial size set to 20G, heap max size set to 20G, and page cache size set to 20G,
+    # but these settings would depend on your hardware limitations.
+    # See Neo4j Aura for cloud hosting: https://neo4j.com/aura/
     print("\t\tExecuting query and collecting results (this may take awhile)...")
+    print(f"\t\t\tTime start: {get_timestamp()}")
     query_result = graph.run(query_txt).data()
+    print(f"\t\t\tTime finish: {get_timestamp()}")
     # print("\t\tQuery results:")
     # print(query_result[0])
     print("\t\tSaving query results and meta info...")
     this_out_folder = get_timestamp()
     os.mkdir("output/" + this_out_folder)
+    
+    # save data as JSON and CSV (JSON for easy IO, CSV for human readability)
     with open('output/' + this_out_folder + '/query_results.json', 'w') as file_data_out:
         json.dump(query_result, file_data_out)
+    data_df = pd.read_json('output/' + this_out_folder + '/query_results.json')
+    data_df.to_csv('output/' + this_out_folder + '/query_results.csv', index=False)
+    
+    # save Neo4j_Imports folder
+    copytree(mod_exports_folder_path, 'output/' + this_out_folder + "/Neo4j_Imports")
+    
+    # save meta info as well in out folder
     with open("output/" + this_out_folder + "/query.txt", 'w') as file_query_out:
         file_query_out.write(query_txt)
     query_params = pd.DataFrame( {"parameter": ["min_ring_size","max_ring_size","min_feeder_gen","max_feeder_gen","num_structures_limit"],
@@ -264,7 +294,9 @@ def get_tabulated_possible_autocatalytic_cycles(ring_size_range = (3,7),
     query_params.to_csv("output/" + this_out_folder + "/query_parameters.csv", index=False)
     return this_out_folder
 
-def analyze_possible_autocatalytic_cycles():
+
+
+def analyze_possible_autocatalytic_cycles(mod_exports_folder_path):
     """
     Now that we have the tabulated results of the graph queries, let's do some
     analysis on what's going on.
@@ -275,9 +307,10 @@ def analyze_possible_autocatalytic_cycles():
     """
     
     print("Preparing graph query:")
-    query_results_folder = get_tabulated_possible_autocatalytic_cycles(ring_size_range = (3, 8),
+    query_results_folder = get_tabulated_possible_autocatalytic_cycles(mod_exports_folder_path = mod_exports_folder_path,
+                                                                       ring_size_range = (3, 5),
                                                                        feeder_molecule_generation_range = None,
-                                                                       num_structures_limit = 20)
+                                                                       num_structures_limit = 100000)
     # query_results_folder = "2020-07-27_15-48-35-964434" # manually override for debugging
     
     print("Generating some plots on cycle size distribution / stats by generation...")
@@ -289,11 +322,9 @@ def analyze_possible_autocatalytic_cycles():
     query_data['countMolsInRing'].value_counts().plot(ax = ax,
                                                       kind='bar',
                                                       title = "Ring Size Frequency Distribution")
-    
+    plt.savefig("output/" + query_results_folder + "/ring_size_distribution.png")
     plt.show()
-    #
     
-    print("Saving plots...")
     
     print("Network analysis done.")
 
@@ -303,9 +334,10 @@ def analyze_possible_autocatalytic_cycles():
 
 
 if __name__ == "__main__":
-    mod_exports_folder_path = "../main/Neo4j_Imports"
-    # import_data_from_MOD_exports(mod_exports_folder_path)
-    analyze_possible_autocatalytic_cycles()
+    # mod_exports_folder_path = "../main/Neo4j_Imports"
+    mod_exports_folder_path = "../radicals/all7/Neo4j_Imports"
+    # import_data_from_MOD_exports(mod_exports_folder_path = mod_exports_folder_path)
+    analyze_possible_autocatalytic_cycles(mod_exports_folder_path = mod_exports_folder_path)
     
 
 
