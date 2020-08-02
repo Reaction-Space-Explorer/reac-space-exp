@@ -5,7 +5,7 @@ from py2neo import Graph, Node, Relationship, NodeMatcher, RelationshipMatcher
 import json
 import datetime
 import matplotlib.pyplot as plt
-import shutil
+from shutil import copytree
 
 url = "bolt://neo4j:0000@localhost:7687"
 graph = Graph(url)
@@ -263,22 +263,28 @@ def get_tabulated_possible_autocatalytic_cycles(mod_exports_folder_path,
     query_txt = query_txt.replace("{{NUM_STRUCTURES_LIMIT}}", str(num_structures_limit))
     # print("\t\t\t" + query_txt)
     
-    # execute query in Neo4j
+    # Execute query in Neo4j. If out of memory error occurs, need to change DB settings:
+    # I used heap initial size set to 20G, heap max size set to 20G, and page cache size set to 20G,
+    # but these settings would depend on your hardware limitations.
+    # See Neo4j Aura for cloud hosting: https://neo4j.com/aura/
     print("\t\tExecuting query and collecting results (this may take awhile)...")
+    print(f"\t\t\tTime start: {get_timestamp()}")
     query_result = graph.run(query_txt).data()
+    print(f"\t\t\tTime finish: {get_timestamp()}")
     # print("\t\tQuery results:")
     # print(query_result[0])
     print("\t\tSaving query results and meta info...")
     this_out_folder = get_timestamp()
     os.mkdir("output/" + this_out_folder)
-    # save data as JSON and CSV (JSON for code readability, CSV for human readability)
+    
+    # save data as JSON and CSV (JSON for easy IO, CSV for human readability)
     with open('output/' + this_out_folder + '/query_results.json', 'w') as file_data_out:
         json.dump(query_result, file_data_out)
     data_df = pd.read_json('output/' + this_out_folder + '/query_results.json')
     data_df.to_csv('output/' + this_out_folder + '/query_results.csv', index=False)
     
     # save Neo4j_Imports folder
-    shutil.copyfile(mod_exports_folder_path, 'output/Neo4j_Imports')
+    copytree(mod_exports_folder_path, 'output/' + this_out_folder + "/Neo4j_Imports")
     
     # save meta info as well in out folder
     with open("output/" + this_out_folder + "/query.txt", 'w') as file_query_out:
@@ -302,9 +308,9 @@ def analyze_possible_autocatalytic_cycles(mod_exports_folder_path):
     
     print("Preparing graph query:")
     query_results_folder = get_tabulated_possible_autocatalytic_cycles(mod_exports_folder_path = mod_exports_folder_path,
-                                                                       ring_size_range = (3, 6),
+                                                                       ring_size_range = (3, 5),
                                                                        feeder_molecule_generation_range = None,
-                                                                       num_structures_limit = 10)
+                                                                       num_structures_limit = 100000)
     # query_results_folder = "2020-07-27_15-48-35-964434" # manually override for debugging
     
     print("Generating some plots on cycle size distribution / stats by generation...")
@@ -316,10 +322,9 @@ def analyze_possible_autocatalytic_cycles(mod_exports_folder_path):
     query_data['countMolsInRing'].value_counts().plot(ax = ax,
                                                       kind='bar',
                                                       title = "Ring Size Frequency Distribution")
-    
+    plt.savefig("output/" + query_results_folder + "/ring_size_distribution.png")
     plt.show()
     
-    print("Saving plots...")
     
     print("Network analysis done.")
 
