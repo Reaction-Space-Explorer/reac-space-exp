@@ -39,5 +39,6 @@ test/restart_from_seed.py
 radicals/Neo4j_Imports
 main/Neo4j_Imports
 
-# ALLOW text files for graph queries
+# ALLOW text files for this folder
 !neo4j_loader_and_queries
+
