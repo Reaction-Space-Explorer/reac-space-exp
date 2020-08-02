@@ -42,5 +42,3 @@ main/Neo4j_Imports
 # ALLOW text files for this folder
 !neo4j_loader_and_queries
 
-# Ignore the Neo4j output folder
-
