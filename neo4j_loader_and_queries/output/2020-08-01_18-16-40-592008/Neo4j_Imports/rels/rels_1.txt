@@ -1,0 +1,6 @@
+4,[Md],[Md],'Initiation Ruptura C-H'
+4,C,[Md],'Initiation Ruptura C-H'
+4,[Md],[CH3],'Initiation Ruptura C-H'
+4,C,[CH3],'Initiation Ruptura C-H'
+4,[Md],[H],'Initiation Ruptura C-H'
+4,C,[H],'Initiation Ruptura C-H'
