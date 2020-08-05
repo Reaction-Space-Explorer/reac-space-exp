@@ -36,5 +36,5 @@ AND NOT (beginMol:Molecule)-[:FORMS]->(beginMol:Molecule)<-[:FORMS]-(beginMol:Mo
 
 
 // Finally, return 1 matching structure to look at! (Tabulate results of many using a different query)
-RETURN ringMols, size(ringMols) as countMolsInRing, ringRels, beginMol, beginMolConsumer, feederMol, intermediateMol, consumerMol // ringPath, branchedBeginMolPath, attachedPath
+RETURN ringMols, size(ringMols) as countMolsInRing, ringRels, relationships(branchedBeginMolPath) as branchedBeginMolPathRels, relationships(attachedPath) as attachedPathRels, beginMol, beginMolConsumer, feederMol, intermediateMol, consumerMol, nodes(ringPath) as ringPathNodes, nodes(branchedBeginMolPath) as branchedBeginMolPathNodes, nodes(attachedPath) as attachedPathNodes // ringPath, branchedBeginMolPath, attachedPath
 LIMIT {{NUM_STRUCTURES_LIMIT}}
