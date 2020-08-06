@@ -1,4 +1,3 @@
-#TODO: The oxidation rule isn't being applied, check why.
 def gen_cann_glucose():
 	"""
 	Generate 2 rules for Cannizarro with glucose as one of the oxidant/reductants
@@ -77,15 +76,12 @@ def gen_cann_glucose():
 	ox_rule.constraints.extend(constraint)
 	red_rule.constraints.extend(constraint)
 
-	return ox_rule.loadRule()#, red_rule.loadRule()
+	return [ox_rule.loadRule(), red_rule.loadRule()]
 
-cannizarro_glucose_rule = [gen_cann_glucose()]
-for rule in cannizarro_glucose_rule:
-	rule.print()
-	print(rule.getGMLString())
+cannizarro_glucose_rule = gen_cann_glucose()
 
-'''cannizarro_hcho = [ruleGMLString("""rule [
-	ruleID "Cannizarro 2, HCHO"
+cannizarro_hcho_ox = [ruleGMLString("""rule [
+	ruleID "Cannizarro 2, HCHO (oxidation)"
 	labelType "term"
 	left [
 		edge [ source 8 target 7 label "-" ]
@@ -124,8 +120,46 @@ for rule in cannizarro_glucose_rule:
 		nodeLabels [ label "O" label "N" label "S" ]
 		edgeLabels [ label "-" ]
 	]
+]""")]
+
+cannizarro_hcho_red = [ruleGMLString("""rule[
+	ruleID "Cannizarro 2, HCHO (reduction)"
+	labelType "term"
+	left [
+		edge [ source 8 target 7 label "-" ]
+		edge [ source 2 target 3 label "=" ]
+		edge [ source 6 target 10 label "-" ]
+	]   
+	context [
+		#edge [ source 1 target 2 label "-" ]
+		edge [ source 2 target 4 label "-" ]
+		#edge [ source 5 target 6 label "-" ]
+		edge [ source 6 target 11 label "=" ]
+		edge [ source 8 target 9 label "-" ]
+		#node [ id 1 label "*" ]
+		node [ id 2 label "C" ]
+		node [ id 3 label "O" ]
+		node [ id 4 label "H" ]
+		#node [ id 5 label "*" ]
+		node [ id 6 label "C" ]
+		node [ id 7 label "H" ]
+		node [ id 8 label "O" ]
+		node [ id 9 label "H" ]
+		node [ id 10 label "H" ]
+		node [ id 11 label "O" ]
+		# Here, I am going to force one of them to be HCHO and not any other aldehyde
+		# to reduce number of reactions.
+		node [ id 12 label "H" ]
+		edge [ source 12 target 2 label "-" ]
+	]	
+	right [
+		edge [ source 6 target 8 label "-" ]
+		edge [ source 2 target 3 label "-" ]
+		edge [ source 3 target 10 label "-" ]
+		edge [ source 2 target 7 label "-" ]
+	]
 	constrainAdj[ id 6 op "=" count 0
 		nodeLabels [ label "O" label "N" label "S" ]
 		edgeLabels [ label "-" ]
 	]
-]""")]'''
+]""")]
