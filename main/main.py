@@ -1,23 +1,8 @@
 import os
 import time
 from rdkit.Chem import SDMolSupplier, MolToSmiles
-from mod_to_neo4j_exporter import export_to_neo4j
 
-medium = "Basic" # or "Acidic"
-
-include(os.path.abspath(os.path.join('..', 'rules/all.py')))
-# including these files using MOD's include() so that MOD's functions are callable in them
-include("compare_ms.py")
-#include('clean_tautomers.py')
-
-postChapter('Alkaline Glucose Degradation')
-#postChapter("Formose Reaction")
-# starting molecule
-#glucose = smiles('OC[C@H]1O[C@H](O)[C@H](O)[C@@H](O)[C@@H]1O', name='Glucose')
-#formaldehyde = smiles("C=O", name="Formaldehyde")
-#glycoladehyde = smiles("OCC=O", name="Glycolaldehyde")
-open_glucose = smiles("O=CC(O)C(O)C(O)C(O)C(O)", "Open Chain Glucose")
-water = smiles("O", name="Water")
+include(os.path.join('..', 'rules/all.py'))
 
 # Forbidden substructures (don't add them to inputGraphs)
 # Three and four membeered rings are unstable, any atom with two double bonds is forbidden
@@ -52,7 +37,7 @@ def pred(derivation):
 	"""
 	for g in derivation.right:
 		# Allow masses only lower than a certain maximum
-		if g.exactMass >= 185:
+		if g.exactMass >= 200:
 			return False
 		for fb in forbidden:
 			if fb.monomorphism(g, labelSettings=
@@ -78,23 +63,10 @@ strat = (
 	] (inputRules)#repeat[1]()
 )
 
-# Number of generations we want to perform
-generations = 4
-
-#postSection('Final Network')
-dg = DG(graphDatabase=inputGraphs,
-	labelSettings=LabelSettings(LabelType.Term, LabelRelation.Specialisation))
-
 p = GraphPrinter()
 p.simpleCarbons = True
 p.withColour = True
 p.collapseHydrogens = True
-
-'''dg = dgDump(inputGraphs, inputRules, "dumps/formose_4_rounds.dg")
-print("Finished loading from dump file")'''
-
-dg = DG(graphDatabase=inputGraphs,
-	labelSettings=LabelSettings(LabelType.Term, LabelRelation.Specialisation))
 
 # Use the following when applying a strategy to a DG loaded from a dump file
 '''start_time = 0
@@ -117,85 +89,60 @@ with dg_new.build() as b:
 	start_time = time.time()
 	res = b.execute(addSubset(inputGraphs) >> rightPredicate[pred](rules_list), verbosity=8)
 	print("Number of products this round: ", len(res.subset))
-
 end_time = time.time()
 print("Time taken for this 4th round: ", end_time-start_time)'''
 
 
-subset = inputGraphs
-universe = []
+def check_sdf_matches(dg, sdf_file, draw_structures=True):
+	"""
+	After generating the network, try to see if any structures match with those in SDF files
+	These files were usually created manually, storing structures reported in experimental
+	studies. The purpose is to match our simulations with experiments.
 
-# In the following block, apart from generating the reactions, we may print structures
-# and reactions forming them that are not in the MS
-#postSection("Structures not found in MS")
-with dg.build() as b:
-	for gen in range(generations):
-		start_time = time.time()
-		print(f"Starting round {gen+1}")
-		res = b.execute(addSubset(subset) >> addUniverse(universe) >> strat, verbosity=8)
-		end_time = time.time()
-		print(f"Took {end_time - start_time} seconds to complete round {gen+1}")
-		print('Original subset size:', len(res.subset))
+	Keyword arguments:
+	dg			-- the derivation graph of the network
+	sdf_file	-- path to the SDF file
+	draw_structures -- whether or not to print the structures in the summary pdf
+	"""
+	matching_structs = []
+	not_matching = []
+	postSection('Matching Structures')
+	print(f"Checking for matches with structures in {sdf_file}")
+	sdfile = SDMolSupplier(sdf_file)
+	for mol in sdfile:
+		smi = MolToSmiles(mol)
+		#smi.replace("", "")
+		mol_graph = smiles(smi, add=False)
+		for v in dg.vertices: #dg_new.vertices
+			if v.graph.isomorphism(mol_graph) == 1:
+				matching_structs.append(mol_graph)
+				print("Structure {0} of the SDF found in the network!".format(mol_graph.smiles))
+				if draw_structures == True:
+					v.graph.print(p)
+			else:
+				not_matching.append(mol_graph)
+	print(f"{len(matching_structs)} of {len(sdfile)} ({100* len(matching_structs)/len(sdfile)}%)  total structures in the SDF are in the reaction network.")
 
-		# The returned subset and universe do not contain redundant tautomers
-		#subset, universe = clean_taut(dg, res, algorithm="CMI")
-		subset, universe = res.subset, res.universe
-		#print('Subset size after removal:', len(subset))
-		# This step replaces the previous subset (containing tautomers) with the cleaned subset
-		#res = b.execute(addSubset(subset) >> addUniverse(universe))
-		# now compare how man
-		# y of these simulations were found in the MS data.
-		#compare_sims(dg, gen+1, print_extra=False)
-		#export_to_neo4j(dg_obj = dg, generation_num = gen)
-	print('Completed')
 
-'''with open("formose_reaction_4_rounds.txt", "w") as fish:
-	for v in dg_new.vertices:
-		fish.write(v.graph.smiles)
-		fish.write('\n')'''
+def write_gen_output(subset, generation, reaction_name):
+	"""
+	Create an output.txt while storing SMILES and generation number, so that we can later
+	compare generation by generation for common structures in different reactions
+	"""
+	with open(f"{reaction_name}_output.txt", "a") as f:
+		for graph in subset:
+			f.write(f"G{generation}\t{graph.smiles}\n")
 
-# compare structures with what the Y&M paper has
-sdfile = SDMolSupplier(os.path.join("..", "data/NewAlkalineHydrolysisStructures.sdf"))
 
-matching_structs = []
-not_matching = []
-postSection('Matching Structures')
-
-print("Checking for matches with Y&M's structures")
-for mol in sdfile:
-	smi = MolToSmiles(mol)
-	#smi.replace("", "")
-	mol_graph = smiles(smi, add=False)
-	for v in dg.vertices: #dg_new.vertices
-		if v.graph.isomorphism(mol_graph) == 1:
-			matching_structs.append(mol_graph)
-			print("Structure {0} of the SDF found in the network!".format(mol_graph.smiles))
-			v.graph.print(p)
-		else:
-			not_matching.append(mol_graph)
-
-print(f"{len(matching_structs)} of {len(sdfile)} ({100* len(matching_structs)/len(sdfile)}%)  total structures in the SDF are in the reaction network.")
-
-postSection("Molecules with possible incomplete valencies")
-#postSection("All vertices")
-for v in dg.vertices:
-	if '[C' in v.graph.smiles:
-		v.graph.print(p)
-
-f = dg.dump()
-print("Dump file: ", f)
-
-rules_count = []
-for e in dg.edges:
-	for rule in e.rules:
-		rules_count.append(rule.name)
-
-rules_used = dict({rule:True for rule in rules_count})
-for rule in rules_used.keys():
-	print(f"{rule} reaction count: {rules_count.count(rule)}")
-
-# Make a mass spectra (a histogram of the masses) of the molecules
-#compare_ms.make_mass_spectra([v.graph.smiles for v in dg.vertices])
+# Count number of times a rule appears in the edges' attributes.
+def count_rules(dg):
+	rules_count = []
+	for e in dg.edges:
+		for rule in e.rules:
+			rules_count.append(rule.name)
+	rules_used = dict({rule:True for rule in rules_count})
+	for rule in rules_used.keys():
+		print(f"{rule} reaction count: {rules_count.count(rule)}")
 
 # Print reactions of just the one reaction alone, in each in its own DG
 #to_print = ['Cannizarro', 'Knoevenagel, C, C(=O)A, OR, H |, HC', 'Ester Formation Hydrolysis Exchange',
@@ -217,8 +164,10 @@ dgprint.withShortcutEdges = True
 	edge [ source 1 target 3 label "-" ]
 	edge [ source 2 target 4 label "-" ]
 ]""", add=False)'''
+
 # Track what's producing methoxy ethers
-methoxy_ether = smiles("[O]C")
+methoxy_ether = smiles("[O]C", add=False)
+
 
 postSection("Methoxy ether producing reactions")
 #for item_to_print in to_print:
@@ -229,7 +178,7 @@ count = 0
 		# Don't print more than 35 of any category
 	if count > 50:
 		#pass
-	    break
+		break
 	else:
 		for rule in e.rules:
 			if "" in rule.name:
