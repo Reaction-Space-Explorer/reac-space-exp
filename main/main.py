@@ -110,6 +110,7 @@ def check_sdf_matches(dg, sdf_file, draw_structures=True):
 	print(f"Checking for matches with structures in {sdf_file}")
 	sdfile = SDMolSupplier(sdf_file)
 	for mol in sdfile:
+		print(mol)
 		smi = MolToSmiles(mol)
 		#smi.replace("", "")
 		mol_graph = smiles(smi, add=False)
@@ -169,9 +170,9 @@ dgprint.withShortcutEdges = True
 methoxy_ether = smiles("[O]C", add=False)
 
 
-postSection("Methoxy ether producing reactions")
+#postSection("Methoxy ether producing reactions")
 #for item_to_print in to_print:
-count = 0
+#count = 0
 #postSection(f"{item_to_print} reactions")
 # print all reactions
 '''for e in dg.edges:
