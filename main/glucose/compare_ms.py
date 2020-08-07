@@ -5,12 +5,12 @@ import matplotlib.pyplot as plt
 from rdkit.Chem.Descriptors import ExactMolWt
 from rdkit.Chem import MolFromSmiles, MolToSmiles
 
-
-glucose_data = pd.read_csv(os.path.join("..", 'data/Glucose_MeOH.csv'), delimiter=',',
+# had to add another ".." because now the code is being executed from a subdirectory in "main"
+glucose_data = pd.read_csv(os.path.join("..", '../data/Glucose_MeOH.csv'), delimiter=',',
 							 skiprows=[0,1,2,3,4,5,6,7,8, 1039, 1040], usecols=['Mass', 'Kendrick Mass'])
 # lines 1039 and 1040 in glucose_data and 1179, 1180 in dextrose_data are "***********"s
 # so I had to skip them. First 9 lines contain comments
-dextrose_data = pd.read_csv(os.path.join('..', 'data/Dextrose_MeOH.csv'), delimiter=',',
+dextrose_data = pd.read_csv(os.path.join('..', '../data/Dextrose_MeOH.csv'), delimiter=',',
 							 skiprows=[0,1,2,3,4,5,6,7,8, 1179, 1180], usecols=['Mass', 'Kendrick Mass'])
 
 # Drop rows containing NaNs
