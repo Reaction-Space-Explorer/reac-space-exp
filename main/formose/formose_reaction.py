@@ -1,3 +1,6 @@
+# This flag will be used to toggle one pair of extra Cannizarro 2 rules
+with_formaldehyde = True
+
 include("../main.py")
 
 postChapter("Formose Reaction")
@@ -34,11 +37,10 @@ with dg.build() as b:
 		#print('Subset size after removal:', len(subset))
 		# This step replaces the previous subset (containing tautomers) with the cleaned subset
 		#res = b.execute(addSubset(subset) >> addUniverse(universe))
-		# now compare how man
-		# y of these simulations were found in the MS data.
+		# now compare how many of these simulations were found in the MS data.
 		#compare_sims(dg, gen+1, print_extra=False)
 		#export_to_neo4j(dg_obj = dg, generation_num = gen)
-		write_gen_output(subset, gen, reaction_name="formose")
+		write_gen_output(subset, gen+1, reaction_name="formose")
 	print('Completed')
 
 # Dump the dg so it can be loaded again quickly without having to generate it from scratch.
