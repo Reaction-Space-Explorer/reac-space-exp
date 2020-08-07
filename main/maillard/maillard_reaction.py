@@ -1,3 +1,5 @@
+with_formaldehyde = False
+
 include("../main.py")
 
 postChapter("Maillard Reaction")
@@ -6,11 +8,11 @@ glycine = smiles("NCC(=O)O", name="Glycine")
 open_glucose = smiles("O=CC(O)C(O)C(O)C(O)C(O)", "Open Chain Glucose")
 water = smiles("O", name="Water")
 
-'''dg = dgDump(inputGraphs, inputRules, "../dumps/formose_4_rounds.dg")
+'''dg = dgDump(inputGraphs, inputRules, "../dumps/maillard_3.dg")
 print("Finished loading from dump file")'''
 
 # Number of generations we want to perform
-generations = 5
+generations = 2
 
 dg = DG(graphDatabase=inputGraphs,
 	labelSettings=LabelSettings(LabelType.Term, LabelRelation.Specialisation))
