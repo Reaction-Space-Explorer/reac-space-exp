@@ -51,4 +51,4 @@ with dg.build() as b:
 f = dg.dump()
 print("Dump file: ", f)
 
-check_sdf_matches(dg, "../../data/JohnsonEtal2008WolmanEtAl1972MillerUreyplusExtrasob.sdf")
+check_sdf_matches(dg, "../../data/MUAll2.sdf.sdf")
