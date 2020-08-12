@@ -55,6 +55,11 @@ def create_relationship_if_not_exists(rxn_id, from_smiles, to_smiles, rule, gene
         new_r = Relationship(from_molecule, "FORMS", to_molecule, rule=rule, rxn_id=rxn_id, generation_formed = generation_formed)
         tx.create(new_r)
         tx.commit()
+        
+        # debug (share data for others to import into Neo4j)
+        rels_debug_file = open("rels.txt",'a')
+        rels_debug_file.write(f"\n{from_molecule},FORMS,{to_molecule},{rule},{rxn_id},{generation_formed}")
+        rels_debug_file.close()
 
 
 def create_molecule_if_not_exists(smiles_str, exact_mass, generation_formed):
@@ -71,6 +76,11 @@ def create_molecule_if_not_exists(smiles_str, exact_mass, generation_formed):
                      generation_formed = generation_formed)
         tx.create(new_m)
         tx.commit()
+        
+        # debug (share data for others to import into Neo4j)
+        nodes_debug_file = open("nodes.txt",'a')
+        nodes_debug_file.write(f"\nMolecule,{smiles_str},{exact_mass},{generation_formed}")
+        nodes_debug_file.close()
     else:
         # molecule exists, do nothing
         pass
@@ -342,19 +352,17 @@ def analyze_possible_autocatalytic_cycles(mod_exports_folder_path, query_results
 
 if __name__ == "__main__":
     # choose a path for the Neo4j_Imports folder to import the data from MOD into Neo4j
-    # mod_exports_folder_path = "../main/Neo4j_Imports"
-    mod_exports_folder_path = "../radicals/all7/Neo4j_Imports"
-    # import_data_from_MOD_exports(mod_exports_folder_path = mod_exports_folder_path)
+    mod_exports_folder_path = "../main/Neo4j_Imports"
+    # mod_exports_folder_path = "../radicals/all7/Neo4j_Imports"
+    import_data_from_MOD_exports(mod_exports_folder_path = mod_exports_folder_path)
     # query_results_folder = get_tabulated_possible_autocatalytic_cycles(mod_exports_folder_path = mod_exports_folder_path,
     #                                                                    ring_size_range = (3, 5),
     #                                                                    feeder_molecule_generation_range = None,
     #                                                                    num_structures_limit = 1000)
-    
-    
-    # manually override folder name for debugging
-    query_results_folder = "2020-08-01_18-39-23-986232"
-    analyze_possible_autocatalytic_cycles(mod_exports_folder_path = mod_exports_folder_path,
-                                          query_results_folder = query_results_folder)
+    # # manually override folder name for debugging
+    # # query_results_folder = "2020-08-01_18-39-23-986232"
+    # analyze_possible_autocatalytic_cycles(mod_exports_folder_path = mod_exports_folder_path,
+    #                                       query_results_folder = query_results_folder)
 
 
 
