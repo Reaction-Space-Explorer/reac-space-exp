@@ -57,8 +57,8 @@ def create_relationship_if_not_exists(rxn_id, from_smiles, to_smiles, rule, gene
         tx.commit()
         
         # debug (share data for others to import into Neo4j)
-        rels_debug_file = open("rels.txt",'a')
-        rels_debug_file.write(f"\n{from_molecule},FORMS,{to_molecule},{rule},{rxn_id},{generation_formed}")
+        rels_debug_file = open("mock_data/exported/rels.txt",'a')
+        rels_debug_file.write(f"\n{from_smiles},FORMS,{to_smiles},{rule},{rxn_id},{generation_formed}")
         rels_debug_file.close()
 
 
@@ -78,7 +78,7 @@ def create_molecule_if_not_exists(smiles_str, exact_mass, generation_formed):
         tx.commit()
         
         # debug (share data for others to import into Neo4j)
-        nodes_debug_file = open("nodes.txt",'a')
+        nodes_debug_file = open("mock_data/exported/nodes.txt",'a')
         nodes_debug_file.write(f"\nMolecule,{smiles_str},{exact_mass},{generation_formed}")
         nodes_debug_file.close()
     else:
