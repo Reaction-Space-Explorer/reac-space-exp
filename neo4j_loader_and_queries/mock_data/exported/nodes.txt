@@ -1,4 +1,4 @@
-
+label,smiles_str,exact_mass
 Molecule,C(C(C(C(C(CO)O)O)O)O)=O,180.063388104,0
 Molecule,O,18.010564684,0
 Molecule,C(C(CC(C(CO)O)O)=O)=O,162.05282342,0

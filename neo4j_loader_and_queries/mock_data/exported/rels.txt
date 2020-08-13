@@ -1,4 +1,4 @@
-
+from_molecule,relationship,to_molecule,rule,reaction_id,generation_formed
 C(C(C(C(C(CO)O)O)O)O)=O,FORMS,O,'Elimination + enol to keto',3,0
 C(C(C(C(C(CO)O)O)O)O)=O,FORMS,C(C(CC(C(CO)O)O)=O)=O,'Elimination + enol to keto',3,0
 C(C(C(C(C(CO)O)O)O)O)=O,FORMS,O,'Elimination + enol to keto',5,0
