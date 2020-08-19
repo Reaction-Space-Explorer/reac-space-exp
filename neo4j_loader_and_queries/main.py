@@ -39,6 +39,11 @@ def create_relationship_if_not_exists(rxn_id, from_smiles, to_smiles, rule, gene
     to_molecule = matcher.match("Molecule", smiles_str = to_smiles).first()
     match_pattern = rel_matcher.match(nodes=(from_molecule, to_molecule),
                                 r_type="FORMS",
+                                # properties = {""}
+                                # Remove edge properties so that less edges are formed to reduce
+                                # the computational complexity of the queries...
+                                # all possible reactions between two molecules can
+                                # later be looked up. Properties previously were:
                                 properties = {"rule": rule,
                                               "rxn_id": rxn_id,
                                               "generation_formed": generation_formed,
@@ -52,14 +57,14 @@ def create_relationship_if_not_exists(rxn_id, from_smiles, to_smiles, rule, gene
         # see documentation for weird Relationship function; order of args go:
         # from node, relationship, to node, and then kwargs for relationship properties
         # https://py2neo.org/v4/data.html#py2neo.data.Relationship
-        new_r = Relationship(from_molecule, "FORMS", to_molecule, rule=rule, rxn_id=rxn_id, generation_formed = generation_formed)
+        new_r = Relationship(from_molecule, "FORMS", to_molecule) #, rule=rule, rxn_id=rxn_id, generation_formed = generation_formed)
         tx.create(new_r)
         tx.commit()
         
         # debug (share data for others to import into Neo4j)
-        rels_debug_file = open("mock_data/exported/rels.txt",'a')
-        rels_debug_file.write(f"\n{from_smiles},FORMS,{to_smiles},{rule},{rxn_id},{generation_formed}")
-        rels_debug_file.close()
+        # rels_debug_file = open("mock_data/exported/rels.txt",'a')
+        # rels_debug_file.write(f"\n{from_smiles},FORMS,{to_smiles},{rule},{rxn_id},{generation_formed}")
+        # rels_debug_file.close()
 
 
 def create_molecule_if_not_exists(smiles_str, exact_mass, generation_formed):
@@ -72,15 +77,15 @@ def create_molecule_if_not_exists(smiles_str, exact_mass, generation_formed):
         tx = graph.begin()
         new_m = Node("Molecule",
                      smiles_str = smiles_str,
-                     exact_mass = exact_mass,
+                     exact_mass = round(float(exact_mass),3),
                      generation_formed = generation_formed)
         tx.create(new_m)
         tx.commit()
         
         # debug (share data for others to import into Neo4j)
-        nodes_debug_file = open("mock_data/exported/nodes.txt",'a')
-        nodes_debug_file.write(f"\nMolecule,{smiles_str},{exact_mass},{generation_formed}")
-        nodes_debug_file.close()
+        # nodes_debug_file = open("mock_data/exported/nodes.txt",'a')
+        # nodes_debug_file.write(f"\nMolecule,{smiles_str},{exact_mass},{generation_formed}")
+        # nodes_debug_file.close()
     else:
         # molecule exists, do nothing
         pass
@@ -162,7 +167,7 @@ def import_mock_data():
         
 
 
-def import_data_from_MOD_exports(mod_exports_folder_path):
+def import_data_from_MOD_exports(mod_exports_folder_path, generation_limit):
     """
     Import simple fake dataset to test queries out on.
     """
@@ -184,17 +189,24 @@ def import_data_from_MOD_exports(mod_exports_folder_path):
         generation_num = int(generation_file.split("_")[1].split(".")[0])
         all_gens.append(generation_num)
     all_gens.sort()
+    
+    # set the generation limit to the max (so no data type issue between None/Integer)
+    if generation_limit == None:
+        generation_limit = max(all_gens)
+    
+    # create molecule nodes
     for generation_num in all_gens:
-        print(f"\tGeneration number {generation_num}...")
-        generation_file = "nodes_" + str(generation_num) + ".txt"
-        nodes = open(nodes_folder + "/" + generation_file,'r').read().split('\n')
-        for node in nodes:
-            if node != "":
-                node_data = node.split(',')
-                # print(node_data[0])
-                create_molecule_if_not_exists(smiles_str = node_data[1],
-                                              exact_mass = node_data[2],
-                                              generation_formed = generation_num)
+        if generation_num <= generation_limit:
+            print(f"\tGeneration number {generation_num}...")
+            generation_file = "nodes_" + str(generation_num) + ".txt"
+            nodes = open(nodes_folder + "/" + generation_file,'r').read().split('\n')
+            for node in nodes:
+                if node != "":
+                    node_data = node.split(',')
+                    # print(node_data[0])
+                    create_molecule_if_not_exists(smiles_str = node_data[1],
+                                                  exact_mass = node_data[2],
+                                                  generation_formed = generation_num)
 
     # create relationships by iterating through each generation's file
     print("Importing relationships...")
@@ -207,17 +219,18 @@ def import_data_from_MOD_exports(mod_exports_folder_path):
         all_rel_gens.append(generation_num)
     all_rel_gens.sort()
     for generation_num in all_rel_gens:
-        print(f"\tGeneration number {generation_num}...")
-        generation_file = "rels_" + str(generation_num) + ".txt"
-        rels = open(rels_folder + "/" + generation_file,'r').read().split('\n')
-        for rel in rels:
-            if rel != "":
-                rel_data = rel.split(',')
-                create_relationship_if_not_exists(rxn_id = rel_data[0],
-                                                  from_smiles = rel_data[1],
-                                                  to_smiles = rel_data[2],
-                                                  rule = rel_data[3],
-                                                  generation_formed = generation_num)
+        if generation_num <= generation_limit:
+            print(f"\tGeneration number {generation_num}...")
+            generation_file = "rels_" + str(generation_num) + ".txt"
+            rels = open(rels_folder + "/" + generation_file,'r').read().split('\n')
+            for rel in rels:
+                if rel != "":
+                    rel_data = rel.split(',')
+                    create_relationship_if_not_exists(rxn_id = rel_data[0],
+                                                      from_smiles = rel_data[1],
+                                                      to_smiles = rel_data[2],
+                                                      rule = rel_data[3],
+                                                      generation_formed = generation_num)
 
 
 
@@ -354,15 +367,16 @@ if __name__ == "__main__":
     # choose a path for the Neo4j_Imports folder to import the data from MOD into Neo4j
     mod_exports_folder_path = "../main/Neo4j_Imports"
     # mod_exports_folder_path = "../radicals/all7/Neo4j_Imports"
-    import_data_from_MOD_exports(mod_exports_folder_path = mod_exports_folder_path)
-    # query_results_folder = get_tabulated_possible_autocatalytic_cycles(mod_exports_folder_path = mod_exports_folder_path,
-    #                                                                    ring_size_range = (3, 5),
-    #                                                                    feeder_molecule_generation_range = None,
-    #                                                                    num_structures_limit = 1000)
-    # # manually override folder name for debugging
-    # # query_results_folder = "2020-08-01_18-39-23-986232"
-    # analyze_possible_autocatalytic_cycles(mod_exports_folder_path = mod_exports_folder_path,
-    #                                       query_results_folder = query_results_folder)
+    import_data_from_MOD_exports(mod_exports_folder_path = mod_exports_folder_path,
+                                 generation_limit = 2) # Set to None or Integer. The generation limit at which to import
+    query_results_folder = get_tabulated_possible_autocatalytic_cycles(mod_exports_folder_path = mod_exports_folder_path,
+                                                                       ring_size_range = (3, 5),
+                                                                       feeder_molecule_generation_range = None,
+                                                                       num_structures_limit = 1000)
+    
+    # query_results_folder = "2020-08-01_18-39-23-986232" # manually override folder name for debugging
+    analyze_possible_autocatalytic_cycles(mod_exports_folder_path = mod_exports_folder_path,
+                                          query_results_folder = query_results_folder)
 
 
 
