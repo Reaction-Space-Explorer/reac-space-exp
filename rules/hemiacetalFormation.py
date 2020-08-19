@@ -40,8 +40,13 @@ def create_hemiacetal_formation(ring_size, is_inverse=False):
 			'edge [ source 4 target 5 label "-" ]',
 			'edge [ source 3 target 5 label "-" ]',
 			'edge [ source 4 target 2 label "-" ]'])
-		# constrains are not needed since gem-diols are avoided at time of rule generation
-		# anyways. Update this if we figure out a different pattern to avoid
+		# We need *some* constraints to make sure the rule doesn't invert itself
+		# otherwise it would invert itself to the forward rule without constraints
+		rule.constraints.extend([
+		'constrainAdj [ id 4 op "<=" count 1',
+		'\tnodeLabels [ label "O" label "N" label "S" ]',
+		'\tedgeLabels [ label "-" ]'
+		']'])
 	
 	# The general context
 	rule.context.extend([
@@ -56,9 +61,7 @@ def create_hemiacetal_formation(ring_size, is_inverse=False):
 		rule.context.append(f'node [ id {i} label "C"] ')
 	rule.context.append('edge [ source 1 target 6 label "-" ]')
 	for i in range(6, 6+ring_size-4):
-		print(f"Adding edges between {i} and {i+1}")
 		rule.context.append(f'edge [ source {i} target {i+1} label "-" ]')
-	print(f"adding edge between {ring_size+2} and 4")
 	rule.context.append(f'edge [ source {ring_size+2} target 4 label "-" ]')
 
 	return rule.loadRule()
