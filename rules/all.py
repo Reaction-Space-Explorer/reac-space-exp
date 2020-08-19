@@ -17,9 +17,8 @@ if True:
 	# The following were taken from the HCN folder
 	include("esterFormationHydrolysisExchange.py")
 	include("cannizarro1.py")
-	#include("cannizarro2.py")
-	# Turn off Alkene Addition-Elimination for now; produces enols
-	#include("alkeneAdditionElimination.py")
+	include("cannizarro2.py")
+	include("alkeneAdditionElimination.py")
 	include("alkyneAddition.py")
 	include("knoevenagel.py")
 	include("damnScission.py")
