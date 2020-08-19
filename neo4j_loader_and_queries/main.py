@@ -39,7 +39,13 @@ def create_relationship_if_not_exists(rxn_id, from_smiles, to_smiles, rule, gene
     to_molecule = matcher.match("Molecule", smiles_str = to_smiles).first()
     match_pattern = rel_matcher.match(nodes=(from_molecule, to_molecule),
                                 r_type="FORMS",
-                                properties = {"rule": rule, "rxn_id": rxn_id, "generation_formed": generation_formed})
+                                properties = {"rule": rule,
+                                              "rxn_id": rxn_id,
+                                              "generation_formed": generation_formed,
+                                              "from_smiles": from_smiles,
+                                              "to_smiles": to_smiles
+                                              }
+                                )
     if len(list(match_pattern)) <= 0:
         # relationship does not exist
         tx = graph.begin()
@@ -49,6 +55,11 @@ def create_relationship_if_not_exists(rxn_id, from_smiles, to_smiles, rule, gene
         new_r = Relationship(from_molecule, "FORMS", to_molecule, rule=rule, rxn_id=rxn_id, generation_formed = generation_formed)
         tx.create(new_r)
         tx.commit()
+        
+        # debug (share data for others to import into Neo4j)
+        rels_debug_file = open("rels.txt",'a')
+        rels_debug_file.write(f"\n{from_molecule},FORMS,{to_molecule},{rule},{rxn_id},{generation_formed}")
+        rels_debug_file.close()
 
 
 def create_molecule_if_not_exists(smiles_str, exact_mass, generation_formed):
@@ -65,6 +76,11 @@ def create_molecule_if_not_exists(smiles_str, exact_mass, generation_formed):
                      generation_formed = generation_formed)
         tx.create(new_m)
         tx.commit()
+        
+        # debug (share data for others to import into Neo4j)
+        nodes_debug_file = open("nodes.txt",'a')
+        nodes_debug_file.write(f"\nMolecule,{smiles_str},{exact_mass},{generation_formed}")
+        nodes_debug_file.close()
     else:
         # molecule exists, do nothing
         pass
@@ -296,34 +312,35 @@ def get_tabulated_possible_autocatalytic_cycles(mod_exports_folder_path,
 
 
 
-def analyze_possible_autocatalytic_cycles(mod_exports_folder_path):
+def analyze_possible_autocatalytic_cycles(mod_exports_folder_path, query_results_folder):
     """
     Now that we have the tabulated results of the graph queries, let's do some
     analysis on what's going on.
     
     1. Calculate the the count of cycles found per generation
-    2. Total/avg mass per cycle per generation
-    3. 
+    2. Total mass per cycle per feeder molecule's generation (calculate total
+        using only the molecules in the ring, and use the feeder molecule's
+        generation as the ring's generation).
+        Note: make sure to remove duplicates when getting sum of mass in ringPathNodes
+        because the beginMol is counted twice (it is the start and end node in the path).
+    3. Node degree distribution
     """
     
-    print("Preparing graph query:")
-    query_results_folder = get_tabulated_possible_autocatalytic_cycles(mod_exports_folder_path = mod_exports_folder_path,
-                                                                       ring_size_range = (3, 5),
-                                                                       feeder_molecule_generation_range = None,
-                                                                       num_structures_limit = 100000)
-    # query_results_folder = "2020-07-27_15-48-35-964434" # manually override for debugging
     
     print("Generating some plots on cycle size distribution / stats by generation...")
     query_data = pd.read_json("output/" + query_results_folder + "/query_results.json")
     # print(query_data.describe())
     # print(query_data.head())
+    
     # cycle distribution (y axis is frequency, x axis is ring size)
     fig, ax = plt.subplots()
     query_data['countMolsInRing'].value_counts().plot(ax = ax,
                                                       kind='bar',
                                                       title = "Ring Size Frequency Distribution")
     plt.savefig("output/" + query_results_folder + "/ring_size_distribution.png")
-    plt.show()
+    # plt.show()
+    
+    # total mass per cycle per feeder molecule's generation (y axis total mass, x axis generation)
     
     
     print("Network analysis done.")
@@ -334,11 +351,25 @@ def analyze_possible_autocatalytic_cycles(mod_exports_folder_path):
 
 
 if __name__ == "__main__":
-    # mod_exports_folder_path = "../main/Neo4j_Imports"
-    mod_exports_folder_path = "../radicals/all7/Neo4j_Imports"
-    # import_data_from_MOD_exports(mod_exports_folder_path = mod_exports_folder_path)
-    analyze_possible_autocatalytic_cycles(mod_exports_folder_path = mod_exports_folder_path)
-    
+    # choose a path for the Neo4j_Imports folder to import the data from MOD into Neo4j
+    mod_exports_folder_path = "../main/Neo4j_Imports"
+    # mod_exports_folder_path = "../radicals/all7/Neo4j_Imports"
+    import_data_from_MOD_exports(mod_exports_folder_path = mod_exports_folder_path)
+    # query_results_folder = get_tabulated_possible_autocatalytic_cycles(mod_exports_folder_path = mod_exports_folder_path,
+    #                                                                    ring_size_range = (3, 5),
+    #                                                                    feeder_molecule_generation_range = None,
+    #                                                                    num_structures_limit = 1000)
+    # # manually override folder name for debugging
+    # # query_results_folder = "2020-08-01_18-39-23-986232"
+    # analyze_possible_autocatalytic_cycles(mod_exports_folder_path = mod_exports_folder_path,
+    #                                       query_results_folder = query_results_folder)
+
+
+
+
+
+
+
 
 
 
