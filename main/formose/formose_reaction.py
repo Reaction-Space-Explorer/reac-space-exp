@@ -47,4 +47,4 @@ with dg.build() as b:
 f = dg.dump()
 print("Dump file: ", f)
 
-check_sdf_matches(dg, "../../data/FormoseTestSetob.sdf")
+check_sdf_matches(dg, "../../data/FormoseTestSetPlus5.sdf")

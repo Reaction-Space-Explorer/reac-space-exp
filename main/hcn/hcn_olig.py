@@ -1,6 +1,6 @@
 with_formaldehyde = False
 include("../main.py")
-
+include("../../rules/alkeneAdditionElimination.py")
 postChapter("HCN Oligmerisation")
 
 hcn = smiles("C#N", name="Hydrogen Cyanide")
@@ -10,7 +10,7 @@ water = smiles("O", name="Water")
 print("Finished loading from dump file")'''
 
 # Number of generations we want to perform
-generations = 5
+generations = 3
 
 dg = DG(graphDatabase=inputGraphs,
 	labelSettings=LabelSettings(LabelType.Term, LabelRelation.Specialisation))
@@ -24,7 +24,7 @@ with dg.build() as b:
 	for gen in range(generations):
 		start_time = time.time()
 		print(f"Starting round {gen+1}")
-		res = b.execute(addSubset(subset) >> addUniverse(universe) >> strat, verbosity=8)
+		res = b.execute(addSubset(subset) >> addUniverse(universe) >> strat, verbosity=2)
 		end_time = time.time()
 		print(f"Took {end_time - start_time} seconds to complete round {gen+1}")
 		print('Original subset size:', len(res.subset))
@@ -46,4 +46,4 @@ with dg.build() as b:
 f = dg.dump()
 print("Dump file: ", f)
 
-check_sdf_matches(dg, "../../data/NH3HCHODworkingob.sdf")
+check_sdf_matches(dg, "../../data/HCNfixed.sdf.sdf")

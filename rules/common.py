@@ -185,7 +185,12 @@ def attach_EWG(r, root, offset):
 	for rCopy in attach_H_C(rCopy, offset, offset + 2):
 		yield rCopy
 
-def attach_Nu(r, offset):
+def attach_Nu(r, offset, allow_o=True):
+	'''
+	allow_o -- whether or not to consider O for attachment or not. I added this as a
+	quick fix to avoid attaching O in the alkene-addition elimination rule (which was
+	producing enols). It is passed as False when that rule is generated.
+	'''
 	rOrig = r
 	for k in "ONSC":
 		r = rOrig.clone()
@@ -193,7 +198,11 @@ def attach_Nu(r, offset):
 		r.context.extend([
 			'node [ id %d label "%s" ]' % (offset, k),
 		])
-		if k == 'O' or k == 'S':
+		if k == 'O':
+			if allow_o == True:
+				for r in attach_H_C(r, offset, offset + 1):
+					yield r
+		elif k == 'S':
 			for r in attach_H_C(r, offset, offset + 1):
 				yield r
 		elif k == 'N':
@@ -210,7 +219,6 @@ def attach_Nu(r, offset):
 			yield r
 		else:
 			assert False
-
 
 
 

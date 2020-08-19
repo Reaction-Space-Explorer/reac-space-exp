@@ -3,7 +3,7 @@ with_formaldehyde = False
 
 include("../main.py")
 # including these files using MOD's include() so that MOD's functions are callable in them
-include("../compare_ms.py")
+include("compare_ms.py")
 include("../mod_to_neo4j_exporter.py")
 #include('clean_tautomers.py')
 
