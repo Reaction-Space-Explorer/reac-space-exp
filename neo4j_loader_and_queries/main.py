@@ -57,7 +57,7 @@ def create_relationship_if_not_exists(rxn_id, from_smiles, to_smiles, rule, gene
         # see documentation for weird Relationship function; order of args go:
         # from node, relationship, to node, and then kwargs for relationship properties
         # https://py2neo.org/v4/data.html#py2neo.data.Relationship
-        new_r = Relationship(from_molecule, "FORMS", to_molecule) #, rule=rule, rxn_id=rxn_id, generation_formed = generation_formed)
+        new_r = Relationship(from_molecule, "FORMS", to_molecule, rule=rule, rxn_id=rxn_id, generation_formed = generation_formed)
         tx.create(new_r)
         tx.commit()
         
@@ -367,12 +367,12 @@ if __name__ == "__main__":
     # choose a path for the Neo4j_Imports folder to import the data from MOD into Neo4j
     mod_exports_folder_path = "../main/Neo4j_Imports"
     # mod_exports_folder_path = "../radicals/all7/Neo4j_Imports"
-    import_data_from_MOD_exports(mod_exports_folder_path = mod_exports_folder_path,
-                                 generation_limit = 2) # Set to None or Integer. The generation limit at which to import
+    # import_data_from_MOD_exports(mod_exports_folder_path = mod_exports_folder_path,
+    #                              generation_limit = 2) # Set to None or Integer. The generation limit at which to import
     query_results_folder = get_tabulated_possible_autocatalytic_cycles(mod_exports_folder_path = mod_exports_folder_path,
-                                                                       ring_size_range = (3, 5),
+                                                                       ring_size_range = (3, 6),
                                                                        feeder_molecule_generation_range = None,
-                                                                       num_structures_limit = 1000)
+                                                                       num_structures_limit = 100000)
     
     # query_results_folder = "2020-08-01_18-39-23-986232" # manually override folder name for debugging
     analyze_possible_autocatalytic_cycles(mod_exports_folder_path = mod_exports_folder_path,
