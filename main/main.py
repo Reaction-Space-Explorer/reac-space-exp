@@ -28,7 +28,23 @@ four_memb = graphGMLString("""graph [
 	edge [ source 3 target 0 label "*" ]
 ]""", name="Four membered ring", add=False)
 
-forbidden = [three_memb, four_memb, smiles('[*]=[*]=[*]', name="Two double bonds", add=False)]
+# A cyclic substructure usually appearing in unstable bicyclic compounds.
+bad_bicycle = graphGMLString("""graph [
+	node [ id 0 label "C" ]
+	node [ id 1 label "O" ]
+	node [ id 2 label "C" ]
+	node [ id 3 label "O" ]
+	node [ id 4 label "C" ]
+	edge [ source 0 target 1 label "-" ]
+	edge [ source 1 target 2 label "-" ]
+	edge [ source 2 target 3 label "-" ]
+	edge [ source 3 target 4 label "-" ]
+	edge [ source 4 target 0 label "-" ]
+]
+""", name="Bad bicycle substruct", add=False)
+
+forbidden = [three_memb, four_memb, smiles('[*]=[*]=[*]', name="Two double bonds", add=False),
+			bad_bicycle]
 
 def pred(derivation):
 	"""
@@ -45,14 +61,6 @@ def pred(derivation):
 				return False
 		#print(g)
 	return True
-
-# store the rules in a separate list
-rules_list = []
-for rule in inputRules:
-	rules_list.append(rule)
-# now load Cannizarro2 into inputRules so that loading the DG doesn't give an error (rule not found)
-# because the dumped dg had Cannizarro 2 reactions in it.
-include(os.path.join("..", "rules/cannizarro2.py"))
 
 strat = (
 	addSubset(inputGraphs)
@@ -110,9 +118,7 @@ def check_sdf_matches(dg, sdf_file, draw_structures=True):
 	print(f"Checking for matches with structures in {sdf_file}")
 	sdfile = SDMolSupplier(sdf_file)
 	for mol in sdfile:
-		print(mol)
 		smi = MolToSmiles(mol)
-		#smi.replace("", "")
 		mol_graph = smiles(smi, add=False)
 		for v in dg.vertices: #dg_new.vertices
 			if v.graph.isomorphism(mol_graph) == 1:
@@ -166,30 +172,29 @@ dgprint.withShortcutEdges = True
 	edge [ source 2 target 4 label "-" ]
 ]""", add=False)'''
 
-# Track what's producing methoxy ethers
-methoxy_ether = smiles("[O]C", add=False)
+# Track what's producing methoxy/ethoxy ethers
+methoxy_ether = smiles("[C][O]C", name="methoxy ether substruct", add=False)
+ethoxy_ether = smiles("[C][O]CC", name="Ethoxy Ether Substruct", add=False)
 
 
-#postSection("Methoxy ether producing reactions")
-#for item_to_print in to_print:
-#count = 0
-#postSection(f"{item_to_print} reactions")
-# print all reactions
-'''for e in dg.edges:
-		# Don't print more than 35 of any category
-	if count > 50:
-		#pass
-		break
-	else:
-		for rule in e.rules:
-			if "" in rule.name:
+def find_substruct_producer(dg, substruct, print_max=50, print_rule=False):
+	"""
+	Find reactions producing a certain substructure.
+	"""
+	postSection(f"{substruct.name} producing reactions")
+	count = 0
+	for e in dg.edges:
+		if count > print_max:
+			break
+		else:
+			for rule in e.rules:
 				dg2 = DG(graphDatabase=inputGraphs)
 				sources = [source.graph for source in e.sources]
 				targets = [target.graph for target in e.targets]
 				for g in targets:
-					if methoxy_ether.monomorphism(g) > 0:
+					if substruct.monomorphism(g) > 0:
 						count += 1
-						print("Found methoxy ether!")
+						print(f"Found {substruct.name}!")
 						with dg2.build() as b:
 							d = Derivations()
 							d.left = sources
@@ -197,5 +202,37 @@ methoxy_ether = smiles("[O]C", add=False)
 							d.right = targets
 							fake_edge = b.addDerivation(d)
 							print("Printing reaction: ", fake_edge)
-							#rule.print()
-						dg2.print(dgprint)'''
+						dg2.print(dgprint)
+						if print_rule == True:
+							rule.print(p)
+
+
+def print_reaction(dg, reac_name, print_max=50, print_rule=False):
+	"""
+	Print individual reactions for testing purposes.
+	dg -- the DG of the whole network
+	name -- name of the reaction (ruleID)
+	max -- the maximum number of such reactions to print.
+	"""
+	postSection(f"{reac_name} Reactions")
+	count = 0
+	for e in dg.edges:
+		if count > print_max:
+			break
+		else:
+			for rule in e.rules:
+				if reac_name in rule.name:
+					dg2 = DG(graphDatabase=inputGraphs)
+					sources = [source.graph for source in e.sources]
+					targets = [target.graph for target in e.targets]
+					with dg2.build() as b:
+						d = Derivations()
+						d.left = sources
+						d.rules = [rule]
+						d.right = targets
+						fake_edge = b.addDerivation(d)
+						print("Printing reaction: ", fake_edge)
+					dg2.print(dgprint)
+					if print_rule == True:
+						rule.print(p)
+					count += 1
