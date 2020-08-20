@@ -394,11 +394,17 @@ def save_query_results(query_result, file_name, this_out_folder):
     data_df = pd.read_json('output/' + this_out_folder + f"/{file_name}.json")
     data_df.to_csv('output/' + this_out_folder + f"/{file_name}.csv", index=False)
 
+def run_single_value_query(query, value):
+    return graph.run(query).data()[0][value]
 
 def network_statistics(query_results_folder):
     """
     Get some statistics on the network.
-    0. Number of nodes and edges in the graph
+    0. Number of nodes and edges in the graph, as well as various network-level
+        statistics: 1. Eigenvector centrality, 2. Betweenness Centrality,
+        3. Random-walk betweenness, 4. Clique enumeration,
+        5. k-plex enumeration, 6. k-core enumeration,
+        7. k-component enumeration, 8. neighbor redundancy
     1. Node degree distribution: (log?) node degree frequency by degree value by generation_formed
     2. Avg number of edges per node per generation
     """
@@ -406,13 +412,45 @@ def network_statistics(query_results_folder):
     print("Doing some network statistics...")
     # 0.
     # get total number of nodes and edges
-    # total_count_nodes_query = "MATCH (n) RETURN COUNT(n) AS count_nodes"
-    # total_count_nodes = graph.run(total_count_nodes_query).data()[0]['count_nodes']
-    # total_count_rels_query = "MATCH (n)-[r]->() RETURN COUNT(r) AS count_rels"
-    # total_count_rels = graph.run(total_count_nodes).data()[0]['count_rels']
-    # graph_info = pd.DataFrame({"statistic": ["Total Count Molecules", "Total Count Edges"],
-    #                            "value": [total_count_nodes, total_count_rels]})
-    # graph_info.to_csv(f"output/{query_results_folder}/network_info.csv")
+    total_count_nodes = run_single_value_query("MATCH (n) RETURN COUNT(n) AS count_nodes", 'count_nodes')
+    total_count_rels = run_single_value_query("MATCH (n)-[r]->() RETURN COUNT(r) AS count_rels", 'count_rels')
+    # get all other statistics
+    # 0.1 eigenvector_centrality
+    """
+    // eigenvector centrality by molecule
+    CALL algo.eigenvector.stream('Molecule', 'FORMS', {})
+    YIELD nodeId, score
+    RETURN algo.asNode(nodeId).smiles_str AS smiles_str,score
+    ORDER BY score DESC
+    """
+    eigenvector_centrality = run_single_value_query("""CALL algo.eigenvector.stream('Molecule', 'FORMS', {})
+                                                    YIELD nodeId, score RETURN avg(score) as avg_score""",
+                                                    'avg_score')
+    # 0.2 betweenness_centrality
+    betweenness_centrality = run_single_value_query("", 'betweenness_centrality')
+    
+    # 0.3 Random-walk betweenness
+    random_walk_betweenness = run_single_value_query("", 'random_walk_betweenness')
+    
+    # 0.4 Clique enumeration
+    clique_enumeration = run_single_value_query("", 'clique_enumeration')
+    
+    # 0.5 K-Plex enumeration
+    k_plex_enumeration = run_single_value_query("", 'k_plex_enumeration')
+    
+    # 0.6 K-Core enumeration
+    k_core_enumeration = run_single_value_query("", 'k_core_enumeration')
+    
+    # 0.7 K-Component enumeration
+    k_component_enumeration = run_single_value_query("", 'k_component_enumeration')
+    
+    # 0.8 Neighbor redundancy
+    neighbor_redundancy = run_single_value_query("", 'neighbor_redundancy')
+    
+    # save all to graph_info DataFrame
+    graph_info = pd.DataFrame({"statistic": ["Total Count Molecules", "Total Count Edges","Eigenvector centrality", "Betweenness centrality", "Random-walk betweenness", 'Clique enumeration','k-plex enumation','k-core enumeration','k-component enumeration','Neighbor redundancy'],
+                               "value": [total_count_nodes, total_count_rels, eigenvector_centrality, betweenness_centrality, random_walk_betweenness, clique_enumeration, k_plex_enumeration, k_core_enumeration, k_component_enumeration, neighbor_redundancy]})
+    graph_info.to_csv(f"output/{query_results_folder}/network_info.csv")
     
     
     # 1.
@@ -476,7 +514,7 @@ if __name__ == "__main__":
     query_results_folder = get_tabulated_possible_autocatalytic_cycles(mod_exports_folder_path = mod_exports_folder_path,
                                                                        ring_size_range = (3, 5),
                                                                        feeder_molecule_generation_range = None,
-                                                                       num_structures_limit = 100)
+                                                                       num_structures_limit = 75000)
     
     # query_results_folder = "2020-08-01_18-39-23-986232" # manually override folder name for debugging
     analyze_possible_autocatalytic_cycles(mod_exports_folder_path = mod_exports_folder_path,
