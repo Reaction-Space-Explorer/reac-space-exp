@@ -6,6 +6,7 @@ import json
 import datetime
 import matplotlib.pyplot as plt
 from shutil import copytree
+import math
 
 url = "bolt://neo4j:0000@localhost:7687"
 graph = Graph(url)
@@ -307,20 +308,20 @@ def get_tabulated_possible_autocatalytic_cycles(mod_exports_folder_path,
     os.mkdir("output/" + this_out_folder)
     
     # save data as JSON and CSV (JSON for easy IO, CSV for human readability)
-    with open('output/' + this_out_folder + '/query_results.json', 'w') as file_data_out:
+    with open('output/' + this_out_folder + '/autocat_query_results.json', 'w') as file_data_out:
         json.dump(query_result, file_data_out)
-    data_df = pd.read_json('output/' + this_out_folder + '/query_results.json')
-    data_df.to_csv('output/' + this_out_folder + '/query_results.csv', index=False)
+    data_df = pd.read_json('output/' + this_out_folder + '/autocat_query_results.json')
+    data_df.to_csv('output/' + this_out_folder + '/autocat_query_results.csv', index=False)
     
     # save Neo4j_Imports folder
     copytree(mod_exports_folder_path, 'output/' + this_out_folder + "/Neo4j_Imports")
     
     # save meta info as well in out folder
-    with open("output/" + this_out_folder + "/query.txt", 'w') as file_query_out:
+    with open("output/" + this_out_folder + "/autocat_query.txt", 'w') as file_query_out:
         file_query_out.write(query_txt)
     query_params = pd.DataFrame( {"parameter": ["min_ring_size","max_ring_size","min_feeder_gen","max_feeder_gen","num_structures_limit"],
                                   "value": [min_ring_size, max_ring_size, min_feeder_gen, max_feeder_gen, num_structures_limit] } )
-    query_params.to_csv("output/" + this_out_folder + "/query_parameters.csv", index=False)
+    query_params.to_csv("output/" + this_out_folder + "/autocat_query_parameters.csv", index=False)
     return this_out_folder
 
 
@@ -330,18 +331,19 @@ def analyze_possible_autocatalytic_cycles(mod_exports_folder_path, query_results
     Now that we have the tabulated results of the graph queries, let's do some
     analysis on what's going on.
     
-    1. Calculate the the count of cycles found per generation
+    1. Ring size frequency distribution
     2. Total mass per cycle per feeder molecule's generation (calculate total
         using only the molecules in the ring, and use the feeder molecule's
         generation as the ring's generation).
         Note: make sure to remove duplicates when getting sum of mass in ringPathNodes
         because the beginMol is counted twice (it is the start and end node in the path).
-    3. Node degree distribution
+    3. Count of cycles by feeder generation
     """
     
     
     print("Generating some plots on cycle size distribution / stats by generation...")
-    query_data = pd.read_json("output/" + query_results_folder + "/query_results.json")
+    # 1.
+    query_data = pd.read_json("output/" + query_results_folder + "/autocat_query_results.json")
     # print(query_data.describe())
     # print(query_data.head())
     
@@ -350,16 +352,118 @@ def analyze_possible_autocatalytic_cycles(mod_exports_folder_path, query_results
     query_data['countMolsInRing'].value_counts().plot(ax = ax,
                                                       kind='bar',
                                                       title = "Ring Size Frequency Distribution")
+    ax.set_xlabel("Ring Size (# of Molecules)")
+    ax.set_ylabel("Count of Cycles")
     plt.savefig("output/" + query_results_folder + "/ring_size_distribution.png")
     # plt.show()
     
-    # total mass per cycle per feeder molecule's generation (y axis total mass, x axis generation)
+    
+    # 2.
+    # total mass of cycle per generation
     
     
-    print("Network analysis done.")
+    # 3.
+    # count of cycles by feeder generation
+    fig, ax = plt.subplots()
+    gen_formed_arr = []
+    feederMolData = list(query_data['feederMol'])
+    for feederMol in feederMolData:
+        gen_formed_arr.append(feederMol['generation_formed'])
+    # get unique list of feeder generations and sum by generation
+    gen_formed_arr = np.array(gen_formed_arr)
+    feeder_gen_counts = np.unique(gen_formed_arr, return_counts=True)
+    feeder_gen_counts = np.transpose(feeder_gen_counts)
+    cycles_by_gen_df = pd.DataFrame(feeder_gen_counts, columns=['feeder_gen',
+                                                                'cycle_count'])
+    cycles_by_gen_df.plot(ax=ax,
+                          x = "feeder_gen",
+                          y = "cycle_count",
+                          kind = "bar",
+                          legend = False,
+                          title = "Count of Cycles by Feeder Generation")
+    ax.set_xlabel("Cycle Generation (Generation Formed of Feeder Molecule)")
+    ax.set_ylabel("Count of Cycles")
+    plt.savefig("output/" + query_results_folder + "/count_cycles_by_feeder_generation.png")
+    
+    print("\tAutocatalysis pattern matching done.")
 
 
+def save_query_results(query_result, file_name, this_out_folder):
+    with open('output/' + this_out_folder + f"/{file_name}.json", 'w') as file_data_out:
+        json.dump(query_result, file_data_out)
+    data_df = pd.read_json('output/' + this_out_folder + f"/{file_name}.json")
+    data_df.to_csv('output/' + this_out_folder + f"/{file_name}.csv", index=False)
 
+
+def network_statistics(query_results_folder):
+    """
+    Get some statistics on the network.
+    0. Number of nodes and edges in the graph
+    1. Node degree distribution: (log?) node degree frequency by degree value by generation_formed
+    2. Avg number of edges per node per generation
+    """
+    
+    print("Doing some network statistics...")
+    # 0.
+    # get total number of nodes and edges
+    # total_count_nodes_query = "MATCH (n) RETURN COUNT(n) AS count_nodes"
+    # total_count_nodes = graph.run(total_count_nodes_query).data()[0]['count_nodes']
+    # total_count_rels_query = "MATCH (n)-[r]->() RETURN COUNT(r) AS count_rels"
+    # total_count_rels = graph.run(total_count_nodes).data()[0]['count_rels']
+    # graph_info = pd.DataFrame({"statistic": ["Total Count Molecules", "Total Count Edges"],
+    #                            "value": [total_count_nodes, total_count_rels]})
+    # graph_info.to_csv(f"output/{query_results_folder}/network_info.csv")
+    
+    
+    # 1.
+    # first do the query and save the results
+    node_deg_query = """
+    MATCH (n:Molecule)
+    RETURN n.smiles_str AS smiles_str, n.generation_formed AS generation_formed, size((n)--()) AS count_relationships
+    """
+    node_deg_query_results = graph.run(node_deg_query).data()
+    node_deg_file = "node_distribution_results"
+    save_query_results(query_result = node_deg_query_results,
+                       file_name = node_deg_file,
+                       this_out_folder = query_results_folder)
+    
+    # now read in the results, transform, and plot
+    # also can represent this as a histogram?
+    fig, ax = plt.subplots()
+    node_deg_df = pd.read_csv(f"output/{query_results_folder}/{node_deg_file}.csv")
+    # node_deg_df['count_relationships'].value_counts().plot(ax=ax,
+    #                                                        kind='bar',
+    #                                                        title="Node Degree Distribution by Generation Formed")
+    node_deg_pivot = pd.pivot_table(node_deg_df,
+                                    values="smiles_str",
+                                    index=["count_relationships"],
+                                    columns=["generation_formed"],
+                                    aggfunc=lambda x: math.sqrt(len(x.unique()))) # the square of the count of unique smiles_str
+    node_deg_pivot.plot(ax=ax,
+                        kind="bar",
+                        title="Square of Molecule Degree by Generation Formed",
+                        figsize = (8,5))
+    ax.set_xlabel("Molecule Degree (count of incoming and outgoing edges)")
+    ax.set_ylabel("sqrt(Count of Molecules)")
+    plt.savefig(f"output/{query_results_folder}/{node_deg_file}.png")
+    
+    # 2.
+    # get average number of edges by node and generation
+    fig, ax = plt.subplots()
+    node_deg_avg = node_deg_df.groupby(by=['generation_formed']).mean().reset_index()
+    # print(node_deg_avg)
+    node_deg_avg.plot(ax=ax,
+                      x = "generation_formed",
+                      y = "count_relationships",
+                      kind="bar",
+                      title="Average Molecule Degree by Generation Formed",
+                      figsize = (8,5),
+                      legend = False)
+    ax.set_xlabel("Generation Formed")
+    ax.set_ylabel("Average Node Degree")
+    plt.savefig(f"output/{query_results_folder}/{node_deg_file}_avg.png")
+    
+    print("\tNetwork statistics done.")
 
 
 
@@ -370,13 +474,16 @@ if __name__ == "__main__":
     # import_data_from_MOD_exports(mod_exports_folder_path = mod_exports_folder_path,
     #                              generation_limit = 2) # Set to None or Integer. The generation limit at which to import
     query_results_folder = get_tabulated_possible_autocatalytic_cycles(mod_exports_folder_path = mod_exports_folder_path,
-                                                                       ring_size_range = (3, 6),
+                                                                       ring_size_range = (3, 5),
                                                                        feeder_molecule_generation_range = None,
-                                                                       num_structures_limit = 100000)
+                                                                       num_structures_limit = 100)
     
     # query_results_folder = "2020-08-01_18-39-23-986232" # manually override folder name for debugging
     analyze_possible_autocatalytic_cycles(mod_exports_folder_path = mod_exports_folder_path,
                                           query_results_folder = query_results_folder)
+    
+    # get network statistics
+    network_statistics(query_results_folder = query_results_folder)
 
 
 
