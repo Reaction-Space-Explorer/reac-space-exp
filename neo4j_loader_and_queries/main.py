@@ -405,7 +405,7 @@ def network_statistics(query_results_folder):
         3. Random-walk betweenness, 4. Clique enumeration,
         5. k-plex enumeration, 6. k-core enumeration,
         7. k-component enumeration, 8. neighbor redundancy
-    1. Node degree distribution: (log?) node degree frequency by degree value by generation_formed
+    1. Node degree distribution: sqrt of node degree frequency by degree value colored by generation_formed
     2. Avg number of edges per node per generation
     """
     
@@ -416,41 +416,39 @@ def network_statistics(query_results_folder):
     total_count_rels = run_single_value_query("MATCH (n)-[r]->() RETURN COUNT(r) AS count_rels", 'count_rels')
     # get all other statistics
     # 0.1 eigenvector_centrality
-    """
-    // eigenvector centrality by molecule
-    CALL algo.eigenvector.stream('Molecule', 'FORMS', {})
-    YIELD nodeId, score
-    RETURN algo.asNode(nodeId).smiles_str AS smiles_str,score
-    ORDER BY score DESC
-    """
-    eigenvector_centrality = run_single_value_query("""CALL algo.eigenvector.stream('Molecule', 'FORMS', {})
-                                                    YIELD nodeId, score RETURN avg(score) as avg_score""",
-                                                    'avg_score')
+    # do by generation, molecule, order by score first
+    eigenvector_centrality = graph.run("""
+                                       CALL algo.eigenvector.stream('Molecule', 'FORMS', {})
+                                       YIELD nodeId, score
+                                       RETURN algo.asNode(nodeId).smiles_str AS smiles_str,score
+                                       ORDER BY score DESC """).data()
+    save_query_results(eigenvector_centrality, "eigenvector_centrality", query_results_folder)
+    
     # 0.2 betweenness_centrality
-    betweenness_centrality = run_single_value_query("", 'betweenness_centrality')
+    betweenness_centrality = None #run_single_value_query("", 'betweenness_centrality')
     
     # 0.3 Random-walk betweenness
-    random_walk_betweenness = run_single_value_query("", 'random_walk_betweenness')
+    random_walk_betweenness = None #run_single_value_query("", 'random_walk_betweenness')
     
     # 0.4 Clique enumeration
-    clique_enumeration = run_single_value_query("", 'clique_enumeration')
+    clique_enumeration = None #run_single_value_query("", 'clique_enumeration')
     
     # 0.5 K-Plex enumeration
-    k_plex_enumeration = run_single_value_query("", 'k_plex_enumeration')
+    k_plex_enumeration = None #run_single_value_query("", 'k_plex_enumeration')
     
     # 0.6 K-Core enumeration
-    k_core_enumeration = run_single_value_query("", 'k_core_enumeration')
+    k_core_enumeration = None #run_single_value_query("", 'k_core_enumeration')
     
     # 0.7 K-Component enumeration
-    k_component_enumeration = run_single_value_query("", 'k_component_enumeration')
+    k_component_enumeration = None #run_single_value_query("", 'k_component_enumeration')
     
     # 0.8 Neighbor redundancy
-    neighbor_redundancy = run_single_value_query("", 'neighbor_redundancy')
+    neighbor_redundancy = None #run_single_value_query("", 'neighbor_redundancy')
     
     # save all to graph_info DataFrame
     graph_info = pd.DataFrame({"statistic": ["Total Count Molecules", "Total Count Edges","Eigenvector centrality", "Betweenness centrality", "Random-walk betweenness", 'Clique enumeration','k-plex enumation','k-core enumeration','k-component enumeration','Neighbor redundancy'],
                                "value": [total_count_nodes, total_count_rels, eigenvector_centrality, betweenness_centrality, random_walk_betweenness, clique_enumeration, k_plex_enumeration, k_core_enumeration, k_component_enumeration, neighbor_redundancy]})
-    graph_info.to_csv(f"output/{query_results_folder}/network_info.csv")
+    graph_info.to_csv(f"output/{query_results_folder}/network_info.csv", index=False)
     
     
     # 1.
@@ -509,12 +507,12 @@ if __name__ == "__main__":
     # choose a path for the Neo4j_Imports folder to import the data from MOD into Neo4j
     mod_exports_folder_path = "../main/Neo4j_Imports"
     # mod_exports_folder_path = "../radicals/all7/Neo4j_Imports"
-    # import_data_from_MOD_exports(mod_exports_folder_path = mod_exports_folder_path,
-    #                              generation_limit = 2) # Set to None or Integer. The generation limit at which to import
+    import_data_from_MOD_exports(mod_exports_folder_path = mod_exports_folder_path,
+                                 generation_limit = 2) # Set to None or Integer. The generation limit at which to import
     query_results_folder = get_tabulated_possible_autocatalytic_cycles(mod_exports_folder_path = mod_exports_folder_path,
                                                                        ring_size_range = (3, 5),
                                                                        feeder_molecule_generation_range = None,
-                                                                       num_structures_limit = 75000)
+                                                                       num_structures_limit = 100) #75000
     
     # query_results_folder = "2020-08-01_18-39-23-986232" # manually override folder name for debugging
     analyze_possible_autocatalytic_cycles(mod_exports_folder_path = mod_exports_folder_path,
