@@ -709,13 +709,13 @@ if __name__ == "__main__":
     copytree(mod_exports_folder_path, 'output/' + query_results_folder + "/Neo4j_Imports")
     
     # do pattern match query on possible autocatalytic cycles
-    # get_tabulated_possible_autocatalytic_cycles(mod_exports_folder_path = mod_exports_folder_path,
-    #                                             this_out_folder = query_results_folder,
-    #                                             ring_size_range = (3, 5),
-    #                                             feeder_molecule_generation_range = None,
-    #                                             num_structures_limit = 100) #75000
-    # analyze_possible_autocatalytic_cycles(mod_exports_folder_path = mod_exports_folder_path,
-    #                                       query_results_folder = query_results_folder)
+    get_tabulated_possible_autocatalytic_cycles(mod_exports_folder_path = mod_exports_folder_path,
+                                                this_out_folder = query_results_folder,
+                                                ring_size_range = (3, 5),
+                                                feeder_molecule_generation_range = None,
+                                                num_structures_limit = 75000) # set to 100 for small batch testing
+    analyze_possible_autocatalytic_cycles(mod_exports_folder_path = mod_exports_folder_path,
+                                          query_results_folder = query_results_folder)
     
     # do network statistics and get plots
     network_statistics(query_results_folder = query_results_folder)
