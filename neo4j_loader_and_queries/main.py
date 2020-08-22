@@ -5,6 +5,7 @@ from py2neo import Graph, Node, Relationship, NodeMatcher, RelationshipMatcher
 import json
 import datetime
 import matplotlib.pyplot as plt
+# from ggplot import *
 from shutil import copytree
 import math
 
@@ -170,7 +171,8 @@ def import_mock_data():
 
 def import_data_from_MOD_exports(mod_exports_folder_path, generation_limit):
     """
-    Import simple fake dataset to test queries out on.
+    Clear the database and import the network depending on the Neo4j_Imports
+    folder selected.
     """
     # first, clear db
     print("Clearing database...")
@@ -234,8 +236,18 @@ def import_data_from_MOD_exports(mod_exports_folder_path, generation_limit):
                                                       generation_formed = generation_num)
 
 
+def save_query_results(query_result, file_name, this_out_folder):
+    with open('output/' + this_out_folder + f"/{file_name}.json", 'w') as file_data_out:
+        json.dump(query_result, file_data_out)
+    data_df = pd.read_json('output/' + this_out_folder + f"/{file_name}.json")
+    data_df.to_csv('output/' + this_out_folder + f"/{file_name}.csv", index=False)
+
+def run_single_value_query(query, value):
+    return graph.run(query).data()[0][value]
+
 
 def get_tabulated_possible_autocatalytic_cycles(mod_exports_folder_path,
+                                                this_out_folder,
                                                 ring_size_range = (3,7),
                                                 feeder_molecule_generation_range = None,
                                                 num_structures_limit = 100
@@ -291,6 +303,12 @@ def get_tabulated_possible_autocatalytic_cycles(mod_exports_folder_path,
         query_txt = query_txt.replace("{{MAX_FEEDER_GENERATION}}", str(max_feeder_gen))
     
     query_txt = query_txt.replace("{{NUM_STRUCTURES_LIMIT}}", str(num_structures_limit))
+    
+    # Get the max ID of all molecules to get a random molecule to start with.
+    # Query several times in small chunks to stochastically estimate the behavior
+    # of the graph without having to traverse the entire thing for this query.
+    # max_node_id = run_single_value_query("MATCH (n) RETURN max(ID(n)) AS max_node_id","max_node_id")
+    # WHERE ID(beginMol) = round(rand() * {{MAX_NODE_ID}})
     # print("\t\t\t" + query_txt)
     
     # Execute query in Neo4j. If out of memory error occurs, need to change DB settings:
@@ -304,17 +322,11 @@ def get_tabulated_possible_autocatalytic_cycles(mod_exports_folder_path,
     # print("\t\tQuery results:")
     # print(query_result[0])
     print("\t\tSaving query results and meta info...")
-    this_out_folder = get_timestamp()
-    os.mkdir("output/" + this_out_folder)
     
     # save data as JSON and CSV (JSON for easy IO, CSV for human readability)
-    with open('output/' + this_out_folder + '/autocat_query_results.json', 'w') as file_data_out:
-        json.dump(query_result, file_data_out)
-    data_df = pd.read_json('output/' + this_out_folder + '/autocat_query_results.json')
-    data_df.to_csv('output/' + this_out_folder + '/autocat_query_results.csv', index=False)
-    
-    # save Neo4j_Imports folder
-    copytree(mod_exports_folder_path, 'output/' + this_out_folder + "/Neo4j_Imports")
+    save_query_results(query_result = query_result,
+                       file_name = "autocat_query_results",
+                       this_out_folder = this_out_folder)
     
     # save meta info as well in out folder
     with open("output/" + this_out_folder + "/autocat_query.txt", 'w') as file_query_out:
@@ -359,7 +371,7 @@ def analyze_possible_autocatalytic_cycles(mod_exports_folder_path, query_results
     
     
     # 2.
-    # total mass of cycle per generation
+    # Total mass of cycle per generation. Not really needed.
     
     
     # 3.
@@ -388,14 +400,64 @@ def analyze_possible_autocatalytic_cycles(mod_exports_folder_path, query_results
     print("\tAutocatalysis pattern matching done.")
 
 
-def save_query_results(query_result, file_name, this_out_folder):
-    with open('output/' + this_out_folder + f"/{file_name}.json", 'w') as file_data_out:
-        json.dump(query_result, file_data_out)
-    data_df = pd.read_json('output/' + this_out_folder + f"/{file_name}.json")
-    data_df.to_csv('output/' + this_out_folder + f"/{file_name}.csv", index=False)
 
-def run_single_value_query(query, value):
-    return graph.run(query).data()[0][value]
+
+def plot_hist(file_name, statistic_col_name, title, x_label, y_label):
+    # fig, ax = plt.subplots()
+    # df = pd.read_csv(f"output/{query_results_folder}/{file_name}.csv")
+    # num_bins = int(math.sqrt(df.shape[0])) # estimate the number of bins by taking the square root of the number of rows in the dataset
+    # df.plot.hist(bins=num_bins, ax=ax)
+    # ax.set_xlabel(x_label)
+    # ax.set_ylabel(y_label)
+    # plt.savefig(f"output/{query_results_folder}/{file_name}.png")
+    fig, ax = plt.subplots()
+    df = pd.read_csv(f"output/{query_results_folder}/{file_name}.csv")
+    num_bins = int(math.sqrt(df.shape[0])) # estimate the number of bins by taking the square root
+    df = pd.pivot_table(df,
+                        values="smiles_str",
+                        index=[statistic_col_name],
+                        columns=["generation_formed"],
+                        aggfunc=lambda x: math.sqrt(len(x.unique()))) # the square of the count of unique smiles_str
+    df.plot.hist(ax=ax,
+                 bins = num_bins,
+                 title=title,
+                 figsize = (15,15))
+    ax.set_xlabel(x_label)
+    ax.set_ylabel(y_label)
+    plt.savefig(f"output/{query_results_folder}/{file_name}_histogram.png")
+
+
+def plot_scatter(file_name, statistic_col_name, title, x_label, y_label):
+    fig, ax = plt.subplots()
+    df = pd.read_csv(f"output/{query_results_folder}/{file_name}.csv")
+    df = df.head(100) # cut off by top 100 most interesting 
+    # df.plot.bar(ax = ax,
+    #             x = "smiles_str",
+    #             y = statistic_col_name,
+    #             # color = "generation_formed",
+    #             legend = True,
+    #             title = title,
+    #             figsize = (14,14))
+    # ggplot(aes(x = "smiles_str",
+    #            y = statistic_col_name,
+    #            color = "generation_formed"),
+    #        data = df) + geom_point()
+    # ax.legend(['generation_formed'])
+    groups = df.groupby("generation_formed")
+    for name, group in groups:
+        plt.plot(group['smiles_str'],
+                 group[statistic_col_name],
+                 marker = "o",
+                 linestyle = "",
+                 label = name)
+    plt.xticks(rotation=90)
+    fig.set_figheight(15)
+    fig.set_figwidth(15)
+    ax.set_title(title)
+    ax.set_xlabel(x_label)
+    ax.set_ylabel(y_label)
+    plt.savefig(f"output/{query_results_folder}/{file_name}_scatter.png")
+
 
 def network_statistics(query_results_folder):
     """
@@ -405,7 +467,9 @@ def network_statistics(query_results_folder):
         3. Random-walk betweenness, 4. Clique enumeration,
         5. k-plex enumeration, 6. k-core enumeration,
         7. k-component enumeration, 8. neighbor redundancy
-    1. Node degree distribution: sqrt of node degree frequency by degree value colored by generation_formed
+    1. Node degree distribution: sqrt of node degree frequency by degree
+        value colored by generation_formed, one plot for incoming, outgoing,
+        and incoming and outgoing edges
     2. Avg number of edges per node per generation
     """
     
@@ -414,41 +478,91 @@ def network_statistics(query_results_folder):
     # get total number of nodes and edges
     total_count_nodes = run_single_value_query("MATCH (n) RETURN COUNT(n) AS count_nodes", 'count_nodes')
     total_count_rels = run_single_value_query("MATCH (n)-[r]->() RETURN COUNT(r) AS count_rels", 'count_rels')
-    # get all other statistics
+    
     # 0.1 eigenvector_centrality
     # do by generation, molecule, order by score first
     eigenvector_centrality = graph.run("""
                                        CALL algo.eigenvector.stream('Molecule', 'FORMS', {})
                                        YIELD nodeId, score
-                                       RETURN algo.asNode(nodeId).smiles_str AS smiles_str,score
+                                       RETURN algo.asNode(nodeId).smiles_str AS smiles_str, algo.asNode(nodeId).generation_formed AS generation_formed, score
                                        ORDER BY score DESC """).data()
     save_query_results(eigenvector_centrality, "eigenvector_centrality", query_results_folder)
+    plot_hist(file_name = "eigenvector_centrality",
+              statistic_col_name = "score",
+              title = "Histogram of Eigenvector Centrality",
+              x_label = "Eigenvector Centrality Score Bin",
+              y_label = "Count of Molecules")
+    plot_scatter(file_name = "eigenvector_centrality",
+                 statistic_col_name = "score",
+                 title = "Eigenvector Centrality - Top 100 Connected Molecules",
+                 x_label = "Molecule Smiles Format",
+                 y_label = "Eigenvector Centrality Score")
+    avg_eigenvector_centrality = run_single_value_query("""
+                                                        CALL algo.eigenvector.stream('Molecule', 'FORMS', {})
+                                                        YIELD nodeId, score
+                                                        RETURN avg(score) AS avg_score
+                                                        """,
+                                                        "avg_score")
+    
     
     # 0.2 betweenness_centrality
-    betweenness_centrality = None #run_single_value_query("", 'betweenness_centrality')
+    betweenness_centrality = graph.run("""
+                                       CALL algo.betweenness.stream('Molecule','FORMS',{direction:'out'})
+                                       YIELD nodeId, centrality
+                                       MATCH (molecule:Molecule) WHERE id(molecule) = nodeId
+                                       RETURN molecule.smiles_str AS smiles_str, molecule.generation_formed AS generation_formed, centrality
+                                       ORDER BY centrality DESC;
+                                       """).data()
+    save_query_results(betweenness_centrality, "betweenness_centrality", query_results_folder)
+    plot_hist(file_name = "betweenness_centrality",
+              statistic_col_name = "centrality",
+              title = "Histogram of Betweenness Centrality",
+              x_label = "Betweenness Centrality Score Bin",
+              y_label = "Count of Molecules")
+    avg_betweenness_centrality = run_single_value_query("""
+                                       CALL algo.betweenness.stream('Molecule','FORMS',{direction:'out'})
+                                       YIELD nodeId, centrality
+                                       MATCH (molecule:Molecule) WHERE id(molecule) = nodeId
+                                       RETURN avg(centrality) AS avg_centrality
+                                       """, 'avg_centrality')
     
     # 0.3 Random-walk betweenness
-    random_walk_betweenness = None #run_single_value_query("", 'random_walk_betweenness')
+    random_walk_betweenness = graph.run(""" CALL algo.betweenness.sampled.stream('Molecule','FORMS', {strategy:'random', probability:1.0, maxDepth:1, direction: "out"})
+                                        YIELD nodeId, centrality
+                                        MATCH (molecule) WHERE id(molecule) = nodeId
+                                        RETURN molecule.smiles_str AS smiles_str, molecule.generation_formed AS generation_formed, centrality AS random_walk_centrality
+                                        ORDER BY random_walk_centrality DESC;""").data()
+    save_query_results(random_walk_betweenness, "random_walk_betweenness", query_results_folder)
+    plot_hist(file_name = "random_walk_betweenness",
+              statistic_col_name = "random_walk_centrality",
+              title = "Histogram of Random Walk Betweenness Centrality",
+              x_label = "Random Walk Betweenness Centrality Score Bin",
+              y_label = "Count of Molecules")
+    avg_random_walk_betweenness = run_single_value_query("""CALL algo.betweenness.stream('Molecule','FORMS',{direction:'out'})
+                                                         YIELD nodeId, centrality
+                                                         MATCH (molecule:Molecule) WHERE id(molecule) = nodeId
+                                                         RETURN avg(centrality) AS avg_random_walk_betweenness""",
+                                                         'avg_random_walk_betweenness')
     
     # 0.4 Clique enumeration
-    clique_enumeration = None #run_single_value_query("", 'clique_enumeration')
+    avg_clique_enumeration = None #run_single_value_query("", 'clique_enumeration')
     
     # 0.5 K-Plex enumeration
-    k_plex_enumeration = None #run_single_value_query("", 'k_plex_enumeration')
+    avg_k_plex_enumeration = None #run_single_value_query("", 'k_plex_enumeration')
     
     # 0.6 K-Core enumeration
-    k_core_enumeration = None #run_single_value_query("", 'k_core_enumeration')
+    avg_k_core_enumeration = None #run_single_value_query("", 'k_core_enumeration')
     
     # 0.7 K-Component enumeration
-    k_component_enumeration = None #run_single_value_query("", 'k_component_enumeration')
+    avg_k_component_enumeration = None #run_single_value_query("", 'k_component_enumeration')
     
     # 0.8 Neighbor redundancy
-    neighbor_redundancy = None #run_single_value_query("", 'neighbor_redundancy')
+    avg_neighbor_redundancy = None #run_single_value_query("", 'neighbor_redundancy')
     
     # save all to graph_info DataFrame
-    graph_info = pd.DataFrame({"statistic": ["Total Count Molecules", "Total Count Edges","Eigenvector centrality", "Betweenness centrality", "Random-walk betweenness", 'Clique enumeration','k-plex enumation','k-core enumeration','k-component enumeration','Neighbor redundancy'],
-                               "value": [total_count_nodes, total_count_rels, eigenvector_centrality, betweenness_centrality, random_walk_betweenness, clique_enumeration, k_plex_enumeration, k_core_enumeration, k_component_enumeration, neighbor_redundancy]})
-    graph_info.to_csv(f"output/{query_results_folder}/network_info.csv", index=False)
+    graph_info = pd.DataFrame({"statistic": ["Total Count Molecules", "Total Count Edges","Average Eigenvector Centrality", "Average Betweenness Centrality", "Average Random-walk Betweenness", 'Clique enumeration','k-plex enumation','k-core enumeration','k-component enumeration','Neighbor redundancy'],
+                               "value": [total_count_nodes, total_count_rels, avg_eigenvector_centrality, avg_betweenness_centrality, avg_random_walk_betweenness, avg_clique_enumeration, avg_k_plex_enumeration, avg_k_core_enumeration, avg_k_component_enumeration, avg_neighbor_redundancy]})
+    graph_info.to_csv(f"output/{query_results_folder}/_network_info.csv", index=False)
     
     
     # 1.
@@ -491,13 +605,78 @@ def network_statistics(query_results_folder):
     node_deg_avg.plot(ax=ax,
                       x = "generation_formed",
                       y = "count_relationships",
-                      kind="bar",
+                      kind="scatter",
                       title="Average Molecule Degree by Generation Formed",
                       figsize = (8,5),
                       legend = False)
     ax.set_xlabel("Generation Formed")
     ax.set_ylabel("Average Node Degree")
     plt.savefig(f"output/{query_results_folder}/{node_deg_file}_avg.png")
+    
+    # incoming relationships by molecule
+    incoming_rels_count_file = "incoming_rels_count"
+    incoming_rels_count = graph.run("""
+                                    MATCH (n)<-[r:FORMS]-()
+                                    RETURN n.smiles_str AS smiles_str,
+                                    n.generation_formed AS generation_formed,
+                                    n.exact_mass AS exact_mass,
+                                    count(r) AS count_incoming
+                                    ORDER BY count_incoming DESC
+                                    """).data()
+    save_query_results(query_result = incoming_rels_count,
+                       file_name = incoming_rels_count_file,
+                       this_out_folder = query_results_folder)
+    fig, ax = plt.subplots()
+    node_deg_df = pd.read_csv(f"output/{query_results_folder}/{incoming_rels_count_file}.csv")
+    # node_deg_df['count_relationships'].value_counts().plot(ax=ax,
+    #                                                        kind='bar',
+    #                                                        title="Node Degree Distribution by Generation Formed")
+    node_deg_pivot = pd.pivot_table(node_deg_df,
+                                    values="smiles_str",
+                                    index=["count_incoming"],
+                                    columns=["generation_formed"],
+                                    aggfunc=lambda x: math.sqrt(len(x.unique()))) # the square of the count of unique smiles_str
+    node_deg_pivot.plot(ax=ax,
+                        kind="bar",
+                        title="Square of Molecule Degree by Generation Formed for Incoming Relationships",
+                        figsize = (8,5))
+    ax.set_xlabel("Molecule Degree (count of incoming edges)")
+    ax.set_ylabel("sqrt(Count of Molecules)")
+    plt.savefig(f"output/{query_results_folder}/{incoming_rels_count_file}.png")
+    
+    # outgoing relationships by molecule
+    outgoing_rels_count_file = "outgoing_rels_count"
+    outgoing_rels_count = graph.run("""
+                                    MATCH (n)-[r:FORMS]->()
+                                    RETURN n.smiles_str AS smiles_str,
+                                    n.generation_formed AS generation_formed,
+                                    n.exact_mass AS exact_mass,
+                                    count(r) AS count_outgoing
+                                    ORDER BY count_outgoing DESC
+                                    """).data()
+    save_query_results(query_result = outgoing_rels_count,
+                       file_name = outgoing_rels_count_file,
+                       this_out_folder = query_results_folder)
+    fig, ax = plt.subplots()
+    node_deg_df = pd.read_csv(f"output/{query_results_folder}/{outgoing_rels_count_file}.csv")
+    # node_deg_df['count_relationships'].value_counts().plot(ax=ax,
+    #                                                        kind='bar',
+    #                                                        title="Node Degree Distribution by Generation Formed")
+    node_deg_pivot = pd.pivot_table(node_deg_df,
+                                    values="smiles_str",
+                                    index=["count_outgoing"],
+                                    columns=["generation_formed"],
+                                    aggfunc=lambda x: math.sqrt(len(x.unique()))) # the square of the count of unique smiles_str
+    node_deg_pivot.plot(ax=ax,
+                        kind="bar",
+                        title="Square of Molecule Degree by Generation Formed for Outgoing Relationships",
+                        figsize = (8,5))
+    ax.set_xlabel("Molecule Degree (count of outgoing edges)")
+    ax.set_ylabel("sqrt(Count of Molecules)")
+    plt.savefig(f"output/{query_results_folder}/{outgoing_rels_count_file}.png")
+    
+    
+    
     
     print("\tNetwork statistics done.")
 
@@ -507,18 +686,27 @@ if __name__ == "__main__":
     # choose a path for the Neo4j_Imports folder to import the data from MOD into Neo4j
     mod_exports_folder_path = "../main/Neo4j_Imports"
     # mod_exports_folder_path = "../radicals/all7/Neo4j_Imports"
-    import_data_from_MOD_exports(mod_exports_folder_path = mod_exports_folder_path,
-                                 generation_limit = 2) # Set to None or Integer. The generation limit at which to import
-    query_results_folder = get_tabulated_possible_autocatalytic_cycles(mod_exports_folder_path = mod_exports_folder_path,
-                                                                       ring_size_range = (3, 5),
-                                                                       feeder_molecule_generation_range = None,
-                                                                       num_structures_limit = 100) #75000
+    # import_data_from_MOD_exports(mod_exports_folder_path = mod_exports_folder_path,
+    #                              generation_limit = 2) # Set to None or Integer. The generation limit at which to import
     
+    # create a timestamped output folder to store everything for this run
+    query_results_folder = get_timestamp()
+    os.mkdir("output/" + query_results_folder)
     # query_results_folder = "2020-08-01_18-39-23-986232" # manually override folder name for debugging
-    analyze_possible_autocatalytic_cycles(mod_exports_folder_path = mod_exports_folder_path,
-                                          query_results_folder = query_results_folder)
     
-    # get network statistics
+    # Optional: save the state of the Neo4j_Imports folder at the time this was run
+    copytree(mod_exports_folder_path, 'output/' + query_results_folder + "/Neo4j_Imports")
+    
+    # do pattern match query on possible autocatalytic cycles
+    # get_tabulated_possible_autocatalytic_cycles(mod_exports_folder_path = mod_exports_folder_path,
+    #                                             this_out_folder = query_results_folder,
+    #                                             ring_size_range = (3, 5),
+    #                                             feeder_molecule_generation_range = None,
+    #                                             num_structures_limit = 100) #75000
+    # analyze_possible_autocatalytic_cycles(mod_exports_folder_path = mod_exports_folder_path,
+    #                                       query_results_folder = query_results_folder)
+    
+    # do network statistics and get plots
     network_statistics(query_results_folder = query_results_folder)
 
 
