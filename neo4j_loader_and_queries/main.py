@@ -697,8 +697,8 @@ if __name__ == "__main__":
     # choose a path for the Neo4j_Imports folder to import the data from MOD into Neo4j
     mod_exports_folder_path = "../main/Neo4j_Imports"
     # mod_exports_folder_path = "../radicals/all7/Neo4j_Imports"
-    # import_data_from_MOD_exports(mod_exports_folder_path = mod_exports_folder_path,
-    #                              generation_limit = 2) # Set to None or Integer. The generation limit at which to import
+    import_data_from_MOD_exports(mod_exports_folder_path = mod_exports_folder_path,
+                                 generation_limit = 2) # Set to None or Integer. The generation limit at which to import
     
     # create a timestamped output folder to store everything for this run
     query_results_folder = get_timestamp()
