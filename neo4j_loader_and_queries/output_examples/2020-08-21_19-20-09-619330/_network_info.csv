@@ -1,0 +1,11 @@
+statistic,value
+Total Count Molecules,1005.0
+Total Count Edges,2827.0
+Average Eigenvector Centrality,3.919243648036647
+Average Betweenness Centrality,262.90646766169147
+Average Random-walk Betweenness,262.9064676616915
+Clique enumeration,
+k-plex enumation,
+k-core enumeration,
+k-component enumeration,
+Neighbor redundancy,

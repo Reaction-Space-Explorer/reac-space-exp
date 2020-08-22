@@ -450,6 +450,7 @@ def plot_scatter(file_name, statistic_col_name, title, x_label, y_label):
                  marker = "o",
                  linestyle = "",
                  label = name)
+    plt.legend(loc="best", title="Generation Formed")
     plt.xticks(rotation=90)
     fig.set_figheight(15)
     fig.set_figwidth(15)
@@ -519,6 +520,11 @@ def network_statistics(query_results_folder):
               title = "Histogram of Betweenness Centrality",
               x_label = "Betweenness Centrality Score Bin",
               y_label = "Count of Molecules")
+    plot_scatter(file_name = "betweenness_centrality",
+                 statistic_col_name = "centrality",
+                 title = "Betweenness Centrality - Top 100 Connected Molecules",
+                 x_label = "Molecule Smiles Format",
+                 y_label = "Betweenness Centrality Score")
     avg_betweenness_centrality = run_single_value_query("""
                                        CALL algo.betweenness.stream('Molecule','FORMS',{direction:'out'})
                                        YIELD nodeId, centrality
@@ -538,6 +544,11 @@ def network_statistics(query_results_folder):
               title = "Histogram of Random Walk Betweenness Centrality",
               x_label = "Random Walk Betweenness Centrality Score Bin",
               y_label = "Count of Molecules")
+    plot_scatter(file_name = "random_walk_betweenness",
+                 statistic_col_name = "random_walk_centrality",
+                 title = "Random Walk Betweenness Centrality - Top 100 Connected Molecules",
+                 x_label = "Molecule Smiles Format",
+                 y_label = "Random Walk Betweenness Centrality Score")
     avg_random_walk_betweenness = run_single_value_query("""CALL algo.betweenness.stream('Molecule','FORMS',{direction:'out'})
                                                          YIELD nodeId, centrality
                                                          MATCH (molecule:Molecule) WHERE id(molecule) = nodeId
@@ -686,8 +697,8 @@ if __name__ == "__main__":
     # choose a path for the Neo4j_Imports folder to import the data from MOD into Neo4j
     mod_exports_folder_path = "../main/Neo4j_Imports"
     # mod_exports_folder_path = "../radicals/all7/Neo4j_Imports"
-    # import_data_from_MOD_exports(mod_exports_folder_path = mod_exports_folder_path,
-    #                              generation_limit = 2) # Set to None or Integer. The generation limit at which to import
+    import_data_from_MOD_exports(mod_exports_folder_path = mod_exports_folder_path,
+                                 generation_limit = 2) # Set to None or Integer. The generation limit at which to import
     
     # create a timestamped output folder to store everything for this run
     query_results_folder = get_timestamp()
@@ -698,13 +709,13 @@ if __name__ == "__main__":
     copytree(mod_exports_folder_path, 'output/' + query_results_folder + "/Neo4j_Imports")
     
     # do pattern match query on possible autocatalytic cycles
-    # get_tabulated_possible_autocatalytic_cycles(mod_exports_folder_path = mod_exports_folder_path,
-    #                                             this_out_folder = query_results_folder,
-    #                                             ring_size_range = (3, 5),
-    #                                             feeder_molecule_generation_range = None,
-    #                                             num_structures_limit = 100) #75000
-    # analyze_possible_autocatalytic_cycles(mod_exports_folder_path = mod_exports_folder_path,
-    #                                       query_results_folder = query_results_folder)
+    get_tabulated_possible_autocatalytic_cycles(mod_exports_folder_path = mod_exports_folder_path,
+                                                this_out_folder = query_results_folder,
+                                                ring_size_range = (3, 5),
+                                                feeder_molecule_generation_range = None,
+                                                num_structures_limit = 1000) # set to 100 for small batch testing
+    analyze_possible_autocatalytic_cycles(mod_exports_folder_path = mod_exports_folder_path,
+                                          query_results_folder = query_results_folder)
     
     # do network statistics and get plots
     network_statistics(query_results_folder = query_results_folder)
