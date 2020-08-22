@@ -450,6 +450,7 @@ def plot_scatter(file_name, statistic_col_name, title, x_label, y_label):
                  marker = "o",
                  linestyle = "",
                  label = name)
+    plt.legend(loc="best", title="Generation Formed")
     plt.xticks(rotation=90)
     fig.set_figheight(15)
     fig.set_figwidth(15)
@@ -519,6 +520,11 @@ def network_statistics(query_results_folder):
               title = "Histogram of Betweenness Centrality",
               x_label = "Betweenness Centrality Score Bin",
               y_label = "Count of Molecules")
+    plot_scatter(file_name = "betweenness_centrality",
+                 statistic_col_name = "centrality",
+                 title = "Betweenness Centrality - Top 100 Connected Molecules",
+                 x_label = "Molecule Smiles Format",
+                 y_label = "Betweenness Centrality Score")
     avg_betweenness_centrality = run_single_value_query("""
                                        CALL algo.betweenness.stream('Molecule','FORMS',{direction:'out'})
                                        YIELD nodeId, centrality
@@ -538,6 +544,11 @@ def network_statistics(query_results_folder):
               title = "Histogram of Random Walk Betweenness Centrality",
               x_label = "Random Walk Betweenness Centrality Score Bin",
               y_label = "Count of Molecules")
+    plot_scatter(file_name = "random_walk_betweenness",
+                 statistic_col_name = "random_walk_centrality",
+                 title = "Random Walk Betweenness Centrality - Top 100 Connected Molecules",
+                 x_label = "Molecule Smiles Format",
+                 y_label = "Random Walk Betweenness Centrality Score")
     avg_random_walk_betweenness = run_single_value_query("""CALL algo.betweenness.stream('Molecule','FORMS',{direction:'out'})
                                                          YIELD nodeId, centrality
                                                          MATCH (molecule:Molecule) WHERE id(molecule) = nodeId
