@@ -40,13 +40,6 @@ def create_hemiacetal_formation(ring_size, is_inverse=False):
 			'edge [ source 4 target 5 label "-" ]',
 			'edge [ source 3 target 5 label "-" ]',
 			'edge [ source 4 target 2 label "-" ]'])
-		# We need *some* constraints to make sure the rule doesn't invert itself
-		# otherwise it would invert itself to the forward rule without constraints
-		rule.constraints.extend([
-		'constrainAdj [ id 4 op "<=" count 1',
-		'\tnodeLabels [ label "O" label "N" label "S" ]',
-		'\tedgeLabels [ label "-" ]'
-		']'])
 	
 	# The general context
 	rule.context.extend([
