@@ -44,3 +44,4 @@ main/Neo4j_Imports
 
 # disallow output folder
 neo4j_loader_and_queries/output
+neo4j_loader_and_queries/veronica_rdkit_help/output
