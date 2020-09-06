@@ -32,12 +32,20 @@ hydration1 = ruleGMLString("""rule [
 		nodeLabels [ label "N" label "S" label "O" ]
 	]
 	constrainAdj [ id 3 op "=" count 0
-		edgeLabels [ label "=" label "-" ] # avoid gem diols as well
+		edgeLabels [ label "=" label "-" ] # avoid gem diols and forming carboxylic acids, amides
 		nodeLabels [ label "O" label "N" label "S" ]
+	]
+	# make sure it doesn't form enols; for the case of C=C, the suceeding rule is more useful
+	constrainAdj [ id 3 op "=" count 0
+		nodeLabels [ label "C" ]
+		edgeLabels [ label "=" ]
 	]
 ]
 """)
-
+p = GraphPrinter()
+p.withIndex = True
+p.withColour = True
+hydration1.print(p)
 
 hydration2 = ruleGMLString("""rule [
 	ruleID "Hydration of C=C(O)"
