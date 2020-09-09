@@ -61,12 +61,19 @@ for file_name in bad_rings_aromatics:
 			ring = smiles(ring_smiles, add=False)
 			forbidden.append(ring)
 
+# A list of things that might be forbidden by the library above but is stable
+# and should be produced
+allowed_structs = [smiles("O=C=O", name="Carbon Dioxide", add=False)]
+
 def pred(derivation):
 	"""
 	Keyword arguments:
 	d --- a derivation graph object
 	"""
 	for g in derivation.right:
+		for allowed in allowed_structs:
+			if g.monomorphism(allowed) > 0:
+				return True
 		# Allow masses only lower than a certain maximum
 		if g.exactMass >= 200:
 			return False
