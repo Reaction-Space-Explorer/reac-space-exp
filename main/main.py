@@ -1,8 +1,13 @@
 import os
 import time
-from rdkit.Chem import SDMolSupplier, MolToSmiles
+from rdkit.Chem import SDMolSupplier, MolFromSmiles, MolToSmiles, Kekulize
 
 include(os.path.join('..', 'rules/all.py'))
+
+p = GraphPrinter()
+p.simpleCarbons = True
+p.withColour = True
+p.collapseHydrogens = True
 
 # Forbidden substructures (don't add them to inputGraphs)
 # Three and four membeered rings are unstable, any atom with two double bonds is forbidden
@@ -46,12 +51,29 @@ bad_bicycle = graphGMLString("""graph [
 forbidden = [three_memb, four_memb, smiles('[*]=[*]=[*]', name="Two double bonds", add=False),
 			bad_bicycle]
 
+# Load the library of bad ring and aromatic structures.
+bad_rings_aromatics = ['BadRingsList.txt', 'BadAromaticsList.txt']
+for file_name in bad_rings_aromatics:
+	with open(f"../../data/{file_name}") as rings_list:
+		list_rings = rings_list.readlines()
+		for item in list_rings:
+			ring_smiles = item.replace("\n", "")
+			ring = smiles(ring_smiles, add=False)
+			forbidden.append(ring)
+
+# A list of things that might be forbidden by the library above but is stable
+# and should be produced
+allowed_structs = [smiles("O=C=O", name="Carbon Dioxide", add=False)]
+
 def pred(derivation):
 	"""
 	Keyword arguments:
 	d --- a derivation graph object
 	"""
 	for g in derivation.right:
+		for allowed in allowed_structs:
+			if g.monomorphism(allowed) > 0:
+				return True
 		# Allow masses only lower than a certain maximum
 		if g.exactMass >= 200:
 			return False
@@ -70,11 +92,6 @@ strat = (
 		# and (fb.monomorphism(g) == 0 for fb in forbidden) for g in derivation.right)
 	] (inputRules)#repeat[1]()
 )
-
-p = GraphPrinter()
-p.simpleCarbons = True
-p.withColour = True
-p.collapseHydrogens = True
 
 # Use the following when applying a strategy to a DG loaded from a dump file
 '''start_time = 0
@@ -101,7 +118,7 @@ end_time = time.time()
 print("Time taken for this 4th round: ", end_time-start_time)'''
 
 
-def check_sdf_matches(dg, sdf_file, draw_structures=True):
+def check_sdf_matches(dg, sdf_file, draw_structures=True, print_unmatching=False):
 	"""
 	After generating the network, try to see if any structures match with those in SDF files
 	These files were usually created manually, storing structures reported in experimental
@@ -118,16 +135,23 @@ def check_sdf_matches(dg, sdf_file, draw_structures=True):
 	print(f"Checking for matches with structures in {sdf_file}")
 	sdfile = SDMolSupplier(sdf_file)
 	for mol in sdfile:
-		smi = MolToSmiles(mol)
+		Kekulize(mol)
+		smi = MolToSmiles(mol, kekuleSmiles=True)
 		mol_graph = smiles(smi, add=False)
 		for v in dg.vertices: #dg_new.vertices
 			if v.graph.isomorphism(mol_graph) == 1:
 				matching_structs.append(mol_graph)
 				print("Structure {0} of the SDF found in the network!".format(mol_graph.smiles))
-				if draw_structures == True:
-					v.graph.print(p)
-			else:
-				not_matching.append(mol_graph)
+		if mol_graph not in matching_structs:
+			not_matching.append(mol_graph)
+	if draw_structures == True:
+		for g in matching_structs:
+			g.print(p)
+	if print_unmatching == True:
+		postSection("Structures not matched yet")
+		for g in not_matching:
+			g.print(p)
+
 	print(f"{len(matching_structs)} of {len(sdfile)} ({100* len(matching_structs)/len(sdfile)}%)  total structures in the SDF are in the reaction network.")
 
 
@@ -143,6 +167,11 @@ def write_gen_output(subset, generation, reaction_name):
 
 # Count number of times a rule appears in the edges' attributes.
 def count_rules(dg):
+	"""
+	Counts the number of edges associated with each rule in the network and prints the count.
+	Keyword arguments:
+	dg -- the derivation graph of the network
+	"""
 	rules_count = []
 	for e in dg.edges:
 		for rule in e.rules:
@@ -151,26 +180,12 @@ def count_rules(dg):
 	for rule in rules_used.keys():
 		print(f"{rule} reaction count: {rules_count.count(rule)}")
 
-# Print reactions of just the one reaction alone, in each in its own DG
-#to_print = ['Cannizarro', 'Knoevenagel, C, C(=O)A, OR, H |, HC', 'Ester Formation Hydrolysis Exchange',
-#			'Knoevenagel, C, C(=O)A, OR, H |, CC', 'Ring Closure']
-
 dgprint = DGPrinter()
 dgprint.withRuleName = True
 dgprint.withShortcutEdges = True
 
 # Track what is producing diols
-'''diol = graphGMLString("""graph [
-	node [ id 0 label "C" ]
-	node [ id 1 label "O" ]
-	node [ id 2 label "O" ]
-	node [ id 3 label "H" ]
-	node [ id 4 label "H" ]
-	edge [ source 0 target 1 label "-" ]
-	edge [ source 0 target 2 label "-" ]
-	edge [ source 1 target 3 label "-" ]
-	edge [ source 2 target 4 label "-" ]
-]""", add=False)'''
+gem_diol = smiles("O[C]O", name="gem diol substruct", add=False)
 
 # Track what's producing methoxy/ethoxy ethers
 methoxy_ether = smiles("[C][O]C", name="methoxy ether substruct", add=False)

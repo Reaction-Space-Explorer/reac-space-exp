@@ -1,8 +1,8 @@
 include("common.py")
 
-# Some rules have a missing adjConstraint due to which they can't be inverted
-#config.rule.ignoreConstraintsDuringInversion = True
-
+# Note: rules listed here will automatically inverted. If there is a rule without constraints
+# that you want to load without letting it get inverted, include it near the bottom of
+# the file
 if True:
 	# The ones that were created by Rana and Aayush
 	include("aldolCondensation.py")
@@ -11,10 +11,10 @@ if True:
 	include("elimination2.py")
 	include("retroAldol.py")
 	include("ketoEnolisation.py")
-	include("hemiacetalFormation.py")
 	include("hydration.py")
 	include("heyns_rearrangement.py")
-	# The following were taken from the HCN folder
+	# The following were taken from the HCN folder (many were modified)
+	include("hcn_addition.py")
 	include("esterFormationHydrolysisExchange.py")
 	include("cannizarro1.py")
 	include("cannizarro2.py")
@@ -38,13 +38,10 @@ if True:
 	include("amideExchange.py")
 	include("thialThiene.py")
 	include("sulfideToNitrileAddition.py")
-	include("amidineToAmideHydrolysis.py")
 	include("thioamidineToAmideHydrolysis.py")
 	include("ketoneAldehydeToThioketoneThial.py")
 	include("ringClosure.py")
 	include("hcnToKetone.py")
-	include("imineToCarbonyl.py")
-	include("imineToEnamine.py")
 	include("streckerDegradationDicarbonyl.py")
 	include("schiffTautomerization.py")
 	include("michaelAddition.py")
@@ -80,3 +77,10 @@ for a in loaded:
 	except LogicError as e:
 		print(a.name, "can not be inverted yet.")
 		canNotBeInvertedYet.append(a)
+
+# These rules won't get inverted automatically
+include("hemiacetalFormation.py")
+include("imineToCarbonyl.py")
+include("amidineToAmideHydrolysis.py")
+include("imineToEnamine.py")
+include("nitrile_hydrolysis.py")

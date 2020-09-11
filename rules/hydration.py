@@ -1,7 +1,7 @@
 # The purpose of this is to provide an "inverse" rule to elimination
 
-# Hydration + 
-hydration1 = [ruleGMLString("""rule [
+# Prefer producing the keto form instead of the enol form (avoid tautomers)
+hydration1 = ruleGMLString("""rule [
 	ruleID "Hydration of C(=O)C"
 	left [
 		edge [ source 1 target 2 label "=" ]
@@ -32,13 +32,22 @@ hydration1 = [ruleGMLString("""rule [
 		nodeLabels [ label "N" label "S" label "O" ]
 	]
 	constrainAdj [ id 3 op "=" count 0
-		edgeLabels [ label "=" label "-" ] # avoid gem diols as well
+		edgeLabels [ label "=" label "-" ] # avoid gem diols and forming carboxylic acids, amides
 		nodeLabels [ label "O" label "N" label "S" ]
 	]
+	# make sure it doesn't form enols; for the case of C=C, the suceeding rule is more useful
+	constrainAdj [ id 3 op "=" count 0
+		nodeLabels [ label "C" ]
+		edgeLabels [ label "=" ]
+	]
 ]
-""")]
+""")
+p = GraphPrinter()
+p.withIndex = True
+p.withColour = True
+hydration1.print(p)
 
-hydration2 = [ruleGMLString("""rule [
+hydration2 = ruleGMLString("""rule [
 	ruleID "Hydration of C=C(O)"
 	left [
 		edge [ source 1 target 2 label "=" ]
@@ -62,10 +71,10 @@ hydration2 = [ruleGMLString("""rule [
 		nodeLabels [ label "N" label "S" ]
 		edgeLabels [ label "-" label "=" ]
 	]
-	# It should not form carboxylic acids (avoid adding -OH to carbons with =O )
+	# It should not form gem-diols or aminols
 	constrainAdj [ id 2 op "=" count 0
-		nodeLabels [ label "O" ]
-		edgeLabels [ label "=" ]
+		nodeLabels [ label "O" label "N" label "S" ]
+		edgeLabels [ label "-" ]
 	]
 ]
-""")]
+""")
