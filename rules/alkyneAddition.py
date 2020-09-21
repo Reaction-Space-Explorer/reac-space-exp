@@ -16,6 +16,6 @@ def alkyneAdditionGen():
 		'edge [ source 0 target 2 label "-" ]',
 		'edge [ source 1 target 3 label "-" ]',
 	])
-	for r in attach_Nu(r, 3):
+	for r in attach_Nu(r, 3, allow_o=False):
 		yield r.loadRule()
 alkyneAddition = [a for a in alkyneAdditionGen()]

@@ -184,6 +184,9 @@ dgprint = DGPrinter()
 dgprint.withRuleName = True
 dgprint.withShortcutEdges = True
 
+rp = GraphPrinter() # Think of it as a "Rule Printer"
+rp.withIndex = True
+rp.withColour = True
 # Track what is producing diols
 gem_diol = smiles("O[C]O", name="gem diol substruct", add=False)
 
@@ -219,7 +222,7 @@ def find_substruct_producer(dg, substruct, print_max=50, print_rule=False):
 							print("Printing reaction: ", fake_edge)
 						dg2.print(dgprint)
 						if print_rule == True:
-							rule.print(p)
+							rule.print(rp)
 
 
 def print_reaction(dg, reac_name, print_max=50, print_rule=False):
@@ -249,5 +252,5 @@ def print_reaction(dg, reac_name, print_max=50, print_rule=False):
 						print("Printing reaction: ", fake_edge)
 					dg2.print(dgprint)
 					if print_rule == True:
-						rule.print(p)
+						rule.print(rp)
 					count += 1
