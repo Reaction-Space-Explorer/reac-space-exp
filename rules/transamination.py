@@ -35,8 +35,14 @@ transamination = ruleGMLString("""rule [
 		edge [ source 2 target 12 label "-" ]
 		edge [ source 2 target 9 label "-" ]
 		edge [ source 11 target 3 label "=" ]
-	]   
+	]
+	constrainAdj [
+		id 2 op "=" count 0
+		nodeLabels [ label "O" label "N" label "S" ] # should not be part of an amide, etc.
+		edgeLabels [ label "-" ]
+	]
 ]""")
+
 
 transamination_inv = ruleGMLString("""rule [
 	ruleID "Transamination (inverse)" 
