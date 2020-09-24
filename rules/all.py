@@ -26,12 +26,8 @@ if True:
 	include("cyanamideHydration.py")
 	include("carbamylation.py")
 	include("cyanamidation.py")
-	include("mannich.py")
 	include("amideFormationHydrolysis.py")
 	include("cyanateFromCyanogen.py")
-	include("betaDecarboxylation2.py")
-	include("transamination.py")
-	include("alphaKetoAcidDecarboxylation.py")
 	include("ketoneCatalyzedDecarboxylation.py")
 	include("amadoriRearrangement.py")
 	include("streckerDegradation.py")
@@ -40,11 +36,9 @@ if True:
 	include("sulfideToNitrileAddition.py")
 	include("thioamidineToAmideHydrolysis.py")
 	include("ketoneAldehydeToThioketoneThial.py")
-	include("ringClosure.py")
 	include("hcnToKetone.py")
 	include("streckerDegradationDicarbonyl.py")
 	include("schiffTautomerization.py")
-	include("michaelAddition.py")
 
 canNotBeInvertedYet = []
 loaded = list(inputRules)
@@ -79,8 +73,16 @@ for a in loaded:
 		canNotBeInvertedYet.append(a)
 
 # These rules won't get inverted automatically
+
+include("decarboxylation_reactions.py")
+include("mannich.py")
 include("hemiacetalFormation.py")
 include("imineToCarbonyl.py")
 include("amidineToAmideHydrolysis.py")
 include("imineToEnamine.py")
 include("nitrile_hydrolysis.py")
+include("transamination.py")
+include("alphaKetoAcidDecarboxylation.py")
+include("betaDecarboxylation2.py")
+include("ringClosure.py")
+include("michaelAddition.py")
