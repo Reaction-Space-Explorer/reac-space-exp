@@ -27,17 +27,18 @@ ester_hydrolysis = ruleGMLString("""rule [
 		edge [ source 2 target 6 label "-" ]
 		edge [ source 4 target 8 label "-" ]
 	]
-	# solely to avoid this rule from being inverible for now
-	constrainAdj [ id 2 op "=" count 1
-		nodeLabels [ label "O"]
+	# should not produce gem diols/aminols
+	constrainAdj [ id 5 op "=" count 0
+		nodeLabels [ label "O" label "N" label "S"]
 		edgeLabels [ label "-" ]
 	]
 ]""")
-	
 
-# Temporarily turn off ester formation (happens less often in basic medium)
-'''def esterFormationHydrolysisExchangeGen():
-	r = RuleGen("Ester Formation")
+
+'''# Temporarily turn off ester formation (happens less often in basic medium)
+def esterFormationHydrolysisExchangeGen():
+	# Although I think this rule only does formation, not exchange.
+	r = RuleGen("Ester Formation Hydrolysis Exchange")
 	r.label = "term"
 	r.left.extend([
 		'# OC(A)OR',
