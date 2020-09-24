@@ -33,23 +33,11 @@ four_memb = graphGMLString("""graph [
 	edge [ source 3 target 0 label "*" ]
 ]""", name="Four membered ring", add=False)
 
-# A cyclic substructure usually appearing in unstable bicyclic compounds.
-bad_bicycle = graphGMLString("""graph [
-	node [ id 0 label "C" ]
-	node [ id 1 label "O" ]
-	node [ id 2 label "C" ]
-	node [ id 3 label "O" ]
-	node [ id 4 label "C" ]
-	edge [ source 0 target 1 label "-" ]
-	edge [ source 1 target 2 label "-" ]
-	edge [ source 2 target 3 label "-" ]
-	edge [ source 3 target 4 label "-" ]
-	edge [ source 4 target 0 label "-" ]
-]
-""", name="Bad bicycle substruct", add=False)
-
+# some substructures had high electron density
+bad_bicycle_1 = smiles("[C]1[O][C](O)[O][C]1", add=False)
+bad_bicycle_2 = smiles("[C]1(O)[O][C][O][C]1", add=False)
 forbidden = [three_memb, four_memb, smiles('[*]=[*]=[*]', name="Two double bonds", add=False),
-			bad_bicycle]
+			bad_bicycle_1, bad_bicycle_2]
 
 # Load the library of bad ring and aromatic structures.
 bad_rings_aromatics = ['BadRingsList.txt', 'BadAromaticsList.txt']
@@ -60,6 +48,7 @@ for file_name in bad_rings_aromatics:
 			ring_smiles = item.replace("\n", "")
 			ring = smiles(ring_smiles, add=False)
 			forbidden.append(ring)
+
 
 # A list of things that might be forbidden by the library above but is stable
 # and should be produced
@@ -191,8 +180,8 @@ rp.withColour = True
 gem_diol = smiles("O[C]O", name="gem diol substruct", add=False)
 
 # Track what's producing methoxy/ethoxy ethers
-methoxy_ether = smiles("[C][O]C", name="methoxy ether substruct", add=False)
-ethoxy_ether = smiles("[C][O]CC", name="Ethoxy Ether Substruct", add=False)
+methoxy = smiles("[C][O]C", name="methoxy ether substruct", add=False)
+ethoxy = smiles("[C][O]CC", name="Ethoxy Ether Substruct", add=False)
 
 
 def find_substruct_producer(dg, substruct, print_max=50, print_rule=False):
