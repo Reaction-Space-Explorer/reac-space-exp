@@ -1,4 +1,4 @@
-alphaKetoAcidDecarboxylation = [ruleGMLString("""rule [
+alphaKetoAcidDecarboxylation = ruleGMLString("""rule [
 	ruleID "Alpha-Keto Acid Decarboxylation" 
     labelType "term"
 	left [
@@ -10,7 +10,7 @@ alphaKetoAcidDecarboxylation = [ruleGMLString("""rule [
 		edge [ source 1 target 2 label "-" ]
 		edge [ source 2 target 3 label "=" ]
 		edge [ source 4 target 5 label "=" ]
-		node [ id 1 label "_a" ]
+		node [ id 1 label "*" ]
 		node [ id 2 label "C" ]
 		node [ id 3 label "O" ]
 		node [ id 4 label "C" ]
@@ -22,7 +22,4 @@ alphaKetoAcidDecarboxylation = [ruleGMLString("""rule [
 		edge [ source 2 target 7 label "-" ]
 		edge [ source 4 target 6 label "=" ]
 	]
-]""")]
-#	constrainLabelNone [
-#		label "_a" labels [ label "H" ]
-#	]
+]""")
