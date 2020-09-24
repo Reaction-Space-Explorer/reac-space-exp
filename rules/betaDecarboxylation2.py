@@ -8,7 +8,7 @@ beta_decarboxylation = ruleGMLString("""rule [
 		edge [ source 7 target 9 label "-" ]
 		edge [ source 9 target 10 label "-" ]
 	]
-	context[
+	context [
 		node [ id 1 label "*" ]
 		edge [ source 1 target 2 label "-" ]
 		node [ id 2 label "C" ]
@@ -26,15 +26,12 @@ beta_decarboxylation = ruleGMLString("""rule [
 		node [ id 9 label "O" ]
 		node [ id 10 label "H" ]
 	]
-	right[
+	right [
 		edge [ source 7 target 9 label "=" ]
 		edge [ source 4 target 10 label "-" ]
 	]
 ]
 """)
-
-beta_decaboxylation_inv = beta_decarboxylation.makeInverse()
-
 
 '''def betaDecarboxylation2Gen():
 	r = RuleGen("Beta-decarboxylation 2")
