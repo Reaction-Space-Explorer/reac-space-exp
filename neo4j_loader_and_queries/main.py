@@ -485,16 +485,16 @@ def network_statistics(query_results_folder):
     eigenvector_centrality = graph.run("""
                                        CALL algo.eigenvector.stream('Molecule', 'FORMS', {})
                                        YIELD nodeId, score
-                                       RETURN algo.asNode(nodeId).smiles_str AS smiles_str, algo.asNode(nodeId).generation_formed AS generation_formed, score
-                                       ORDER BY score DESC """).data()
+                                       RETURN algo.asNode(nodeId).smiles_str AS smiles_str, algo.asNode(nodeId).generation_formed AS generation_formed, score AS eigenvector_centrality
+                                       ORDER BY eigenvector_centrality DESC """).data()
     save_query_results(eigenvector_centrality, "eigenvector_centrality", query_results_folder)
     plot_hist(file_name = "eigenvector_centrality",
-              statistic_col_name = "score",
+              statistic_col_name = "eigenvector_centrality",
               title = "Histogram of Eigenvector Centrality",
               x_label = "Eigenvector Centrality Score Bin",
               y_label = "Count of Molecules")
     plot_scatter(file_name = "eigenvector_centrality",
-                 statistic_col_name = "score",
+                 statistic_col_name = "eigenvector_centrality",
                  title = "Eigenvector Centrality - Top 100 Connected Molecules",
                  x_label = "Molecule Smiles Format",
                  y_label = "Eigenvector Centrality Score")
@@ -511,17 +511,17 @@ def network_statistics(query_results_folder):
                                        CALL algo.betweenness.stream('Molecule','FORMS',{direction:'out'})
                                        YIELD nodeId, centrality
                                        MATCH (molecule:Molecule) WHERE id(molecule) = nodeId
-                                       RETURN molecule.smiles_str AS smiles_str, molecule.generation_formed AS generation_formed, centrality
-                                       ORDER BY centrality DESC;
+                                       RETURN molecule.smiles_str AS smiles_str, molecule.generation_formed AS generation_formed, centrality AS betweenness_centrality
+                                       ORDER BY betweenness_centrality DESC;
                                        """).data()
     save_query_results(betweenness_centrality, "betweenness_centrality", query_results_folder)
     plot_hist(file_name = "betweenness_centrality",
-              statistic_col_name = "centrality",
+              statistic_col_name = "betweenness_centrality",
               title = "Histogram of Betweenness Centrality",
               x_label = "Betweenness Centrality Score Bin",
               y_label = "Count of Molecules")
     plot_scatter(file_name = "betweenness_centrality",
-                 statistic_col_name = "centrality",
+                 statistic_col_name = "betweenness_centrality",
                  title = "Betweenness Centrality - Top 100 Connected Molecules",
                  x_label = "Molecule Smiles Format",
                  y_label = "Betweenness Centrality Score")
@@ -536,16 +536,16 @@ def network_statistics(query_results_folder):
     random_walk_betweenness = graph.run(""" CALL algo.betweenness.sampled.stream('Molecule','FORMS', {strategy:'random', probability:1.0, maxDepth:1, direction: "out"})
                                         YIELD nodeId, centrality
                                         MATCH (molecule) WHERE id(molecule) = nodeId
-                                        RETURN molecule.smiles_str AS smiles_str, molecule.generation_formed AS generation_formed, centrality AS random_walk_centrality
-                                        ORDER BY random_walk_centrality DESC;""").data()
+                                        RETURN molecule.smiles_str AS smiles_str, molecule.generation_formed AS generation_formed, centrality AS random_walk_betweenness
+                                        ORDER BY random_walk_betweenness DESC;""").data()
     save_query_results(random_walk_betweenness, "random_walk_betweenness", query_results_folder)
     plot_hist(file_name = "random_walk_betweenness",
-              statistic_col_name = "random_walk_centrality",
+              statistic_col_name = "random_walk_betweenness",
               title = "Histogram of Random Walk Betweenness Centrality",
               x_label = "Random Walk Betweenness Centrality Score Bin",
               y_label = "Count of Molecules")
     plot_scatter(file_name = "random_walk_betweenness",
-                 statistic_col_name = "random_walk_centrality",
+                 statistic_col_name = "random_walk_betweenness",
                  title = "Random Walk Betweenness Centrality - Top 100 Connected Molecules",
                  x_label = "Molecule Smiles Format",
                  y_label = "Random Walk Betweenness Centrality Score")
@@ -580,7 +580,8 @@ def network_statistics(query_results_folder):
     # first do the query and save the results
     node_deg_query = """
     MATCH (n:Molecule)
-    RETURN n.smiles_str AS smiles_str, n.generation_formed AS generation_formed, size((n)--()) AS count_relationships
+    RETURN n.smiles_str AS smiles_str, n.exact_mass AS exact_mass,
+    n.generation_formed AS generation_formed, size((n)--()) AS count_relationships
     """
     node_deg_query_results = graph.run(node_deg_query).data()
     node_deg_file = "node_distribution_results"
@@ -693,12 +694,61 @@ def network_statistics(query_results_folder):
 
 
 
+def compute_likely_abundance_by_molecule(query_results_folder):
+    """
+    Get a dataset with the following columns in order to compute the abundance
+    score:
+    """
+    print("\tComputing the likely abundance score by molecule...")
+    # Join all the datasets for rels. Start with the node_distribution_results
+    # query and then join all the other data onto it
+    datasets = {'node_distribution_results': ['smiles_str',
+                                              'exact_mass',
+                                              'generation_formed',
+                                              'count_relationships'],
+                'incoming_rels_count': ['smiles_str',
+                                        'count_incoming'],
+                'outgoing_rels_count': ['smiles_str',
+                                        'count_outgoing'],
+                'betweenness_centrality': ['smiles_str',
+                                           'betweenness_centrality'],
+                'eigenvector_centrality': ['smiles_str',
+                                           'eigenvector_centrality'],
+                'random_walk_betweenness': ['smiles_str',
+                                            'random_walk_betweenness']
+                }
+    full_df = pd.DataFrame()
+    for dataset in datasets.keys():
+        df = pd.read_csv(f"output/{query_results_folder}/{dataset}.csv")
+        df = df[datasets[dataset]] # filter only by the needed columns
+        if dataset == "node_distribution_results":
+            full_df = df
+        else:
+            full_df = pd.merge(full_df, df, on="smiles_str", how='left')
+    
+    # Query for all relationships and their parent (consumed) & child (produced)
+    # molecules. Groupby molecule and reaction, mulitiply each
+    # generation_formed of parent to get likely_abundance_score by relationship.
+    # For each molecule, only take most likely reaction (filter out lower scores)
+    
+    # calculate abundance score
+    
+    # save calculated data
+    full_df.to_csv(f"output/{query_results_folder}/likely_abundance_score_by_molecule.csv",
+                   index=False)
+    
+    # generate visualization
+    
+    # save visualization
+    pass
+
+
 if __name__ == "__main__":
     # choose a path for the Neo4j_Imports folder to import the data from MOD into Neo4j
     mod_exports_folder_path = "../main/Neo4j_Imports"
     # mod_exports_folder_path = "../radicals/all7/Neo4j_Imports"
-    import_data_from_MOD_exports(mod_exports_folder_path = mod_exports_folder_path,
-                                 generation_limit = 2) # Set to None or Integer. The generation limit at which to import
+    # import_data_from_MOD_exports(mod_exports_folder_path = mod_exports_folder_path,
+    #                              generation_limit = 2) # Set to None or Integer. The generation limit at which to import
     
     # create a timestamped output folder to store everything for this run
     query_results_folder = get_timestamp()
@@ -719,9 +769,12 @@ if __name__ == "__main__":
     
     # do network statistics and get plots
     network_statistics(query_results_folder = query_results_folder)
-
-
-
+    
+    # get Cytoscape network visualization
+    # network_visualization()
+    
+    # compute likely abundance by molecule
+    compute_likely_abundance_by_molecule(query_results_folder = query_results_folder)
 
 
 
