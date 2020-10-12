@@ -42,10 +42,7 @@ hydration1 = ruleGMLString("""rule [
 	]
 ]
 """)
-p = GraphPrinter()
-p.withIndex = True
-p.withColour = True
-hydration1.print(p)
+
 
 hydration2 = ruleGMLString("""rule [
 	ruleID "Hydration of C=C(O)"
@@ -78,3 +75,43 @@ hydration2 = ruleGMLString("""rule [
 	]
 ]
 """)
+
+# irreversible
+enamine_hydration = ruleGMLString("""rule [
+	ruleID "Enamine Hydration and Elimination"
+	labelType "term"
+	left [
+		edge [ source 1 target 2 label "=" ]
+		edge [ source 2 target 3 label "-" ]
+
+		edge [ source 6 target 7 label "-" ] # break O-H bonds
+		edge [ source 6 target 8 label "-" ]
+	]
+	context [
+		node [ id 1 label "C" ]
+		node [ id 2 label "C" ]
+		node [ id 3 label "N" ]
+		edge [ source 3 target 4 label "-" ]
+		node [ id 4 label "*" ]
+		edge [ source 3 target 5 label "-" ]
+		node [ id 5 label "*" ]
+
+		node [ id 6 label "H" ]
+		node [ id 7 label "O" ]
+		node [ id 8 label "H" ]
+	]
+	right [
+		edge [ source 1 target 2 label "-" ] # C-C
+		edge [ source 1 target 6 label "-" ] # add H to C
+		edge [ source 2 target 7 label "=" ] # C=O
+		edge [ source 8 target 3 label "-" ] # H-N
+	]
+	constrainAdj [ id 4 op "=" count 0 
+		nodeLabels [ label "O" label "N" ]
+		edgeLabels [ label "=" ]
+	]
+	constrainAdj [ id 5 op "=" count 0 
+		nodeLabels [ label "O" label "N" ]
+		edgeLabels [ label "=" ]
+	]
+]""")
