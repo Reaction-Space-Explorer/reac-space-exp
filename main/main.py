@@ -243,3 +243,67 @@ def print_reaction(dg, reac_name, print_max=50, print_rule=False):
 					if print_rule == True:
 						rule.print(rp)
 					count += 1
+
+
+def trace_pathways(dg, mol_smiles, seed_mol, exact_molecule=False):
+	"""
+	Method to trace the entire molecular pathway producing a certain species
+	beginning from the starting substrates to the target species itself
+
+	TODO: Highlight the target molecule in a diff colour. Colour precursors by generation maybe?
+
+	Keyword arguments:
+	dg -- the DG object of the network we're looking at 
+	mol_smiles -- SMILES of the target molecule
+	seed_mol -- the initial reactant which was used as a "seed" when the reaction network 
+			was generated
+	exact_molecule -- True if the mol_smiles is the exact structure to search for, otherwise
+			if False, mol_smiles will be treated as a substructure and pathways for all molecules
+			containing those substructures will be printed
+	"""
+	# molecule being searched for
+	target_mol = smiles(mol_smiles, add=False)
+	target_indices = [] # indices of the target molecule(s) in the dg's list of vertices (species)
+	all_species = [v for v in dg.vertices]
+	all_species_graphs = [v.graph for v in all_species]
+	if exact_molecule == False:
+		for sp in all_species_graphs:
+			if target_mol.monomorphism(sp) >= 1: # if it's present as a substructure
+				target_indices.append(all_species_graphs.index(sp))
+	else:
+		for sp in all_species_graphs:
+			if target_mol.isomorphism(sp) == 1: # needs to be an exact match
+				target_indices.append(all_species_graphs.index(sp))
+	# now, for the molecule at the target index, trace precursors
+	for index in target_indices:
+		target_dg_vert = all_species[index] # the DGVertex associated with the target molecule
+		pathway_dg = DG(graphDatabase=inputGraphs)
+		sources = []
+		targets = [target_dg_vert]
+		trace_complete = False
+		with pathway_dg.build() as build_pathway:
+			while not trace_complete:
+				print(f"Targets: {[t.graph.smiles for t in targets]}")
+				next_targets = []
+				for targ in targets:
+					if targ.graph.isomorphism(seed_mol) == 1:
+						trace_complete = True
+						break
+					else:
+						print(f"Current target: {targ.graph.smiles}")
+						for e in targ.inEdges:
+							print(f"working with edge {e.id}")
+							sources = [source.graph for source in e.sources]
+							next_targets.extend(source for source in e.sources 
+									if source not in next_targets)
+							for educt in sources:
+								d = Derivations()
+								d.left = [educt]
+								d.rules = [r for r in e.rules]
+								d.right = [targ.graph]
+								edge = build_pathway.addDerivation(d)
+								print(f"Adding reaction {d} to pathway")
+				print(f"Targets were {targets}")
+				targets = next_targets
+				print(f"Targets are {targets}")
+		pathway_dg.print()
