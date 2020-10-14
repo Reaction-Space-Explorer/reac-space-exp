@@ -119,6 +119,11 @@ def gen_michael_addition(inverse=False):
 			if s2 == 0:
 				rule.constraints.extend([
 					'constrainAdj [',
+					'\tid 1 op "=" count 0', # avoid forming diamine or aminols
+					'\tnodeLabels [ label "O" label "N" ]',
+					'\tedgeLabels [ label "-" ]',
+					']',
+					'constrainAdj [',
 					'\tid 13 op "=" count 0',
 					'\tnodeLabels [ label "O" ]',
 					'\tedgeLabels [ label "=" ]',
@@ -156,8 +161,6 @@ def gen_michael_addition(inverse=False):
 michael_addition = gen_michael_addition()
 michael_addition_inv = gen_michael_addition(inverse=True)
 
-for r in michael_addition_inv:
-	r.print()
 '''def michaelAddition34Gen():
 	r = RuleGen("Michael Addition ")
 	r.left.extend([
