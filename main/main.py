@@ -3,6 +3,8 @@ import time
 from rdkit.Chem import SDMolSupplier, MolFromSmiles, MolToSmiles, Kekulize
 
 include(os.path.join('..', 'rules/all.py'))
+include("mod_to_neo4j_exporter.py")
+
 
 p = GraphPrinter()
 p.simpleCarbons = True
@@ -195,13 +197,13 @@ def find_substruct_producer(dg, substruct, print_max=50, print_rule=False):
 			break
 		else:
 			for rule in e.rules:
-				dg2 = DG(graphDatabase=inputGraphs)
 				sources = [source.graph for source in e.sources]
 				targets = [target.graph for target in e.targets]
 				for g in targets:
 					if substruct.monomorphism(g) > 0:
 						count += 1
 						print(f"Found {substruct.name}!")
+						dg2 = DG(graphDatabase=inputGraphs)
 						with dg2.build() as b:
 							d = Derivations()
 							d.left = sources
