@@ -84,12 +84,17 @@ enamine_hydration = ruleGMLString("""rule [
 		edge [ source 1 target 2 label "=" ]
 		edge [ source 2 target 3 label "-" ]
 
-		edge [ source 6 target 7 label "-" ] # break O-H bonds
-		edge [ source 6 target 8 label "-" ]
+		edge [ source 7 target 6 label "-" ] # break O-H bonds
+		edge [ source 7 target 8 label "-" ]
 	]
 	context [
 		node [ id 1 label "C" ]
 		node [ id 2 label "C" ]
+		node [ id 10 label "*" ]
+		node [ id 11 label "*" ]
+		edge [ source 1 target 10 label "-" ]
+		edge [ source 1 target 11 label "-" ]
+
 		node [ id 3 label "N" ]
 		edge [ source 3 target 4 label "-" ]
 		node [ id 4 label "*" ]
@@ -106,6 +111,7 @@ enamine_hydration = ruleGMLString("""rule [
 		edge [ source 2 target 7 label "=" ] # C=O
 		edge [ source 8 target 3 label "-" ] # H-N
 	]
+	# Rs Should not be a part of C=O or C=N
 	constrainAdj [ id 4 op "=" count 0 
 		nodeLabels [ label "O" label "N" ]
 		edgeLabels [ label "=" ]
@@ -114,4 +120,18 @@ enamine_hydration = ruleGMLString("""rule [
 		nodeLabels [ label "O" label "N" ]
 		edgeLabels [ label "=" ]
 	]
+	constrainAdj [ id 10 op "=" count 0 
+		nodeLabels [ label "O" label "N" ]
+		edgeLabels [ label "=" ]
+	]
+	constrainAdj [ id 11 op "=" count 0 
+		nodeLabels [ label "O" label "N" ]
+		edgeLabels [ label "=" ]
+	]
 ]""")
+
+p = GraphPrinter()
+p.withColour = True
+p.withIndex = True
+
+enamine_hydration.print(p)
