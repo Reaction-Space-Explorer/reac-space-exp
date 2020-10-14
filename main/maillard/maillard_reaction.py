@@ -8,11 +8,11 @@ glycine = smiles("NCC(=O)O", name="Glycine")
 open_glucose = smiles("O=CC(O)C(O)C(O)C(O)C(O)", "Open Chain Glucose")
 water = smiles("O", name="Water")
 
-'''dg = dgDump(inputGraphs, inputRules, "../dumps/maillard_3.dg")
+'''dg = dgDump(inputGraphs, inputRules, "3_new.dg")
 print("Finished loading from dump file")'''
 
 # Number of generations we want to perform
-generations = 2
+generations = 4
 
 dg = DG(graphDatabase=inputGraphs,
 	labelSettings=LabelSettings(LabelType.Term, LabelRelation.Specialisation))
@@ -29,7 +29,7 @@ with dg.build() as b:
 		res = b.execute(addSubset(subset) >> addUniverse(universe) >> strat, verbosity=8)
 		end_time = time.time()
 		print(f"Took {end_time - start_time} seconds to complete round {gen+1}")
-		print('Original subset size:', len(res.subset))
+		print(f'Products in round {gen+1}: {len(res.subset)}')
 
 		# The returned subset and universe do not contain redundant tautomers
 		#subset, universe = clean_taut(dg, res, algorithm="CMI")
@@ -38,13 +38,17 @@ with dg.build() as b:
 		# This step replaces the previous subset (containing tautomers) with the cleaned subset
 		#res = b.execute(addSubset(subset) >> addUniverse(universe))
 		# now compare how many of these simulations were found in the MS data.
-		#compare_sims(dg, gen+1, print_extra=False)
-		#export_to_neo4j(dg_obj = dg, generation_num = gen)
+		export_to_neo4j(dg_obj = dg, generation_num = gen)
 		write_gen_output(subset, gen+1, reaction_name="maillard")
 	print('Completed')
+
 
 # Dump the dg so it can be loaded again quickly without having to generate it from scratch.
 f = dg.dump()
 print("Dump file: ", f)
+
+'''with open("maillard_new_3rounds.txt", "w") as wr:
+	for v in dg.vertices:
+		wr.write(f"{v.graph.smiles}\n")'''
 
 check_sdf_matches(dg, "../../data/Maillard2.sdf")
