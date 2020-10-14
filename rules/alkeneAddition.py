@@ -25,7 +25,6 @@ hcn_addition_alk = ruleGMLString("""rule [
 	]
 ]""")
 
-hcn_addition_alk.print(p)
 '''def alkeneAdditionEliminationGen():
 	r = RuleGen("Alkene Addition Elimination")
 	r.left.extend([
