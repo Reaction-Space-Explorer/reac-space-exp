@@ -68,7 +68,7 @@ for a in loaded:
 		canNotBeInvertedYet.append(a)
 
 # These rules won't get inverted automatically
-include("alkeneAdditionElimination.py")
+include("alkeneAddition.py")
 include("elimination.py")
 include("hydration.py")
 include("deamination_addition.py")
