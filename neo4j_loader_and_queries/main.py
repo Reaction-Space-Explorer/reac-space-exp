@@ -185,7 +185,8 @@ def run_single_value_query(query, value):
     return graph.run(query).data()[0][value]
 
 
-def get_tabulated_possible_autocatalytic_cycles(mod_exports_folder_path,
+def get_tabulated_possible_autocatalytic_cycles(generation_num,
+                                                mod_exports_folder_path,
                                                 this_out_folder,
                                                 ring_size_range = (3,7),
                                                 feeder_molecule_generation_range = None,
@@ -822,36 +823,18 @@ def import_data_from_MOD_exports(mod_exports_folder_path, generation_limit):
 
 if __name__ == "__main__":
     # choose a path for the Neo4j_Imports folder to import the data from MOD into Neo4j
-    mod_exports_folder_path = "../main/Neo4j_Imports"
+    # mod_exports_folder_path = "../main/Neo4j_Imports"
     # mod_exports_folder_path = "../radicals/all7/Neo4j_Imports"
-    import_data_from_MOD_exports(mod_exports_folder_path = mod_exports_folder_path,
-                                 generation_limit = 2) # Set to None or Integer. The generation limit at which to import
     
-    # create a timestamped output folder to store everything for this run
-    # query_results_folder = get_timestamp()
-    # os.mkdir("output/" + query_results_folder)
-    # # query_results_folder = "2020-08-01_18-39-23-986232" # manually override folder name for debugging
-    # 
-    # # Optional: save the state of the Neo4j_Imports folder at the time this was run
-    # copytree(mod_exports_folder_path, 'output/' + query_results_folder + "/Neo4j_Imports")
-    # 
-    # # do pattern match query on possible autocatalytic cycles
-    # get_tabulated_possible_autocatalytic_cycles(mod_exports_folder_path = mod_exports_folder_path,
-    #                                             this_out_folder = query_results_folder,
-    #                                             ring_size_range = (3, 5),
-    #                                             feeder_molecule_generation_range = None,
-    #                                             num_structures_limit = 1000) # set to 100 for small batch testing
-    # analyze_possible_autocatalytic_cycles(mod_exports_folder_path = mod_exports_folder_path,
-    #                                       query_results_folder = query_results_folder)
-    # 
-    # # do network statistics and get plots
-    # network_statistics(query_results_folder = query_results_folder)
-    # 
-    # # get Cytoscape network visualization
-    # # network_visualization()
-    # 
-    # # compute likely abundance by molecule
-    # compute_likely_abundance_by_molecule(query_results_folder = query_results_folder)
+    formose_MOD_exports_path = "../data/formose/Neo4j_Imports"
+    glucose_MOD_exports_path = "../data/glucose/Neo4j_Imports"
+    exports_folder_paths = [formose_MOD_exports_path, glucose_MOD_exports_path]
+    
+    for mod_export_folder_path in exports_folder_paths:
+        print(f"Importing the network from the following path: {mod_export_folder_path}")
+        import_data_from_MOD_exports(mod_exports_folder_path = mod_export_folder_path,
+                                     generation_limit = 2) # Set to None or Integer. The generation limit at which to import
+    
 
 
 
