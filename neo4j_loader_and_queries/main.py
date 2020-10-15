@@ -9,6 +9,13 @@ import matplotlib.pyplot as plt
 from shutil import copytree
 import math
 
+
+# If NETWORK_SNAPSHOTS is True, the program gathers data on the network at each generation
+# in the reaction netowrk. If False, the program gathers data only on the state of
+# the network once the generation has completely finished being loaded (snapshot
+# only of the final generation).
+NETWORK_SNAPSHOTS = True
+
 url = "bolt://neo4j:0000@localhost:7687"
 graph = Graph(url)
 matcher = NodeMatcher(graph)
@@ -166,81 +173,13 @@ def import_mock_data():
         # merge_query = rxn_query_str(reactant=row['from_node'],
         #                             product=row['to_node'],
         #                             rxn_id=row['rxn_id'])
-        
 
 
-def import_data_from_MOD_exports(mod_exports_folder_path, generation_limit):
-    """
-    Clear the database and import the network depending on the Neo4j_Imports
-    folder selected.
-    """
-    # first, clear db
-    print("Clearing database...")
-    graph.run("MATCH (n) DETACH DELETE n")
-    
-    # read in data
-    nodes_folder = mod_exports_folder_path + "/nodes"
-    rels_folder = mod_exports_folder_path + "/rels"
-
-    # create nodes by iterating through each generation's file
-    print("Importing nodes...")
-    nodes_all_generation_file_names = os.listdir(nodes_folder)
-    # first get all generation numbers and sort them in order so the import
-    # doesn't go out of order
-    all_gens = []
-    for generation_file in nodes_all_generation_file_names:
-        generation_num = int(generation_file.split("_")[1].split(".")[0])
-        all_gens.append(generation_num)
-    all_gens.sort()
-    
-    # set the generation limit to the max (so no data type issue between None/Integer)
-    if generation_limit == None:
-        generation_limit = max(all_gens)
-    
-    # create molecule nodes
-    for generation_num in all_gens:
-        if generation_num <= generation_limit:
-            print(f"\tGeneration number {generation_num}...")
-            generation_file = "nodes_" + str(generation_num) + ".txt"
-            nodes = open(nodes_folder + "/" + generation_file,'r').read().split('\n')
-            for node in nodes:
-                if node != "":
-                    node_data = node.split(',')
-                    # print(node_data[0])
-                    create_molecule_if_not_exists(smiles_str = node_data[1],
-                                                  exact_mass = node_data[2],
-                                                  generation_formed = generation_num)
-
-    # create relationships by iterating through each generation's file
-    print("Importing relationships...")
-    rels_all_generation_file_names = os.listdir(rels_folder)
-    # first get all generation numbers and sort them in order so the import
-    # doesn't go out of order
-    all_rel_gens = []
-    for generation_file in rels_all_generation_file_names:
-        generation_num = int(generation_file.split("_")[1].split(".")[0])
-        all_rel_gens.append(generation_num)
-    all_rel_gens.sort()
-    for generation_num in all_rel_gens:
-        if generation_num <= generation_limit:
-            print(f"\tGeneration number {generation_num}...")
-            generation_file = "rels_" + str(generation_num) + ".txt"
-            rels = open(rels_folder + "/" + generation_file,'r').read().split('\n')
-            for rel in rels:
-                if rel != "":
-                    rel_data = rel.split(',')
-                    create_relationship_if_not_exists(rxn_id = rel_data[0],
-                                                      from_smiles = rel_data[1],
-                                                      to_smiles = rel_data[2],
-                                                      rule = rel_data[3],
-                                                      generation_formed = generation_num)
-
-
-def save_query_results(query_result, file_name, this_out_folder):
-    with open('output/' + this_out_folder + f"/{file_name}.json", 'w') as file_data_out:
+def save_query_results(generation_num, query_result, file_name, this_out_folder):
+    with open(f'output/{generation_num}' + this_out_folder + f"/{file_name}.json", 'w') as file_data_out:
         json.dump(query_result, file_data_out)
-    data_df = pd.read_json('output/' + this_out_folder + f"/{file_name}.json")
-    data_df.to_csv('output/' + this_out_folder + f"/{file_name}.csv", index=False)
+    data_df = pd.read_json(f'output/{generation_num}' + this_out_folder + f"/{file_name}.json")
+    data_df.to_csv(f'output/{generation_num}' + this_out_folder + f"/{file_name}.csv", index=False)
 
 def run_single_value_query(query, value):
     return graph.run(query).data()[0][value]
@@ -324,21 +263,22 @@ def get_tabulated_possible_autocatalytic_cycles(mod_exports_folder_path,
     print("\t\tSaving query results and meta info...")
     
     # save data as JSON and CSV (JSON for easy IO, CSV for human readability)
-    save_query_results(query_result = query_result,
+    save_query_results(generation_num = generation_num,
+                       query_result = query_result,
                        file_name = "autocat_query_results",
                        this_out_folder = this_out_folder)
     
     # save meta info as well in out folder
-    with open("output/" + this_out_folder + "/autocat_query.txt", 'w') as file_query_out:
+    with open(f"output/{generation_num}" + this_out_folder + "/autocat_query.txt", 'w') as file_query_out:
         file_query_out.write(query_txt)
     query_params = pd.DataFrame( {"parameter": ["min_ring_size","max_ring_size","min_feeder_gen","max_feeder_gen","num_structures_limit"],
                                   "value": [min_ring_size, max_ring_size, min_feeder_gen, max_feeder_gen, num_structures_limit] } )
-    query_params.to_csv("output/" + this_out_folder + "/autocat_query_parameters.csv", index=False)
+    query_params.to_csv(f"output/{generation_num}" + this_out_folder + "/autocat_query_parameters.csv", index=False)
     return this_out_folder
 
 
 
-def analyze_possible_autocatalytic_cycles(mod_exports_folder_path, query_results_folder):
+def analyze_possible_autocatalytic_cycles(generation_num, mod_exports_folder_path, query_results_folder):
     """
     Now that we have the tabulated results of the graph queries, let's do some
     analysis on what's going on.
@@ -355,7 +295,7 @@ def analyze_possible_autocatalytic_cycles(mod_exports_folder_path, query_results
     
     print("Generating some plots on cycle size distribution / stats by generation...")
     # 1.
-    query_data = pd.read_json("output/" + query_results_folder + "/autocat_query_results.json")
+    query_data = pd.read_json(f"output/{generation_num}" + query_results_folder + "/autocat_query_results.json")
     # print(query_data.describe())
     # print(query_data.head())
     
@@ -366,7 +306,7 @@ def analyze_possible_autocatalytic_cycles(mod_exports_folder_path, query_results
                                                       title = "Ring Size Frequency Distribution")
     ax.set_xlabel("Ring Size (# of Molecules)")
     ax.set_ylabel("Count of Cycles")
-    plt.savefig("output/" + query_results_folder + "/ring_size_distribution.png")
+    plt.savefig(f"output/{generation_num}" + query_results_folder + "/ring_size_distribution.png")
     # plt.show()
     
     
@@ -395,7 +335,7 @@ def analyze_possible_autocatalytic_cycles(mod_exports_folder_path, query_results
                           title = "Count of Cycles by Feeder Generation")
     ax.set_xlabel("Cycle Generation (Generation Formed of Feeder Molecule)")
     ax.set_ylabel("Count of Cycles")
-    plt.savefig("output/" + query_results_folder + "/count_cycles_by_feeder_generation.png")
+    plt.savefig(f"output/{generation_num}" + query_results_folder + "/count_cycles_by_feeder_generation.png")
     
     print("\tAutocatalysis pattern matching done.")
 
@@ -460,7 +400,7 @@ def plot_scatter(file_name, statistic_col_name, title, x_label, y_label):
     plt.savefig(f"output/{query_results_folder}/{file_name}_scatter.png")
 
 
-def network_statistics(query_results_folder):
+def network_statistics(generation_num, query_results_folder):
     """
     Get some statistics on the network.
     0. Number of nodes and edges in the graph, as well as various network-level
@@ -487,7 +427,7 @@ def network_statistics(query_results_folder):
                                        YIELD nodeId, score
                                        RETURN algo.asNode(nodeId).smiles_str AS smiles_str, algo.asNode(nodeId).generation_formed AS generation_formed, score AS eigenvector_centrality
                                        ORDER BY eigenvector_centrality DESC """).data()
-    save_query_results(eigenvector_centrality, "eigenvector_centrality", query_results_folder)
+    save_query_results(generation_num, eigenvector_centrality, "eigenvector_centrality", query_results_folder)
     plot_hist(file_name = "eigenvector_centrality",
               statistic_col_name = "eigenvector_centrality",
               title = "Histogram of Eigenvector Centrality",
@@ -514,7 +454,7 @@ def network_statistics(query_results_folder):
                                        RETURN molecule.smiles_str AS smiles_str, molecule.generation_formed AS generation_formed, centrality AS betweenness_centrality
                                        ORDER BY betweenness_centrality DESC;
                                        """).data()
-    save_query_results(betweenness_centrality, "betweenness_centrality", query_results_folder)
+    save_query_results(generation_num, betweenness_centrality, "betweenness_centrality", query_results_folder)
     plot_hist(file_name = "betweenness_centrality",
               statistic_col_name = "betweenness_centrality",
               title = "Histogram of Betweenness Centrality",
@@ -538,7 +478,7 @@ def network_statistics(query_results_folder):
                                         MATCH (molecule) WHERE id(molecule) = nodeId
                                         RETURN molecule.smiles_str AS smiles_str, molecule.generation_formed AS generation_formed, centrality AS random_walk_betweenness
                                         ORDER BY random_walk_betweenness DESC;""").data()
-    save_query_results(random_walk_betweenness, "random_walk_betweenness", query_results_folder)
+    save_query_results(generation_num, random_walk_betweenness, "random_walk_betweenness", query_results_folder)
     plot_hist(file_name = "random_walk_betweenness",
               statistic_col_name = "random_walk_betweenness",
               title = "Histogram of Random Walk Betweenness Centrality",
@@ -585,7 +525,8 @@ def network_statistics(query_results_folder):
     """
     node_deg_query_results = graph.run(node_deg_query).data()
     node_deg_file = "node_distribution_results"
-    save_query_results(query_result = node_deg_query_results,
+    save_query_results(generation_num = generation_num,
+                       query_result = node_deg_query_results,
                        file_name = node_deg_file,
                        this_out_folder = query_results_folder)
     
@@ -635,7 +576,8 @@ def network_statistics(query_results_folder):
                                     count(r) AS count_incoming
                                     ORDER BY count_incoming DESC
                                     """).data()
-    save_query_results(query_result = incoming_rels_count,
+    save_query_results(generation_num = generation_num,
+                       query_result = incoming_rels_count,
                        file_name = incoming_rels_count_file,
                        this_out_folder = query_results_folder)
     fig, ax = plt.subplots()
@@ -666,7 +608,8 @@ def network_statistics(query_results_folder):
                                     count(r) AS count_outgoing
                                     ORDER BY count_outgoing DESC
                                     """).data()
-    save_query_results(query_result = outgoing_rels_count,
+    save_query_results(generation_num = generation_num,
+                       query_result = outgoing_rels_count,
                        file_name = outgoing_rels_count_file,
                        this_out_folder = query_results_folder)
     fig, ax = plt.subplots()
@@ -694,14 +637,14 @@ def network_statistics(query_results_folder):
 
 
 
-def compute_likely_abundance_by_molecule(query_results_folder):
+def compute_likely_abundance_by_molecule(generation_num, query_results_folder):
     """
     Get a dataset with the following columns in order to compute the abundance
     score:
     """
     print("\tComputing the likely abundance score by molecule...")
-    # Join all the datasets for rels. Start with the node_distribution_results
-    # query and then join all the other data onto it
+    # Join all the datasets for rels for all generations. Start with the
+    # node_distribution_results query and then join all the other data onto it
     datasets = {'node_distribution_results': ['smiles_str',
                                               'exact_mass',
                                               'generation_formed',
@@ -719,7 +662,7 @@ def compute_likely_abundance_by_molecule(query_results_folder):
                 }
     full_df = pd.DataFrame()
     for dataset in datasets.keys():
-        df = pd.read_csv(f"output/{query_results_folder}/{dataset}.csv")
+        df = pd.read_csv(f"output/{generation_num}/{query_results_folder}/{dataset}.csv")
         df = df[datasets[dataset]] # filter only by the needed columns
         if dataset == "node_distribution_results":
             full_df = df
@@ -734,7 +677,7 @@ def compute_likely_abundance_by_molecule(query_results_folder):
     # calculate abundance score
     
     # save calculated data
-    full_df.to_csv(f"output/{query_results_folder}/likely_abundance_score_by_molecule.csv",
+    full_df.to_csv(f"output/{generation_num}/{query_results_folder}/likely_abundance_score_by_molecule.csv",
                    index=False)
     
     # generate visualization
@@ -742,39 +685,173 @@ def compute_likely_abundance_by_molecule(query_results_folder):
     # save visualization
     pass
 
+# def export_graph_database():
+#     """
+#     Export nodes / rels to CSV.
+#     """
+#     pass
 
-if __name__ == "__main__":
-    # choose a path for the Neo4j_Imports folder to import the data from MOD into Neo4j
-    mod_exports_folder_path = "../main/Neo4j_Imports"
-    # mod_exports_folder_path = "../radicals/all7/Neo4j_Imports"
-    # import_data_from_MOD_exports(mod_exports_folder_path = mod_exports_folder_path,
-    #                              generation_limit = 2) # Set to None or Integer. The generation limit at which to import
-    
-    # create a timestamped output folder to store everything for this run
-    query_results_folder = get_timestamp()
-    os.mkdir("output/" + query_results_folder)
-    # query_results_folder = "2020-08-01_18-39-23-986232" # manually override folder name for debugging
-    
-    # Optional: save the state of the Neo4j_Imports folder at the time this was run
-    copytree(mod_exports_folder_path, 'output/' + query_results_folder + "/Neo4j_Imports")
-    
+def take_network_snapshot(generation_num, query_results_folder, mod_exports_folder_path):
     # do pattern match query on possible autocatalytic cycles
-    get_tabulated_possible_autocatalytic_cycles(mod_exports_folder_path = mod_exports_folder_path,
+    get_tabulated_possible_autocatalytic_cycles(generation_num = generation_num,
+                                                mod_exports_folder_path = mod_exports_folder_path,
                                                 this_out_folder = query_results_folder,
                                                 ring_size_range = (3, 5),
                                                 feeder_molecule_generation_range = None,
                                                 num_structures_limit = 1000) # set to 100 for small batch testing
-    analyze_possible_autocatalytic_cycles(mod_exports_folder_path = mod_exports_folder_path,
+    
+    analyze_possible_autocatalytic_cycles(generation_num = generation_num,
+                                          mod_exports_folder_path = mod_exports_folder_path,
                                           query_results_folder = query_results_folder)
     
     # do network statistics and get plots
-    network_statistics(query_results_folder = query_results_folder)
+    network_statistics(generation_num = generation_num,
+                       query_results_folder = query_results_folder)
     
     # get Cytoscape network visualization
     # network_visualization()
     
     # compute likely abundance by molecule
-    compute_likely_abundance_by_molecule(query_results_folder = query_results_folder)
+    compute_likely_abundance_by_molecule(generation_num = generation_num,
+                                         query_results_folder = query_results_folder)
+
+def compile_all_generations_data(query_results_folder, generation_limit):
+    if NETWORK_SNAPSHOTS:
+        print("\t\tCompiling abundance score data into one file from all network snapshots...")
+        out_dir = f"output/{query_results_folder}"
+        df_all_gens = pd.DataFrame()
+        for generation_num in range(1, generation_limit + 1):
+            gen_file_path = out_dir + f"/{generation_num}/likely_abundance_score_by_molecule.csv"
+            df_gen = pd.read_csv(gen_file_path)
+            df_gen['snapshot_generation_num'] = generation_num
+            df_all_gens = pd.concat([df_all_gens, df_gen])
+        df_all_gens.to_csv(out_dir + "/all_generations.csv",
+                           index=False)
+            
+
+
+
+def import_data_from_MOD_exports(mod_exports_folder_path, generation_limit):
+    """
+    Clear the database and import the network depending on the Neo4j_Imports
+    folder selected.
+    """
+    # first, clear db
+    print("Clearing database...")
+    graph.run("MATCH (n) DETACH DELETE n")
+    
+    # read in data
+    nodes_folder = mod_exports_folder_path + "/nodes"
+    rels_folder = mod_exports_folder_path + "/rels"
+    nodes_all_generation_file_names = os.listdir(nodes_folder)
+    rels_all_generation_file_names = os.listdir(rels_folder)
+    
+    # first get all generation numbers from the Neo4j_Imports .txt files
+    # and sort them in order so the import doesn't go out of order
+    all_gens = []
+    for generation_file in nodes_all_generation_file_names:
+        generation_num = int(generation_file.split("_")[1].split(".")[0])
+        all_gens.append(generation_num)
+    all_gens.sort()
+    
+    # if no given generation_limit, set the generation limit to the
+    # max (so no data type issue between None/Integer)
+    if generation_limit == None:
+        generation_limit = max(all_gens)
+    # don't let the generation limit go above the max exported from MOD
+    if generation_limit > max(all_gens):
+        generation_limit = max(all_gens)
+    
+    # set up the output folder for snapshots (statistics/visualizations) of the network
+    query_results_folder = get_timestamp()
+    # query_results_folder = "2020-08-01_18-39-23-986232" # manually override folder name for debugging
+    os.mkdir("output/" + query_results_folder)
+    # Optional: save the state of the Neo4j_Imports folder at the time this was run
+    copytree(mod_exports_folder_path, 'output/' + query_results_folder + "/Neo4j_Imports")
+    
+    # now import the data!
+    for generation_num in all_gens:
+        if generation_num <= generation_limit:
+            print(f"\tGeneration number {generation_num}...")
+            
+            # import molecule nodes
+            print("\t\tImporting nodes...")
+            nodes_generation_file = "nodes_" + str(generation_num) + ".txt"
+            nodes = open(nodes_folder + "/" + generation_file,'r').read().split('\n')
+            for node in nodes:
+                if node != "":
+                    node_data = node.split(',')
+                    # print(node_data[0])
+                    create_molecule_if_not_exists(smiles_str = node_data[1],
+                                                  exact_mass = node_data[2],
+                                                  generation_formed = generation_num)
+
+            # create relationship edges
+            print("\t\tImporting relationships...")
+            generation_file = "rels_" + str(generation_num) + ".txt"
+            rels = open(rels_folder + "/" + generation_file,'r').read().split('\n')
+            for rel in rels:
+                if rel != "":
+                    rel_data = rel.split(',')
+                    create_relationship_if_not_exists(rxn_id = rel_data[0],
+                                                      from_smiles = rel_data[1],
+                                                      to_smiles = rel_data[2],
+                                                      rule = rel_data[3],
+                                                      generation_formed = generation_num)
+            
+            # Now that the generation's data has been loaded into the network,
+            # take a snapshot of it. Only take snapshot at each generation,
+            # if NETWORK_SNAPSHOTS is True. Otherwise, only take a snapshot
+            # if this is the last generation.
+            if ((not NETWORK_SNAPSHOTS) and (generation_num == generation_limit)):
+                print("\t\tTaking statistics/visualizations snapshot of network...")
+                take_network_snapshot(generation_num,
+                                      query_results_folder,
+                                      mod_exports_folder_path)
+            elif NETWORK_SNAPSHOTS:
+                print("\t\tTaking statistics/visualizations snapshot of network...")
+                take_network_snapshot(generation_num,
+                                      query_results_folder,
+                                      mod_exports_folder_path)
+    
+    # now that all snapshots of the network have been taken, compile all of the
+    # data into one source (only if NETWORK_SNAPSHOTS enabled)
+    compile_all_generations_data(query_results_folder,
+                                 generation_limit)
+    
+
+if __name__ == "__main__":
+    # choose a path for the Neo4j_Imports folder to import the data from MOD into Neo4j
+    mod_exports_folder_path = "../main/Neo4j_Imports"
+    # mod_exports_folder_path = "../radicals/all7/Neo4j_Imports"
+    import_data_from_MOD_exports(mod_exports_folder_path = mod_exports_folder_path,
+                                 generation_limit = 2) # Set to None or Integer. The generation limit at which to import
+    
+    # create a timestamped output folder to store everything for this run
+    # query_results_folder = get_timestamp()
+    # os.mkdir("output/" + query_results_folder)
+    # # query_results_folder = "2020-08-01_18-39-23-986232" # manually override folder name for debugging
+    # 
+    # # Optional: save the state of the Neo4j_Imports folder at the time this was run
+    # copytree(mod_exports_folder_path, 'output/' + query_results_folder + "/Neo4j_Imports")
+    # 
+    # # do pattern match query on possible autocatalytic cycles
+    # get_tabulated_possible_autocatalytic_cycles(mod_exports_folder_path = mod_exports_folder_path,
+    #                                             this_out_folder = query_results_folder,
+    #                                             ring_size_range = (3, 5),
+    #                                             feeder_molecule_generation_range = None,
+    #                                             num_structures_limit = 1000) # set to 100 for small batch testing
+    # analyze_possible_autocatalytic_cycles(mod_exports_folder_path = mod_exports_folder_path,
+    #                                       query_results_folder = query_results_folder)
+    # 
+    # # do network statistics and get plots
+    # network_statistics(query_results_folder = query_results_folder)
+    # 
+    # # get Cytoscape network visualization
+    # # network_visualization()
+    # 
+    # # compute likely abundance by molecule
+    # compute_likely_abundance_by_molecule(query_results_folder = query_results_folder)
 
 
 
