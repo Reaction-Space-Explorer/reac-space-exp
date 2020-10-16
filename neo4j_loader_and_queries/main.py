@@ -2,6 +2,9 @@ import pandas as pd
 import numpy as np
 import os
 from py2neo import Graph, Node, Relationship, NodeMatcher, RelationshipMatcher
+# from neo4j import GraphDatabase
+# import neo4j
+import networkx as nx
 import json
 import datetime
 import matplotlib.pyplot as plt
@@ -176,10 +179,10 @@ def import_mock_data():
 
 
 def save_query_results(generation_num, query_result, file_name, this_out_folder):
-    with open(f'output/{generation_num}' + this_out_folder + f"/{file_name}.json", 'w') as file_data_out:
+    with open(f'output/' + this_out_folder + f"/{generation_num}/{file_name}.json", 'w') as file_data_out:
         json.dump(query_result, file_data_out)
-    data_df = pd.read_json(f'output/{generation_num}' + this_out_folder + f"/{file_name}.json")
-    data_df.to_csv(f'output/{generation_num}' + this_out_folder + f"/{file_name}.csv", index=False)
+    data_df = pd.read_json(f'output/' + this_out_folder + f"/{generation_num}/{file_name}.json")
+    data_df.to_csv(f'output/' + this_out_folder + f"/{generation_num}/{file_name}.csv", index=False)
 
 def run_single_value_query(query, value):
     return graph.run(query).data()[0][value]
@@ -199,10 +202,10 @@ def get_tabulated_possible_autocatalytic_cycles(generation_num,
     An input of "None" to any of the params means no limit. By default the ring
     size will be from 3 molecules to 7.
     """
-    print("\tPreparing query for cycles...")
+    print("\t\t\tPreparing query for cycles...")
     
     # make sure inputs are okay
-    print("\t\tChecking input parameters...")
+    print("\t\t\t\tChecking input parameters...")
     min_ring_size = ring_size_range[0]
     max_ring_size = ring_size_range[1]
     if min_ring_size < 0 or max_ring_size < 0:
@@ -229,7 +232,7 @@ def get_tabulated_possible_autocatalytic_cycles(generation_num,
         max_feeder_gen = None
     
     # load query and insert params
-    print("\t\tReplacing query parameters in query string...")
+    print("\t\t\t\tReplacing query parameters in query string...")
     query_txt = open("graph_queries/_FINAL_QUERY_PARAMETERIZED.txt",'r').read()
     query_txt = query_txt.replace("{{MIN_RING_SIZE}}", str(min_ring_size))
     query_txt = query_txt.replace("{{MAX_RING_SIZE}}", str(max_ring_size))
@@ -255,13 +258,13 @@ def get_tabulated_possible_autocatalytic_cycles(generation_num,
     # I used heap initial size set to 20G, heap max size set to 20G, and page cache size set to 20G,
     # but these settings would depend on your hardware limitations.
     # See Neo4j Aura for cloud hosting: https://neo4j.com/aura/
-    print("\t\tExecuting query and collecting results (this may take awhile)...")
-    print(f"\t\t\tTime start: {get_timestamp()}")
+    print("\t\t\t\tExecuting query and collecting results (this may take awhile)...")
+    print(f"\t\t\t\tTime start: {get_timestamp()}")
     query_result = graph.run(query_txt).data()
-    print(f"\t\t\tTime finish: {get_timestamp()}")
+    print(f"\t\t\t\tTime finish: {get_timestamp()}")
     # print("\t\tQuery results:")
     # print(query_result[0])
-    print("\t\tSaving query results and meta info...")
+    print("\t\t\t\tSaving query results and meta info...")
     
     # save data as JSON and CSV (JSON for easy IO, CSV for human readability)
     save_query_results(generation_num = generation_num,
@@ -270,11 +273,11 @@ def get_tabulated_possible_autocatalytic_cycles(generation_num,
                        this_out_folder = this_out_folder)
     
     # save meta info as well in out folder
-    with open(f"output/{generation_num}" + this_out_folder + "/autocat_query.txt", 'w') as file_query_out:
+    with open(f"output/" + this_out_folder + f"/{generation_num}/autocat_query.txt", 'w') as file_query_out:
         file_query_out.write(query_txt)
     query_params = pd.DataFrame( {"parameter": ["min_ring_size","max_ring_size","min_feeder_gen","max_feeder_gen","num_structures_limit"],
                                   "value": [min_ring_size, max_ring_size, min_feeder_gen, max_feeder_gen, num_structures_limit] } )
-    query_params.to_csv(f"output/{generation_num}" + this_out_folder + "/autocat_query_parameters.csv", index=False)
+    query_params.to_csv(f"output/" + this_out_folder + f"/{generation_num}/autocat_query_parameters.csv", index=False)
     return this_out_folder
 
 
@@ -296,18 +299,23 @@ def analyze_possible_autocatalytic_cycles(generation_num, mod_exports_folder_pat
     
     print("Generating some plots on cycle size distribution / stats by generation...")
     # 1.
-    query_data = pd.read_json(f"output/{generation_num}" + query_results_folder + "/autocat_query_results.json")
+    query_data = pd.read_json(f"output/" + query_results_folder + f"/{generation_num}/autocat_query_results.json")
+    if query_data.empty:
+        print("No cycles found.")
+        return
     # print(query_data.describe())
     # print(query_data.head())
     
     # cycle distribution (y axis is frequency, x axis is ring size)
     fig, ax = plt.subplots()
+    # print(query_data.head())
+    # query_data['countMolsInRing'] = query_data['countMolsInRing'].astype(int)
     query_data['countMolsInRing'].value_counts().plot(ax = ax,
                                                       kind='bar',
                                                       title = "Ring Size Frequency Distribution")
     ax.set_xlabel("Ring Size (# of Molecules)")
     ax.set_ylabel("Count of Cycles")
-    plt.savefig(f"output/{generation_num}" + query_results_folder + "/ring_size_distribution.png")
+    plt.savefig(f"output/" + query_results_folder + f"/{generation_num}/ring_size_distribution.png")
     # plt.show()
     
     
@@ -336,14 +344,16 @@ def analyze_possible_autocatalytic_cycles(generation_num, mod_exports_folder_pat
                           title = "Count of Cycles by Feeder Generation")
     ax.set_xlabel("Cycle Generation (Generation Formed of Feeder Molecule)")
     ax.set_ylabel("Count of Cycles")
-    plt.savefig(f"output/{generation_num}" + query_results_folder + "/count_cycles_by_feeder_generation.png")
+    plt.savefig(f"output/" + query_results_folder + f"/{generation_num}/count_cycles_by_feeder_generation.png")
     
+    # close all plots so they don't accumulate memory
     print("\tAutocatalysis pattern matching done.")
+    plt.close('all')
 
 
 
 
-def plot_hist(file_name, statistic_col_name, title, x_label, y_label):
+def plot_hist(query_results_folder, generation_num, file_name, statistic_col_name, title, x_label, y_label):
     # fig, ax = plt.subplots()
     # df = pd.read_csv(f"output/{query_results_folder}/{file_name}.csv")
     # num_bins = int(math.sqrt(df.shape[0])) # estimate the number of bins by taking the square root of the number of rows in the dataset
@@ -352,7 +362,7 @@ def plot_hist(file_name, statistic_col_name, title, x_label, y_label):
     # ax.set_ylabel(y_label)
     # plt.savefig(f"output/{query_results_folder}/{file_name}.png")
     fig, ax = plt.subplots()
-    df = pd.read_csv(f"output/{query_results_folder}/{file_name}.csv")
+    df = pd.read_csv(f"output/{query_results_folder}/{generation_num}/{file_name}.csv")
     num_bins = int(math.sqrt(df.shape[0])) # estimate the number of bins by taking the square root
     df = pd.pivot_table(df,
                         values="smiles_str",
@@ -365,12 +375,18 @@ def plot_hist(file_name, statistic_col_name, title, x_label, y_label):
                  figsize = (15,15))
     ax.set_xlabel(x_label)
     ax.set_ylabel(y_label)
-    plt.savefig(f"output/{query_results_folder}/{file_name}_histogram.png")
+    plt.savefig(f"output/{query_results_folder}/{generation_num}/{file_name}_histogram.png")
 
 
-def plot_scatter(file_name, statistic_col_name, title, x_label, y_label):
+def plot_scatter(query_results_folder,
+                 generation_num,
+                 file_name,
+                 statistic_col_name,
+                 title,
+                 x_label,
+                 y_label):
     fig, ax = plt.subplots()
-    df = pd.read_csv(f"output/{query_results_folder}/{file_name}.csv")
+    df = pd.read_csv(f"output/{query_results_folder}/{generation_num}/{file_name}.csv")
     df = df.head(100) # cut off by top 100 most interesting 
     # df.plot.bar(ax = ax,
     #             x = "smiles_str",
@@ -398,7 +414,7 @@ def plot_scatter(file_name, statistic_col_name, title, x_label, y_label):
     ax.set_title(title)
     ax.set_xlabel(x_label)
     ax.set_ylabel(y_label)
-    plt.savefig(f"output/{query_results_folder}/{file_name}_scatter.png")
+    plt.savefig(f"output/{query_results_folder}/{generation_num}/{file_name}_scatter.png")
 
 
 def network_statistics(generation_num, query_results_folder):
@@ -429,12 +445,16 @@ def network_statistics(generation_num, query_results_folder):
                                        RETURN algo.asNode(nodeId).smiles_str AS smiles_str, algo.asNode(nodeId).generation_formed AS generation_formed, score AS eigenvector_centrality
                                        ORDER BY eigenvector_centrality DESC """).data()
     save_query_results(generation_num, eigenvector_centrality, "eigenvector_centrality", query_results_folder)
-    plot_hist(file_name = "eigenvector_centrality",
+    plot_hist(query_results_folder = query_results_folder,
+              generation_num = generation_num,
+              file_name = "eigenvector_centrality",
               statistic_col_name = "eigenvector_centrality",
               title = "Histogram of Eigenvector Centrality",
               x_label = "Eigenvector Centrality Score Bin",
               y_label = "Count of Molecules")
-    plot_scatter(file_name = "eigenvector_centrality",
+    plot_scatter(query_results_folder = query_results_folder,
+                 generation_num = generation_num,
+                 file_name = "eigenvector_centrality",
                  statistic_col_name = "eigenvector_centrality",
                  title = "Eigenvector Centrality - Top 100 Connected Molecules",
                  x_label = "Molecule Smiles Format",
@@ -456,12 +476,16 @@ def network_statistics(generation_num, query_results_folder):
                                        ORDER BY betweenness_centrality DESC;
                                        """).data()
     save_query_results(generation_num, betweenness_centrality, "betweenness_centrality", query_results_folder)
-    plot_hist(file_name = "betweenness_centrality",
+    plot_hist(query_results_folder = query_results_folder,
+              generation_num = generation_num,
+              file_name = "betweenness_centrality",
               statistic_col_name = "betweenness_centrality",
               title = "Histogram of Betweenness Centrality",
               x_label = "Betweenness Centrality Score Bin",
               y_label = "Count of Molecules")
-    plot_scatter(file_name = "betweenness_centrality",
+    plot_scatter(query_results_folder = query_results_folder,
+                 generation_num = generation_num,
+                 file_name = "betweenness_centrality",
                  statistic_col_name = "betweenness_centrality",
                  title = "Betweenness Centrality - Top 100 Connected Molecules",
                  x_label = "Molecule Smiles Format",
@@ -480,12 +504,16 @@ def network_statistics(generation_num, query_results_folder):
                                         RETURN molecule.smiles_str AS smiles_str, molecule.generation_formed AS generation_formed, centrality AS random_walk_betweenness
                                         ORDER BY random_walk_betweenness DESC;""").data()
     save_query_results(generation_num, random_walk_betweenness, "random_walk_betweenness", query_results_folder)
-    plot_hist(file_name = "random_walk_betweenness",
+    plot_hist(query_results_folder = query_results_folder,
+              generation_num = generation_num,
+              file_name = "random_walk_betweenness",
               statistic_col_name = "random_walk_betweenness",
               title = "Histogram of Random Walk Betweenness Centrality",
               x_label = "Random Walk Betweenness Centrality Score Bin",
               y_label = "Count of Molecules")
-    plot_scatter(file_name = "random_walk_betweenness",
+    plot_scatter(query_results_folder = query_results_folder,
+                 generation_num = generation_num,
+                 file_name = "random_walk_betweenness",
                  statistic_col_name = "random_walk_betweenness",
                  title = "Random Walk Betweenness Centrality - Top 100 Connected Molecules",
                  x_label = "Molecule Smiles Format",
@@ -534,7 +562,7 @@ def network_statistics(generation_num, query_results_folder):
     # now read in the results, transform, and plot
     # also can represent this as a histogram?
     fig, ax = plt.subplots()
-    node_deg_df = pd.read_csv(f"output/{query_results_folder}/{node_deg_file}.csv")
+    node_deg_df = pd.read_csv(f"output/{query_results_folder}/{generation_num}/{node_deg_file}.csv")
     # node_deg_df['count_relationships'].value_counts().plot(ax=ax,
     #                                                        kind='bar',
     #                                                        title="Node Degree Distribution by Generation Formed")
@@ -549,7 +577,7 @@ def network_statistics(generation_num, query_results_folder):
                         figsize = (8,5))
     ax.set_xlabel("Molecule Degree (count of incoming and outgoing edges)")
     ax.set_ylabel("sqrt(Count of Molecules)")
-    plt.savefig(f"output/{query_results_folder}/{node_deg_file}.png")
+    plt.savefig(f"output/{query_results_folder}/{generation_num}/{node_deg_file}.png")
     
     # 2.
     # get average number of edges by node and generation
@@ -565,7 +593,7 @@ def network_statistics(generation_num, query_results_folder):
                       legend = False)
     ax.set_xlabel("Generation Formed")
     ax.set_ylabel("Average Node Degree")
-    plt.savefig(f"output/{query_results_folder}/{node_deg_file}_avg.png")
+    plt.savefig(f"output/{query_results_folder}/{generation_num}/{node_deg_file}_avg.png")
     
     # incoming relationships by molecule
     incoming_rels_count_file = "incoming_rels_count"
@@ -582,7 +610,7 @@ def network_statistics(generation_num, query_results_folder):
                        file_name = incoming_rels_count_file,
                        this_out_folder = query_results_folder)
     fig, ax = plt.subplots()
-    node_deg_df = pd.read_csv(f"output/{query_results_folder}/{incoming_rels_count_file}.csv")
+    node_deg_df = pd.read_csv(f"output/{query_results_folder}/{generation_num}/{incoming_rels_count_file}.csv")
     # node_deg_df['count_relationships'].value_counts().plot(ax=ax,
     #                                                        kind='bar',
     #                                                        title="Node Degree Distribution by Generation Formed")
@@ -597,7 +625,7 @@ def network_statistics(generation_num, query_results_folder):
                         figsize = (8,5))
     ax.set_xlabel("Molecule Degree (count of incoming edges)")
     ax.set_ylabel("sqrt(Count of Molecules)")
-    plt.savefig(f"output/{query_results_folder}/{incoming_rels_count_file}.png")
+    plt.savefig(f"output/{query_results_folder}/{generation_num}/{incoming_rels_count_file}.png")
     
     # outgoing relationships by molecule
     outgoing_rels_count_file = "outgoing_rels_count"
@@ -614,7 +642,7 @@ def network_statistics(generation_num, query_results_folder):
                        file_name = outgoing_rels_count_file,
                        this_out_folder = query_results_folder)
     fig, ax = plt.subplots()
-    node_deg_df = pd.read_csv(f"output/{query_results_folder}/{outgoing_rels_count_file}.csv")
+    node_deg_df = pd.read_csv(f"output/{query_results_folder}/{generation_num}/{outgoing_rels_count_file}.csv")
     # node_deg_df['count_relationships'].value_counts().plot(ax=ax,
     #                                                        kind='bar',
     #                                                        title="Node Degree Distribution by Generation Formed")
@@ -629,12 +657,77 @@ def network_statistics(generation_num, query_results_folder):
                         figsize = (8,5))
     ax.set_xlabel("Molecule Degree (count of outgoing edges)")
     ax.set_ylabel("sqrt(Count of Molecules)")
-    plt.savefig(f"output/{query_results_folder}/{outgoing_rels_count_file}.png")
+    plt.savefig(f"output/{query_results_folder}/{generation_num}/{outgoing_rels_count_file}.png")
     
-    
-    
-    
+    # close all plots so they don't accumulate memory
     print("\tNetwork statistics done.")
+    plt.close('all')
+
+def graph_from_cypher(data):
+    """ From: https://stackoverflow.com/questions/59289134/constructing-networkx-graph-from-neo4j-query-result
+    
+    Constructs a networkx graph from the results of a neo4j cypher query.
+    Example of use:
+    >>> result = session.run(query)
+    >>> G = graph_from_cypher(result.data())
+
+    Nodes have fields 'labels' (frozenset) and 'properties' (dicts). Node IDs correspond to the neo4j graph.
+    Edges have fields 'type_' (string) denoting the type of relation, and 'properties' (dict)."""
+
+    G = nx.MultiDiGraph()
+    def add_node(node):
+        # Adds node id it hasn't already been added
+        # print(node)
+        # print(type(node))
+        # print(node.keys())
+        u = node['smiles_str'] # unique identifier for Node
+        if G.has_node(u):
+            return
+        G.add_node(u, labels=node._labels, properties=dict(node))
+
+    def add_edge(relation):
+        # Adds edge if it hasn't already been added.
+        # Make sure the nodes at both ends are created
+        for node in (relation.start_node, relation.end_node):
+            add_node(node)
+        # Check if edge already exists
+        u = relation.start_node['smiles_str'] # unique identifier for Node
+        v = relation.end_node['smiles_str'] # unique identifier for Node
+        eid = relation['rxn_id'] # unique identifier for Relationship
+        if G.has_edge(u, v, key=eid):
+            return
+        # If not, create it
+        G.add_edge(u, v, key=eid, type_=relation.type, properties=dict(relation))
+
+    for d in data:
+        for entry in d.values():
+            # Parse node
+            if isinstance(entry, Node):
+                add_node(entry)
+
+            # Parse link
+            elif isinstance(entry, Relationship):
+                add_edge(entry)
+            else:
+                raise TypeError("Unrecognized object")
+    return G
+
+
+def network_visualization_by_gen(query_results_folder, generation_num):
+    print("Generating an image for the network visualization...")
+    # driver = GraphDatabase.driver(url)
+    full_network_query = """
+    MATCH (n)-[r]->(m)
+    RETURN *
+    """
+    # with driver.session() as session:
+    #     result = session.run(full_network_query)
+    result = graph.run(full_network_query)
+    nxG = graph_from_cypher(result.data())
+    nx.draw(nxG)
+    plt.savefig(f"output/{query_results_folder}/{generation_num}/network_visualization_at_gen.png")
+    plt.close('all')
+    
 
 
 
@@ -663,7 +756,7 @@ def compute_likely_abundance_by_molecule(generation_num, query_results_folder):
                 }
     full_df = pd.DataFrame()
     for dataset in datasets.keys():
-        df = pd.read_csv(f"output/{generation_num}/{query_results_folder}/{dataset}.csv")
+        df = pd.read_csv(f"output/{query_results_folder}/{generation_num}/{dataset}.csv")
         df = df[datasets[dataset]] # filter only by the needed columns
         if dataset == "node_distribution_results":
             full_df = df
@@ -678,7 +771,7 @@ def compute_likely_abundance_by_molecule(generation_num, query_results_folder):
     # calculate abundance score
     
     # save calculated data
-    full_df.to_csv(f"output/{generation_num}/{query_results_folder}/likely_abundance_score_by_molecule.csv",
+    full_df.to_csv(f"output/{query_results_folder}/{generation_num}/likely_abundance_score_by_molecule.csv",
                    index=False)
     
     # generate visualization
@@ -710,7 +803,8 @@ def take_network_snapshot(generation_num, query_results_folder, mod_exports_fold
                        query_results_folder = query_results_folder)
     
     # get Cytoscape network visualization
-    # network_visualization()
+    network_visualization_by_gen(query_results_folder = query_results_folder,
+                                 generation_num = generation_num)
     
     # compute likely abundance by molecule
     compute_likely_abundance_by_molecule(generation_num = generation_num,
@@ -721,12 +815,12 @@ def compile_all_generations_data(query_results_folder, generation_limit):
         print("\t\tCompiling abundance score data into one file from all network snapshots...")
         out_dir = f"output/{query_results_folder}"
         df_all_gens = pd.DataFrame()
-        for generation_num in range(1, generation_limit + 1):
+        for generation_num in range(generation_limit + 1):
             gen_file_path = out_dir + f"/{generation_num}/likely_abundance_score_by_molecule.csv"
             df_gen = pd.read_csv(gen_file_path)
             df_gen['snapshot_generation_num'] = generation_num
             df_all_gens = pd.concat([df_all_gens, df_gen])
-        df_all_gens.to_csv(out_dir + "/all_generations.csv",
+        df_all_gens.to_csv(out_dir + "/all_generations_abundance_scores.csv",
                            index=False)
             
 
@@ -775,10 +869,13 @@ def import_data_from_MOD_exports(mod_exports_folder_path, generation_limit):
         if generation_num <= generation_limit:
             print(f"\tGeneration number {generation_num}...")
             
+            # create an output folder for this generation within query_results_folder
+            os.mkdir("output/" + query_results_folder + f"/{generation_num}")
+            
             # import molecule nodes
             print("\t\tImporting nodes...")
             nodes_generation_file = "nodes_" + str(generation_num) + ".txt"
-            nodes = open(nodes_folder + "/" + generation_file,'r').read().split('\n')
+            nodes = open(nodes_folder + "/" + nodes_generation_file,'r').read().split('\n')
             for node in nodes:
                 if node != "":
                     node_data = node.split(',')
@@ -789,8 +886,8 @@ def import_data_from_MOD_exports(mod_exports_folder_path, generation_limit):
 
             # create relationship edges
             print("\t\tImporting relationships...")
-            generation_file = "rels_" + str(generation_num) + ".txt"
-            rels = open(rels_folder + "/" + generation_file,'r').read().split('\n')
+            rels_generation_file = "rels_" + str(generation_num) + ".txt"
+            rels = open(rels_folder + "/" + rels_generation_file,'r').read().split('\n')
             for rel in rels:
                 if rel != "":
                     rel_data = rel.split(',')
@@ -834,6 +931,11 @@ if __name__ == "__main__":
         print(f"Importing the network from the following path: {mod_export_folder_path}")
         import_data_from_MOD_exports(mod_exports_folder_path = mod_export_folder_path,
                                      generation_limit = 2) # Set to None or Integer. The generation limit at which to import
+    
+    # test functions
+    # query_results_folder = "2020-10-15_17-35-22-778323"
+    # generation_num = 2
+    # network_visualization_by_gen(query_results_folder, generation_num)
     
 
 
