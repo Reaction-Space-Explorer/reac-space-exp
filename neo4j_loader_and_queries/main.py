@@ -725,7 +725,7 @@ def network_visualization_by_gen(query_results_folder, generation_num):
     result = graph.run(full_network_query)
     nxG = graph_from_cypher(result.data())
     nx.draw(nxG)
-    plt.savefig(f"output/{query_results_folder}/{generation_num}/network_visualization_at_gen.png")
+    plt.savefig(f"output/{query_results_folder}/{generation_num}/network_visualization_at_gen_{generation_num}.png")
     plt.close('all')
     
 
