@@ -946,25 +946,36 @@ def get_node_degree_rank_by_gen(df, query_results_folder):
 
 
 def compile_all_generations_data(query_results_folder, generation_limit):
-    print("\t\tCompiling abundance score data into one file from all network snapshots...")
+    print("\t\tCompiling abundance score data and autocatalysis pattern query results from all network snapshots into one file...")
     
-    # pull all scores calculated at each generation thus far
+    # pull all molecule scores calculated at each generation thus far
     out_dir = f"output/{query_results_folder}"
     df_all_gens = pd.DataFrame()
+    df_autocat_all_gens = pd.DataFrame()
     for generation_num in range(generation_limit + 1):
+        # append molecule data
         gen_file_path = out_dir + f"/{generation_num}/likely_abundance_score_by_molecule.csv"
         df_gen = pd.read_csv(gen_file_path)
         df_gen['snapshot_generation_num'] = generation_num
         df_all_gens = pd.concat([df_all_gens, df_gen])
+        
+        # append autocat query results data
+        autocat_gen_file_path = out_dir + f"/{generation_num}/autocat_query_results.csv"
+        df_autocat_gen = pd.read_csv(autocat_gen_file_path)
+        df_autocat_gen['snapshot_generation_num'] = generation_num
+        df_autocat_all_gens = pd.concat([df_autocat_all_gens, df_autocat_gen])
     
     # do some more calculations/analysis/plotting on all generations' dataset
     get_node_degree_rank_by_gen(df_all_gens, query_results_folder)
     
-    
-    # finally, save as CSV
+    # save all generations' molecule data as CSV
     df_all_gens.to_csv(out_dir + "/all_generations_abundance_scores.csv",
                        index=False)
-            
+    
+    # save all generations' autocatalysis pattern matches as CSV
+    df_autocat_all_gens.to_csv(out_dir + "/all_generations_autocat_pattern_matches.csv",
+                               index = False)
+    
 
 
 
