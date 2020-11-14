@@ -907,15 +907,40 @@ def take_network_snapshot(generation_num, query_results_folder, mod_exports_fold
                                          query_results_folder = query_results_folder)
 
 
-def get_node_degree_by_rank_order_plot_by_gen(df):
+def get_node_degree_rank_by_gen(df, query_results_folder):
     # Figure #7
     # first rank all molecules by node degree over generation, sorting
     # highest to lowest over generation
     # count_relationships is total count incoming and count outgoing--use this
     # for ranking node degree (lowest rank is highest node degree)
-    df['rank'] = df.groupby(by=['snapshot_generation_num'])['count_relationships'].rank(ascending=False)
+    df['rank_node_deg_by_gen'] = df.groupby(by=['snapshot_generation_num'])['count_relationships'].rank(ascending=False,
+                                                                                                        method="max") # so rank values are integer only
     print(df.head())
-    return df
+    
+    # plot_hist(query_results_folder = query_results_folder,
+    #           generation_num = generation_num,
+    #           file_name = "eigenvector_centrality",
+    #           statistic_col_name = "eigenvector_centrality",
+    #           title = "Histogram of Eigenvector Centrality",
+    #           x_label = "Eigenvector Centrality Score Bin",
+    #           y_label = "Count of Molecules")
+    
+    # now plot fig 7
+    fig, ax = plt.subplots()
+    df = pd.pivot_table(df,
+                        values="count_relationships",
+                        index=["rank_node_deg_by_gen"],
+                        columns=["snapshot_generation_num"],
+                        aggfunc=lambda x: math.log10(len(x.unique()))) # the log of the count of unique smiles_str
+    print("pivoted df:")
+    print(df.head())
+    df.plot.area(ax = ax,
+                 stacked = True,
+                 title = "Log of Node Degree by Node Degree Rank by Generation",
+                 figsize = (15,15))
+    ax.set_xlabel("Node Degree Rank")
+    ax.set_ylabel("Log of Node Degree")
+    plt.savefig(f"output/{query_results_folder}/node_deg_by_rank_plot.png")
     
 
 
@@ -933,7 +958,7 @@ def compile_all_generations_data(query_results_folder, generation_limit):
         df_all_gens = pd.concat([df_all_gens, df_gen])
     
     # do some more calculations/analysis/plotting on all generations' dataset
-    df_all_gens = get_node_degree_by_rank_order_plot_by_gen(df_all_gens)
+    get_node_degree_rank_by_gen(df_all_gens, query_results_folder)
     
     
     # finally, save as CSV
