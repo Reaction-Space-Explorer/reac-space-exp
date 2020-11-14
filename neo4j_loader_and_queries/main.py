@@ -1,4 +1,5 @@
 import pandas as pd
+pd.options.mode.chained_assignment = None  # default='warn'
 import numpy as np
 import os
 from py2neo import Graph, Node, Relationship, NodeMatcher, RelationshipMatcher
@@ -915,33 +916,60 @@ def get_node_degree_rank_by_gen(df, query_results_folder):
     # for ranking node degree (lowest rank is highest node degree)
     df['rank_node_deg_by_gen'] = df.groupby(by=['snapshot_generation_num'])['count_relationships'].rank(ascending=False,
                                                                                                         method="max") # so rank values are integer only
-    print(df.head())
-    
-    # plot_hist(query_results_folder = query_results_folder,
-    #           generation_num = generation_num,
-    #           file_name = "eigenvector_centrality",
-    #           statistic_col_name = "eigenvector_centrality",
-    #           title = "Histogram of Eigenvector Centrality",
-    #           x_label = "Eigenvector Centrality Score Bin",
-    #           y_label = "Count of Molecules")
-    
+    # print(df.head())
     # now plot fig 7
-    fig, ax = plt.subplots()
-    df = pd.pivot_table(df,
-                        values="count_relationships",
-                        index=["rank_node_deg_by_gen"],
-                        columns=["snapshot_generation_num"],
-                        aggfunc=lambda x: math.log10(len(x.unique()))) # the log of the count of unique smiles_str
-    print("pivoted df:")
-    print(df.head())
-    df.plot.area(ax = ax,
-                 stacked = True,
-                 title = "Log of Node Degree by Node Degree Rank by Generation",
-                 figsize = (15,15))
-    ax.set_xlabel("Node Degree Rank")
-    ax.set_ylabel("Log of Node Degree")
-    plt.savefig(f"output/{query_results_folder}/node_deg_by_rank_plot.png")
+    # fig, ax = plt.subplots()
+    # df = pd.pivot_table(df,
+    #                     values="count_relationships",
+    #                     index=["rank_node_deg_by_gen"],
+    #                     columns=["snapshot_generation_num"],
+    #                     aggfunc=lambda x: math.log10(len(x.unique()))) # the log of the count of unique smiles_str
+    # print("pivoted df:")
+    # print(df.head())
+    # df.plot.area(ax = ax,
+    #              stacked = True,
+    #              title = "Log of Node Degree by Node Degree Rank by Generation",
+    #              figsize = (15,15))
+    # ax.set_xlabel("Node Degree Rank")
+    # ax.set_ylabel("Log of Node Degree")
+    # plt.savefig(f"output/{query_results_folder}/node_deg_by_rank_plot.png")
+    return df
+
+
+def get_change_in_node_degree_by_molecule_per_gen(df, query_results_folder):
     
+    # group by molecule, sort by snapshot generation asc, then take rolling difference
+    # of count_relationships
+    
+    # df.sort_values(by = ['snapshot_generation_num'],
+    #                ascending = True,
+    #                inplace = True)
+    # print(df.head())
+    # df['count_rels_diff_by_mol_by_gen'] = df.groupby(by=['smiles_str','snapshot_generation_num'])['count_relationships'].mean().diff()
+    # print(df.head())
+    
+    # calculate the difference in count_relationships by molecule over snapshot generation
+    df_mols_with_rels_diff = pd.DataFrame()
+    mols = list(df['smiles_str'].unique())
+    for mol in mols:
+        df_mol = df[ df['smiles_str'] == mol ]
+        df_mol.sort_values(by = ['snapshot_generation_num'],
+                           ascending = True,
+                           inplace = True)
+        df_mol['count_rels_diff_by_mol_by_gen'] = df_mol['count_relationships'].diff()
+        df_mol = df_mol[['smiles_str', 'snapshot_generation_num', 'count_rels_diff_by_mol_by_gen']]
+        df_mols_with_rels_diff = pd.concat([df_mols_with_rels_diff, df_mol])
+    
+    # Now join this information back onto original df. The calculation
+    # count_rels_diff_by_mol_by_gen is computed at the composite level of
+    # smiles_str and snapshot_generation_num.
+    df = pd.merge(df,
+                  df_mols_with_rels_diff,
+                  how = "left",
+                  on = ['smiles_str', 'snapshot_generation_num'])
+    
+    # finally, return the df
+    return df
 
 
 
@@ -970,7 +998,8 @@ def compile_all_generations_data(query_results_folder, generation_limit):
             pass
     
     # do some more calculations/analysis/plotting on all generations' dataset
-    get_node_degree_rank_by_gen(df_all_gens, query_results_folder)
+    df_all_gens = get_node_degree_rank_by_gen(df_all_gens, query_results_folder)
+    df_all_gens = get_change_in_node_degree_by_molecule_per_gen(df_all_gens, query_results_folder)
     
     # save all generations' molecule data as CSV
     df_all_gens.to_csv(out_dir + "/all_generations_abundance_scores.csv",
