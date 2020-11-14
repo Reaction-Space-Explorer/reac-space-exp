@@ -961,9 +961,13 @@ def compile_all_generations_data(query_results_folder, generation_limit):
         
         # append autocat query results data
         autocat_gen_file_path = out_dir + f"/{generation_num}/autocat_query_results.csv"
-        df_autocat_gen = pd.read_csv(autocat_gen_file_path)
-        df_autocat_gen['snapshot_generation_num'] = generation_num
-        df_autocat_all_gens = pd.concat([df_autocat_all_gens, df_autocat_gen])
+        try:
+            df_autocat_gen = pd.read_csv(autocat_gen_file_path)
+            df_autocat_gen['snapshot_generation_num'] = generation_num
+            df_autocat_all_gens = pd.concat([df_autocat_all_gens, df_autocat_gen])
+        except:
+            # if failed, pd.read_csv was an empty file (no autocat pattern matches found)
+            pass
     
     # do some more calculations/analysis/plotting on all generations' dataset
     get_node_degree_rank_by_gen(df_all_gens, query_results_folder)
