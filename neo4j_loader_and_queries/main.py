@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 # from ggplot import *
 from shutil import copytree
 import math
+# from graph_tool.all import *
 
 
 # If NETWORK_SNAPSHOTS is True, the program gathers data on the network at each generation
@@ -19,6 +20,7 @@ import math
 # only of the final generation).
 NETWORK_SNAPSHOTS = True
 
+# configure network database
 url = "bolt://neo4j:0000@localhost:7687"
 graph = Graph(url)
 matcher = NodeMatcher(graph)
@@ -50,26 +52,25 @@ def create_relationship_if_not_exists(rxn_id, from_smiles, to_smiles, rule, gene
     from_molecule = matcher.match("Molecule", smiles_str = from_smiles).first()
     to_molecule = matcher.match("Molecule", smiles_str = to_smiles).first()
     match_pattern = rel_matcher.match(nodes=(from_molecule, to_molecule),
-                                r_type="FORMS",
-                                # properties = {""}
-                                # Remove edge properties so that less edges are formed to reduce
-                                # the computational complexity of the queries...
-                                # all possible reactions between two molecules can
-                                # later be looked up. Properties previously were:
-                                properties = {"rule": rule,
-                                              "rxn_id": rxn_id,
-                                              "generation_formed": generation_formed,
-                                              "from_smiles": from_smiles,
-                                              "to_smiles": to_smiles
-                                              }
-                                )
+                                      r_type="FORMS",
+                                      properties = {"rule": rule,
+                                                    "rxn_id": rxn_id,
+                                                    "generation_formed": generation_formed,
+                                                    "from_smiles": from_smiles,
+                                                    "to_smiles": to_smiles
+                                                    }
+                                      )
     if len(list(match_pattern)) <= 0:
+        # print(f"new pattern: {from_smiles}, {to_smiles}, {rule}, {rxn_id}, {generation_formed}")
         # relationship does not exist
         tx = graph.begin()
         # see documentation for weird Relationship function; order of args go:
         # from node, relationship, to node, and then kwargs for relationship properties
         # https://py2neo.org/v4/data.html#py2neo.data.Relationship
-        new_r = Relationship(from_molecule, "FORMS", to_molecule, rule=rule, rxn_id=rxn_id, generation_formed = generation_formed)
+        new_r = Relationship(from_molecule, "FORMS", to_molecule,
+                             rule=rule,
+                             rxn_id=rxn_id,
+                             generation_formed = generation_formed)
         tx.create(new_r)
         tx.commit()
         
@@ -77,6 +78,8 @@ def create_relationship_if_not_exists(rxn_id, from_smiles, to_smiles, rule, gene
         # rels_debug_file = open("mock_data/exported/rels.txt",'a')
         # rels_debug_file.write(f"\n{from_smiles},FORMS,{to_smiles},{rule},{rxn_id},{generation_formed}")
         # rels_debug_file.close()
+    # else:
+    #     print(f"pattern already exists: {from_smiles}, {to_smiles}, {rule}, {rxn_id}, {generation_formed}")
 
 
 def create_molecule_if_not_exists(smiles_str, exact_mass, generation_formed):
@@ -368,7 +371,7 @@ def plot_hist(query_results_folder, generation_num, file_name, statistic_col_nam
                         values="smiles_str",
                         index=[statistic_col_name],
                         columns=["generation_formed"],
-                        aggfunc=lambda x: math.sqrt(len(x.unique()))) # the square of the count of unique smiles_str
+                        aggfunc=lambda x: math.log10(len(x.unique()))) # the log of the count of unique smiles_str
     df.plot.hist(ax=ax,
                  bins = num_bins,
                  title=title,
@@ -425,7 +428,7 @@ def network_statistics(generation_num, query_results_folder):
         3. Random-walk betweenness, 4. Clique enumeration,
         5. k-plex enumeration, 6. k-core enumeration,
         7. k-component enumeration, 8. neighbor redundancy
-    1. Node degree distribution: sqrt of node degree frequency by degree
+    1. Node degree distribution: log10 of node degree frequency by degree
         value colored by generation_formed, one plot for incoming, outgoing,
         and incoming and outgoing edges
     2. Avg number of edges per node per generation
@@ -570,13 +573,13 @@ def network_statistics(generation_num, query_results_folder):
                                     values="smiles_str",
                                     index=["count_relationships"],
                                     columns=["generation_formed"],
-                                    aggfunc=lambda x: math.sqrt(len(x.unique()))) # the square of the count of unique smiles_str
+                                    aggfunc=lambda x: math.log10(len(x.unique()))) # the log of the count of unique smiles_str
     node_deg_pivot.plot(ax=ax,
                         kind="bar",
                         title="Square of Molecule Degree by Generation Formed",
                         figsize = (8,5))
     ax.set_xlabel("Molecule Degree (count of incoming and outgoing edges)")
-    ax.set_ylabel("sqrt(Count of Molecules)")
+    ax.set_ylabel("log10(Count of Molecules)")
     plt.savefig(f"output/{query_results_folder}/{generation_num}/{node_deg_file}.png")
     
     # 2.
@@ -618,13 +621,13 @@ def network_statistics(generation_num, query_results_folder):
                                     values="smiles_str",
                                     index=["count_incoming"],
                                     columns=["generation_formed"],
-                                    aggfunc=lambda x: math.sqrt(len(x.unique()))) # the square of the count of unique smiles_str
+                                    aggfunc=lambda x: math.log10(len(x.unique()))) # the square of the count of unique smiles_str
     node_deg_pivot.plot(ax=ax,
                         kind="bar",
                         title="Square of Molecule Degree by Generation Formed for Incoming Relationships",
                         figsize = (8,5))
     ax.set_xlabel("Molecule Degree (count of incoming edges)")
-    ax.set_ylabel("sqrt(Count of Molecules)")
+    ax.set_ylabel("log10(Count of Molecules)")
     plt.savefig(f"output/{query_results_folder}/{generation_num}/{incoming_rels_count_file}.png")
     
     # outgoing relationships by molecule
@@ -650,13 +653,13 @@ def network_statistics(generation_num, query_results_folder):
                                     values="smiles_str",
                                     index=["count_outgoing"],
                                     columns=["generation_formed"],
-                                    aggfunc=lambda x: math.sqrt(len(x.unique()))) # the square of the count of unique smiles_str
+                                    aggfunc=lambda x: math.log10(len(x.unique()))) # the square of the count of unique smiles_str
     node_deg_pivot.plot(ax=ax,
                         kind="bar",
                         title="Square of Molecule Degree by Generation Formed for Outgoing Relationships",
                         figsize = (8,5))
     ax.set_xlabel("Molecule Degree (count of outgoing edges)")
-    ax.set_ylabel("sqrt(Count of Molecules)")
+    ax.set_ylabel("log10(Count of Molecules)")
     plt.savefig(f"output/{query_results_folder}/{generation_num}/{outgoing_rels_count_file}.png")
     
     # close all plots so they don't accumulate memory
@@ -712,6 +715,92 @@ def graph_from_cypher(data):
                 raise TypeError("Unrecognized object")
     return G
 
+def nx2gt(nxG):
+    """
+    Converts a networkx graph to a graph-tool graph.
+    
+    Thanks to: https://bbengfort.github.io/snippets/2016/06/23/graph-tool-from-networkx.html
+    """
+    # Phase 0: Create a directed or undirected graph-tool Graph
+    gtG = gt.Graph(directed=nxG.is_directed())
+
+    # Add the Graph properties as "internal properties"
+    for key, value in nxG.graph.items():
+        # Convert the value and key into a type for graph-tool
+        tname, value, key = get_prop_type(value, key)
+
+        prop = gtG.new_graph_property(tname) # Create the PropertyMap
+        gtG.graph_properties[key] = prop     # Set the PropertyMap
+        gtG.graph_properties[key] = value    # Set the actual value
+
+    # Phase 1: Add the vertex and edge property maps
+    # Go through all nodes and edges and add seen properties
+    # Add the node properties first
+    nprops = set() # cache keys to only add properties once
+    for node, data in nxG.nodes_iter(data=True):
+
+        # Go through all the properties if not seen and add them.
+        for key, val in data.items():
+            if key in nprops: continue # Skip properties already added
+
+            # Convert the value and key into a type for graph-tool
+            tname, _, key  = get_prop_type(val, key)
+
+            prop = gtG.new_vertex_property(tname) # Create the PropertyMap
+            gtG.vertex_properties[key] = prop     # Set the PropertyMap
+
+            # Add the key to the already seen properties
+            nprops.add(key)
+
+    # Also add the node id: in NetworkX a node can be any hashable type, but
+    # in graph-tool node are defined as indices. So we capture any strings
+    # in a special PropertyMap called 'id' -- modify as needed!
+    gtG.vertex_properties['id'] = gtG.new_vertex_property('string')
+
+    # Add the edge properties second
+    eprops = set() # cache keys to only add properties once
+    for src, dst, data in nxG.edges_iter(data=True):
+
+        # Go through all the edge properties if not seen and add them.
+        for key, val in data.items():
+            if key in eprops: continue # Skip properties already added
+
+            # Convert the value and key into a type for graph-tool
+            tname, _, key = get_prop_type(val, key)
+
+            prop = gtG.new_edge_property(tname) # Create the PropertyMap
+            gtG.edge_properties[key] = prop     # Set the PropertyMap
+
+            # Add the key to the already seen properties
+            eprops.add(key)
+
+    # Phase 2: Actually add all the nodes and vertices with their properties
+    # Add the nodes
+    vertices = {} # vertex mapping for tracking edges later
+    for node, data in nxG.nodes_iter(data=True):
+
+        # Create the vertex and annotate for our edges later
+        v = gtG.add_vertex()
+        vertices[node] = v
+
+        # Set the vertex properties, not forgetting the id property
+        data['id'] = str(node)
+        for key, value in data.items():
+            gtG.vp[key][v] = value # vp is short for vertex_properties
+
+    # Add the edges
+    for src, dst, data in nxG.edges_iter(data=True):
+
+        # Look up the vertex structs from our vertices mapping and add edge.
+        e = gtG.add_edge(vertices[src], vertices[dst])
+
+        # Add the edge properties
+        for key, value in data.items():
+            gtG.ep[key][e] = value # ep is short for edge_properties
+
+    # Done, finally!
+    return gtG
+
 
 def network_visualization_by_gen(query_results_folder, generation_num):
     print("Generating an image for the network visualization...")
@@ -723,11 +812,18 @@ def network_visualization_by_gen(query_results_folder, generation_num):
     # with driver.session() as session:
     #     result = session.run(full_network_query)
     result = graph.run(full_network_query)
+    
+    # plot using NetworkX graph object + Matplotlib
     nxG = graph_from_cypher(result.data())
     nx.draw(nxG)
-    plt.savefig(f"output/{query_results_folder}/{generation_num}/network_visualization_at_gen_{generation_num}.png")
+    plt.savefig(f"output/{query_results_folder}/{generation_num}/network_visualization_nxG_at_gen_{generation_num}.png")
     plt.close('all')
     
+    # plot using graph_tool module (convert from NetworkX graph to this graph)
+    # gtG = nx2gt(nxG)
+    # graph_draw(gtG,
+    #            vertex_text = g.vertex_index,
+    #            output = f"output/{query_results_folder}/{generation_num}/network_visualization_gtG_at_gen_{generation_num}.png")
 
 
 
@@ -810,18 +906,39 @@ def take_network_snapshot(generation_num, query_results_folder, mod_exports_fold
     compute_likely_abundance_by_molecule(generation_num = generation_num,
                                          query_results_folder = query_results_folder)
 
+
+def get_node_degree_by_rank_order_plot_by_gen(df):
+    # Figure #7
+    # first rank all molecules by node degree over generation, sorting
+    # highest to lowest over generation
+    # count_relationships is total count incoming and count outgoing--use this
+    # for ranking node degree (lowest rank is highest node degree)
+    df['rank'] = df.groupby(by=['snapshot_generation_num'])['count_relationships'].rank(ascending=False)
+    print(df.head())
+    return df
+    
+
+
+
 def compile_all_generations_data(query_results_folder, generation_limit):
-    if NETWORK_SNAPSHOTS:
-        print("\t\tCompiling abundance score data into one file from all network snapshots...")
-        out_dir = f"output/{query_results_folder}"
-        df_all_gens = pd.DataFrame()
-        for generation_num in range(generation_limit + 1):
-            gen_file_path = out_dir + f"/{generation_num}/likely_abundance_score_by_molecule.csv"
-            df_gen = pd.read_csv(gen_file_path)
-            df_gen['snapshot_generation_num'] = generation_num
-            df_all_gens = pd.concat([df_all_gens, df_gen])
-        df_all_gens.to_csv(out_dir + "/all_generations_abundance_scores.csv",
-                           index=False)
+    print("\t\tCompiling abundance score data into one file from all network snapshots...")
+    
+    # pull all scores calculated at each generation thus far
+    out_dir = f"output/{query_results_folder}"
+    df_all_gens = pd.DataFrame()
+    for generation_num in range(generation_limit + 1):
+        gen_file_path = out_dir + f"/{generation_num}/likely_abundance_score_by_molecule.csv"
+        df_gen = pd.read_csv(gen_file_path)
+        df_gen['snapshot_generation_num'] = generation_num
+        df_all_gens = pd.concat([df_all_gens, df_gen])
+    
+    # do some more calculations/analysis/plotting on all generations' dataset
+    df_all_gens = get_node_degree_by_rank_order_plot_by_gen(df_all_gens)
+    
+    
+    # finally, save as CSV
+    df_all_gens.to_csv(out_dir + "/all_generations_abundance_scores.csv",
+                       index=False)
             
 
 
@@ -914,8 +1031,9 @@ def import_data_from_MOD_exports(mod_exports_folder_path, generation_limit):
     
     # now that all snapshots of the network have been taken, compile all of the
     # data into one source (only if NETWORK_SNAPSHOTS enabled)
-    compile_all_generations_data(query_results_folder,
-                                 generation_limit)
+    if NETWORK_SNAPSHOTS:
+        compile_all_generations_data(query_results_folder,
+                                     generation_limit)
     
 
 if __name__ == "__main__":
