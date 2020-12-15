@@ -54,7 +54,11 @@ for file_name in bad_rings_aromatics:
 
 # A list of things that might be forbidden by the library above but is stable
 # and should be produced
-allowed_structs = [smiles("O=C=O", name="Carbon Dioxide", add=False)]
+allowed_structs = [smiles("O=C=O", name="Carbon Dioxide", add=False),
+					smiles("[N]=C=O", name="isocyanates", add=False)]
+
+# Make this a global variable (advantage being it can be changed in other reactions individually)
+max_mass_limit = 200
 
 def pred(derivation):
 	"""
@@ -66,7 +70,7 @@ def pred(derivation):
 			if g.monomorphism(allowed) > 0:
 				return True
 		# Allow masses only lower than a certain maximum
-		if g.exactMass >= 200:
+		if g.exactMass >= max_mass_limit:
 			return False
 		for fb in forbidden:
 			if fb.monomorphism(g, labelSettings=
@@ -186,7 +190,8 @@ methoxy = smiles("[C][O]C", name="methoxy ether substruct", add=False)
 ethoxy = smiles("[C][O]CC", name="Ethoxy Ether Substruct", add=False)
 
 
-def find_substruct_producer(dg, substruct, print_max=50, print_rule=False):
+def find_substruct_producer(dg, substruct, print_max=50, print_rule=False, condense_str=True
+							,exact_struct=False):
 	"""
 	Find reactions producing a certain substructure.
 	"""
@@ -202,8 +207,11 @@ def find_substruct_producer(dg, substruct, print_max=50, print_rule=False):
 				for g in targets:
 					if substruct.monomorphism(g) > 0:
 						count += 1
-						print(f"Found {substruct.name}!")
+						print(f"Found {substruct.name}! Made by {rule}")
 						dg2 = DG(graphDatabase=inputGraphs)
+						if condense_str == False:
+							dgprint.graphPrinter.collapseHydrogens = False
+							dgprint.graphPrinter.simpleCarbons = False
 						with dg2.build() as b:
 							d = Derivations()
 							d.left = sources
@@ -285,16 +293,16 @@ def trace_pathways(dg, mol_smiles, seed_mol, exact_molecule=False):
 		trace_complete = False
 		with pathway_dg.build() as build_pathway:
 			while not trace_complete:
-				print(f"Targets: {[t.graph.smiles for t in targets]}")
+				#print(f"Targets: {[t.graph.smiles for t in targets]}")
 				next_targets = []
 				for targ in targets:
 					if targ.graph.isomorphism(seed_mol) == 1:
 						trace_complete = True
 						break
 					else:
-						print(f"Current target: {targ.graph.smiles}")
+						#print(f"Current target: {targ.graph.smiles}")
 						for e in targ.inEdges:
-							print(f"working with edge {e.id}")
+							#print(f"working with edge {e.id}")
 							sources = [source.graph for source in e.sources]
 							next_targets.extend(source for source in e.sources 
 									if source not in next_targets)
@@ -304,8 +312,8 @@ def trace_pathways(dg, mol_smiles, seed_mol, exact_molecule=False):
 								d.rules = [r for r in e.rules]
 								d.right = [targ.graph]
 								edge = build_pathway.addDerivation(d)
-								print(f"Adding reaction {d} to pathway")
-				print(f"Targets were {targets}")
+								#print(f"Adding reaction {d} to pathway")
+				#print(f"Targets were {targets}")
 				targets = next_targets
-				print(f"Targets are {targets}")
+				#print(f"Targets are {targets}")
 		pathway_dg.print()

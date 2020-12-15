@@ -1,5 +1,51 @@
 include("common.py")
 
+def gen_closure_nitrile(ring_size):
+	r = RuleGen(f"Nitrile Ring Closure {ring_size}")
+	r.label = "term"
+	r.left.extend([
+		'edge [ source 1 target 2 label "#" ]',
+		'edge [ source 3 target 4 label "-" ]',
+		'edge [ source 3 target 5 label "-" ]'
+	])
+	r.context.extend([
+		'node [ id 1 label "N" ]',
+		'node [ id 2 label "C" ]',
+		'node [ id 3 label "N" ]',
+		'node [ id 4 label "H" ]',
+		'node [ id 5 label "H" ]',
+		'node [ id 6 label "*" ]',
+		'node [ id 7 label "*" ]',
+		'node [ id 8 label "*" ]',
+		'edge [ source 3 target 6 label "-" ]',
+		'edge [ source 6 target 7 label "-" ]',
+		'edge [ source 7 target 8 label "-" ]'
+	])
+	r.constraints.extend([
+		'constrainAdj [ id 6 op "=" count 0',
+		'\tnodeLabels [ label "O" ]',
+		'\tedgeLabels [ label "=" ]'
+		']'
+	])
+	if ring_size == 6: # could generalize to larger values but don't need at this point
+		r.context.extend([
+			'node [ id 9 label "*" ]',
+			'edge [ source 8 target 9 label "-" ]',
+			'edge [ source 2 target 9 label "-" ]'
+		])
+	elif ring_size == 5:
+		r.context.extend(['edge [ source 8 target 2 label "-" ]'])
+	r.right.extend([
+		'edge [ source 3 target 2 label "=" ]',
+		'edge [ source 1 target 2 label "-" ]',
+		'edge [ source 1 target 4 label "-" ]',
+		'edge [ source 1 target 5 label "-" ]'
+	])
+	return r.loadRule()
+
+ring_closure_nitrile = [gen_closure_nitrile(size) for size in (5,6)]
+for ru in ring_closure_nitrile:
+	ru.print()
 
 def create_ring_closure(ring_size, is_inverse=False):
 	"""
@@ -21,6 +67,7 @@ def create_ring_closure(ring_size, is_inverse=False):
 	for atom1 in "ONS":
 		for atom2 in "ONS":
 			rule = RuleGen(f"Ring Closure {ring_size} membered{', inverse' if is_inverse == True else ''} {atom1}, {atom2}")
+			rule.label = "term"
 			rule.context.extend([
 				'node [ id 1 label "C" ]',
 				f'node [ id 2 label "{atom1}" ]',
