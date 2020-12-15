@@ -1,20 +1,20 @@
 # Reaction Space Explorer
+An open source cheminformatics workflow to simulate chemical reaction networks important in prebiotic chemistry and to discover autocatalytic loops. Available open source under the BSD-3 Clause license.
 
+The platform uses:
+* [MØD](https://github.com/jakobandersen/mod) version [v.0.11.0](https://github.com/jakobandersen/mod/releases/tag/v0.11.0).2 for network generation.
+* [RDKit](https://anaconda.org/rdkit/rdkit) (not compatible with Python 3.8.x as of now, we used a separate conda environment with Python 3.7.9).
+* [Neo4j](https://neo4j.com/) for graph queries.
+
+Figures were plotted using [matplotlib](https://matplotlib.org/).
+### Note:
+The FT-ICR-MS data has some rows with inconsistent number of columns. For the purpose of plotting the mass spectra, we extracted columns of our interest.
+
+## Publications
+To-be-updated.
 ## TODO:
-* Try to match all the possible structures in the Y&M paper.
-* ~~For some reason, comparison of molecules in the SDF that contain Y&M's reported structures isn't working correctly, fix that.~~
-* ~~Get rid of molecules containing unstable substructures (three or four membered rings)~~
-    * ~~Currently only a few substructures are forbidden, make the library of unstable/impossible substructures more complete~~. Made all three and four membered rings, atoms with two double bonds forbidden using wildcards.
-* ~~Fix the reaction rules that aren't currently invertible for some reason~~.
-    * ~~Check the ones with wildcards~~. Rules with ```constrainAdj[]``` will not be directly invertible.
-* Write more reaction rules (to account for missing products).
-    * ~~Hemiacetal formation for 6 membered rings~~.
-    * ~~Aldol/Retro-aldol~~
-    * ~~Elimination~~/Hydration (one hydration rule left).
-    * Ester Hydrolysis (inverse)
-    * ~~Keto-enol migration~~
-        * Maybe avoid enols by making it go two steps (requires adjacent -OH available).
-* ~~Compare with mass spectra at the end of each generation and see what % of masses are matching.~~
-    * ~~Perhaps represent this info graphically.~~
+
+* ~Try to match all the possible structures in the Y&M paper.~
+    * 96% structures have matched for glucose degradation, 100% for formose.
 * ~~See which step in the tautomer cleaning process is the most inefficient.~~
     * The slowest part is enumerating all possible tautomers for the given molecules. Takes more time to enumerate the possibilties than it does to produce the molecules themselves.

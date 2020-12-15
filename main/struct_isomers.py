@@ -8,7 +8,7 @@ from rdkit.Chem.Descriptors import ExactMolWt
 from rdkit.Chem import MolFromSmiles
 
 import matplotlib.pyplot as plt
-
+import matplotlib.gridspec as gspec
 
 def count_struct_isomers(smiles_list):
 	"""
@@ -41,26 +41,50 @@ def count_struct_isomers(smiles_list):
 
 def plot_spectra(exactwt_freq_dict, gen):
 	"""
-	Plot using matplotlib
+	Stacked Bar Plot using matplotlib
 	"""
 	# which marker (dot) color to use for which generation
-	gen_colors = ["blue", "red", "yellow", "green", "magenta"]
+	gen_colors = ['blue', "green", "darkorange", "crimson", 'black']
+	
 	weights = exactwt_freq_dict.keys()
 	freqs = exactwt_freq_dict.values()
-	# if basefmt is not " " it will draw a red horizontal baseline at y=0
-	(markers, stemlines, baseline) = plt.stem(weights, freqs, basefmt=" ",
-				 markerfmt=f"{gen_colors[gen-1][0]}o")
+	plt.bar(weights, freqs, width=0.5, color=list(reversed(gen_colors))[gen-1], label=f'Generation {gen}')
 	plt.xlabel("Exact Mass")
-	plt.ylabel("Frequency")
+	plt.ylabel("Cumulative Frequency")
+	plt.yscale("log")
+	#ax[gen-1].set_yscale('log')
+	#ax[gen-1].set_yticks([10,100,1000])
 	plt.title("Mass spectra of simulated glucose network")
-	plt.setp(stemlines, linestyle="-", color='olive', linewidth=0.5)
-	plt.setp(markers, markersize=2, label=f"Generation {gen}")
+	#plt.setp(stemlines, linestyle="-", color=gen_colors[gen-1], linewidth=0.5)
+	#plt.setp(markers, markersize=2, label=f"Generation {gen}")
+	#ax[gen-1].legend(loc='upper left')
 	#plt.show()
 
+def plot_lollipop(exactwt_freq_dict, gen):
+	# which marker (dot) color to use for which generation
+	gen_colors = ["blue", "red", "cyan", "green", "magenta"]
+	
+	weights = exactwt_freq_dict.keys()
+	freqs = exactwt_freq_dict.values()
+	# if basefmt is not " " it will draw a coloured horizontal baseline at y=0
+	(markers, stemlines, baseline) = plt.stem(weights, freqs, basefmt="gray",
+				 markerfmt=f"{gen_colors[gen-1][0]}o", use_line_collection=True)
+	plt.xlabel("Exact Mass")
+	plt.ylabel("Cumulative Frequency")
+	plt.yscale("log")
+	plt.ylim(bottom=0.625)
+	#ax[gen-1].set_yscale('log')
+	#ax[gen-1].set_yticks([10,100,1000])
+	plt.title("Mass spectra of simulated glucose network")
+	plt.setp(stemlines, linestyle="-", color='gray', linewidth=0.5)
+	plt.setp(markers, markersize=2, label=f"Generation {gen}")
 
 # Only one fig
 fig = plt.figure(figsize=(8,8))
 ax = fig.add_subplot(111)
+#fig, ax = plt.subplots(5, sharex=True, sharey=True)
+#fig.suptitle("Mass spectra of the model reaction network")
+gs = gspec.GridSpec(4,4)
 # Plot exact wt vs. number of compounds
 with open("glucose/glucose_degradation_output.txt") as output:
 	lines = output.readlines()
@@ -76,10 +100,15 @@ with open("glucose/glucose_degradation_output.txt") as output:
 	
 	# List of smiles upto Nth generation
 	cumulative_list = []
-	count = 0
 	for gen, smiles_list in gen_smiles_dict.items():
 		cumulative_list.extend(smiles_list)
+	count = 0
+	for gen in range(len(gen_smiles_dict.keys()), 0, -1):
 		exactwt_count = count_struct_isomers(cumulative_list)
 		plot_spectra(exactwt_count, gen)
-	plt.legend(loc='upper left') # Fix problem with legend
+
+		#ax2 = fig.add_subplot(111)
+		#plot_lollipop(exactwt_count, gen)
+		cumulative_list = [x for x in cumulative_list if x not in gen_smiles_dict[gen]]
+	plt.legend(loc='upper left')
 	plt.show()

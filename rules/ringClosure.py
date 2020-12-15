@@ -17,9 +17,9 @@ def gen_closure_nitrile(ring_size):
 		'node [ id 6 label "*" ]',
 		'node [ id 7 label "*" ]',
 		'node [ id 8 label "*" ]',
-		'edge [ source 3 target 6 label "-" ]',
-		'edge [ source 6 target 7 label "-" ]',
-		'edge [ source 7 target 8 label "-" ]'
+		'edge [ source 3 target 6 label "*" ]',
+		'edge [ source 6 target 7 label "*" ]',
+		'edge [ source 7 target 8 label "*" ]'
 	])
 	r.constraints.extend([
 		'constrainAdj [ id 6 op "=" count 0',
@@ -30,11 +30,11 @@ def gen_closure_nitrile(ring_size):
 	if ring_size == 6: # could generalize to larger values but don't need at this point
 		r.context.extend([
 			'node [ id 9 label "*" ]',
-			'edge [ source 8 target 9 label "-" ]',
-			'edge [ source 2 target 9 label "-" ]'
+			'edge [ source 8 target 9 label "*" ]',
+			'edge [ source 2 target 9 label "*" ]'
 		])
 	elif ring_size == 5:
-		r.context.extend(['edge [ source 8 target 2 label "-" ]'])
+		r.context.extend(['edge [ source 8 target 2 label "*" ]'])
 	r.right.extend([
 		'edge [ source 3 target 2 label "=" ]',
 		'edge [ source 1 target 2 label "-" ]',
@@ -127,6 +127,300 @@ ring_closure_inv = []
 for ring_size in (5, 6, 7):
 	for r in create_ring_closure(ring_size, is_inverse=True):
 		ring_closure_inv.append(r)
+
+# other ring closure rules.
+
+amine_nitrile_5 = ruleGMLString("""rule [
+	ruleID "Amine Nitrile Ring Closure 5"
+	labelType "term"
+	left [
+		edge [ source 2 target 3 label "-" ] # break N-H
+		edge [ source 7 target 8 label "#" ] # break C#N
+	]
+	context [
+		node [ id 1 label "*" ] # C/H only
+		node [ id 2 label "N" ]
+		edge [ source 1 target 2 label "-" ]
+		node [ id 3 label "H" ]
+		node [ id 4 label "C" ]
+		edge [ source 2 target 4 label "-" ]
+		node [ id 5 label "*" ] # Anything
+		edge [ source 4 target 5 label "*" ] # any type of bond
+		node [ id 6 label "*" ]
+		edge [ source 5 target 6 label "*" ]
+		node [ id 7 label "C" ]
+		edge [ source 6 target 7 label "-" ]
+		node [ id 8 label "N" ]
+	]
+	right [
+		edge [ source 7 target 8 label "=" ] # =N
+		edge [ source 3 target 8 label "-" ] # =N-H
+		edge [ source 2 target 7 label "-" ] # C-N (closes the ring)
+	]
+	# what the following constraint does is, make sure the C/H isn't attached to any N or O
+	# apart from the one N it is already bonded to (atom 2). TODO: See if it deviates from the behavior
+	constrainAdj [ id 1 op "=" count 1
+		edgeLabels [ label "-" label "=" ]
+		nodeLabels [ label "N" label "O" ]
+	]
+]""")
+
+amine_nitrile_5.print()
+
+amine_nitrile_6 = ruleGMLString("""rule [
+	ruleID "Amine Nitrile Ring Closure 6"
+	labelType "term"
+	left [
+		edge [ source 2 target 3 label "-" ] # break N-H
+		edge [ source 8 target 9 label "#" ] # break C#N
+	]
+	context [
+		node [ id 1 label "*" ] # C/H only
+		node [ id 2 label "N" ]
+		edge [ source 1 target 2 label "-" ]
+		node [ id 3 label "H" ]
+		node [ id 4 label "C" ]
+		edge [ source 2 target 4 label "-" ]
+		node [ id 5 label "*" ] # Anything
+		edge [ source 4 target 5 label "*" ] # any type of bond
+		node [ id 6 label "*" ]
+		edge [ source 5 target 6 label "*" ]
+		node [ id 7 label "*" ]
+		edge [ source 6 target 7 label "*" ]
+		node [ id 8 label "C" ]
+		edge [ source 7  target 8 label "-" ]
+		node [ id 9 label "N" ]
+	]
+	right [
+		edge [ source 8 target 9 label "=" ] # =N
+		edge [ source 3 target 9 label "-" ] # =N-H
+		edge [ source 2 target 8 label "-" ] # C-N (closes the ring)
+	]
+	# what the following constraint does is, make sure the C/H isn't attached to any N or O
+	# apart from the one N it is already bonded to (atom 2). TODO: See if it deviates from the behavior
+	constrainAdj [ id 1 op "=" count 1
+		edgeLabels [ label "-" label "=" ]
+		nodeLabels [ label "N" label "O" ]
+	]
+]""")
+
+amine_nitrile_6.print()
+
+amine_imine_5 = ruleGMLString("""rule [
+	ruleID "Amine Imine Ring Closure 5"
+	labelType "term"
+	left [
+		edge [ source 3 target 4 label "-" ]
+		edge [ source 9 target 10 label "-" ]
+	]
+	context [
+		node [ id 1 label "H" ]
+		node [ id 2 label "H" ]
+		node [ id 3 label "N" ]
+		edge [ source 1 target 3 label "-" ]
+		edge [ source 2 target 3 label "-" ]
+		node [ id 4 label "C" ]
+		node [ id 5 label "*" ]
+		edge [ source 4 target 5 label "*" ]
+		node [ id 6 label "*" ]
+		edge [ source 5 target 6 label "*" ]
+		node [ id 7 label "C" ]
+		edge [ source 6 target 7 label "-" ]
+		node [ id 8 label "*" ]
+		edge [ source 7 target 8 label "*" ]
+		node [ id 9 label "N" ]
+		edge [ source 7 target 9 label "=" ]
+		node [ id 10 label "H" ]
+	]
+	right [
+		edge [ source 4 target 9 label "-" ]
+		edge [ source 10 target 3 label "-" ]
+	]
+]""")
+
+amine_imine_5.print()
+
+amine_imine_6 = ruleGMLString("""rule [
+	ruleID "Amine Imine Ring Closure 6"
+	labelType "term"
+	left [
+		edge [ source 3 target 4 label "-" ]
+		edge [ source 10 target 11 label "-" ]
+	]
+	context [
+		node [ id 1 label "H" ]
+		node [ id 2 label "H" ]
+		node [ id 3 label "N" ]
+		edge [ source 1 target 3 label "-" ]
+		edge [ source 2 target 3 label "-" ]
+		node [ id 4 label "C" ]
+		node [ id 5 label "*" ]
+		edge [ source 4 target 5 label "*" ]
+		node [ id 6 label "*" ]
+		edge [ source 5 target 6 label "*" ]
+		node [ id 7 label "*" ]
+		edge [ source 6 target 7 label "*" ]
+
+		node [ id 8 label "C" ]
+		edge [ source 7 target 8 label "-" ]
+		node [ id 9 label "*" ]
+		edge [ source 8 target 9 label "*" ]
+		node [ id 10 label "N" ]
+		edge [ source 8 target 10 label "=" ]
+		node [ id 11 label "H" ]
+	]
+	right [
+		edge [ source 4 target 10 label "-" ]
+		edge [ source 11 target 3 label "-" ]
+	]
+]""")
+
+amine_imine_6.print()
+
+# This rule gets printed horribly, but I think it's correct.
+amidine_nitrile_6 = ruleGMLString("""rule [
+	ruleID "Amidine Nitrile Ring Closure 6"
+	labelType "term"
+	left [
+		edge [ source 1 target 2 label "#" ] #break C#N
+		# remove some hydrogens
+		edge [ source 5 target 6 label "-" ]
+		edge [ source 9 target 10 label "-" ]
+		# shift double bond
+		edge [ source 5 target 7 label "-" ] # break N-C (to be converted into N=C)
+		edge [ source 7 target 9 label "=" ] # break N=C (to be conv into N-C)
+	]
+	context [
+		node [ id 1 label "N" ]
+		node [ id 2 label "C" ]
+		node [ id 3 label "*" ]
+		edge [ source 2 target 3 label "-" ]
+		node [ id 4 label "*" ]
+		edge [ source 3 target 4 label "*" ]
+		node [ id 5 label "N" ]
+		edge [ source 4 target 5 label "-" ]
+		node [ id 6 label "H" ]
+		node [ id 7 label "C" ]
+		node [ id 8 label "*" ]
+		edge [ source 7 target 8 label "-" ]
+		node [ id 9 label "N" ]
+		node [ id 10 label "H" ]
+	]
+	right [
+		edge [ source 5 target 7 label "=" ] # C=N
+		edge [ source 7 target 9 label "-" ] # N-C
+		edge [ source 2 target 9 label "=" ] # C=N
+		# NH2
+		edge [ source 1 target 6 label "-" ]
+		edge [ source 1 target 10 label "-" ]
+	]
+]""")
+
+amidine_nitrile_6.print()
+
+amide_nitrile_6 = ruleGMLString("""rule [
+	ruleID "Amide Nitrile Ring Closure 6"
+	labelType "term"
+	left [
+		edge [ source 1 target 2 label "#" ] # break C#N
+		edge [ source 9 target 10 label "-" ] # break N-H
+		edge [ source 9 target 11 label "-" ]
+	]
+	context [
+		node [ id 1 label "N" ]
+		node [ id 2 label "C" ]
+		node [ id 3 label "*" ]
+		edge [ source 2 target 3 label "-" ]
+		node [ id 4 label "*" ]
+		edge [ source 3 target 4 label "*" ]
+		node [ id 5 label "N" ]
+		edge [ source 4 target 5 label "-"]
+		node [ id 6 label "*" ]
+		edge [ source 5 target 6 label "-" ]
+		node [ id 7 label "C" ]
+		edge [ source 5 target 7 label "-" ]
+		node [ id 8 label "O" ]
+		edge [ source 7 target 8 label "=" ]
+		node [ id 9 label "N" ]
+		edge [ source 7 target 9 label "-" ]
+		node [ id 10 label "H" ]
+		node [ id 11 label "H" ]
+	]
+	right [
+		edge [ source 1 target 2 label "-" ]
+		edge [ source 9 target 2 label "=" ]
+		edge [ source 1 target 10 label "-" ]
+		edge [ source 1 target 11 label "-" ]
+	]
+]""")
+
+amide_nitrile_6.print()
+
+# I wrote it in a way that it will work for ring sizes 5-8
+# but am currently using only 5 and 6
+def create_amine_carbonyl(ring_size):
+	# Need two rules, one with an O as a substituent and another with H.
+	rule_h = RuleGen(f"Amine Carbonyl Ring Closure, H, {ring_size}")
+	rule_c = RuleGen(f"Amine Carbonyl Ring Closure, C, {ring_size}")
+	rule_c.label = "term"
+	rule_h.label = "term"
+
+	# most context will be common to both of these.
+	comm_left = [
+		'edge [ source 1 target 3 label "-" ]', # remove N-H
+		'edge [ source 2 target 3 label "-" ]', # same as above
+		'edge [ source 10 target 12 label "=" ]'
+	]
+	comm_context = [
+		'node [ id 1 label "H" ]',
+		'node [ id 2 label "H" ]',
+		'node [ id 3 label "N" ]',
+		'node [ id 4 label "C" ]',
+		'edge [ source 3 target 4 label "-" ]',
+		'node [ id 5 label "*" ]',
+		'edge [ source 4 target 5 label "*" ]',
+		'node [ id 6 label "*" ]',
+		'edge [ source 5 target 6 label "*" ]',
+		'node [ id 10 label "C" ]',
+		f'edge [ source 10 target {ring_size+1} label "-" ]', # join '*' and C, this would depend on ring_size
+		# atom 11 is C/H, defined separately for the two contexts
+		'edge [ source 10 target 11 label "-" ]'
+		'node [ id 12 label "O" ]'
+	]
+	comm_right = [
+		'edge [ source 3 target 10 label "=" ]', # N=C
+		'edge [ source 2 target 12 label "-" ]', # -H2O
+		'edge [ source 1 target 12 label "-" ]' 
+	]
+	rule_c.left.extend(comm_left)
+	rule_h.left.extend(comm_left)
+	rule_c.right.extend(comm_right)
+	rule_h.right.extend(comm_right)
+	if ring_size > 5:
+		for i in range(7, ring_size+2): # upto ring_size+1
+			comm_context.extend([
+				f'node [ id {i} label "*" ]',
+				f'edge [ source {i-1} target {i} label "*" ]'
+			])
+	rule_c.context.extend(comm_context)
+	rule_c.context.extend([
+		'node [ id 11 label "C" ]'
+	])
+	rule_h.context.extend(comm_context)
+	rule_h.context.extend([
+		'node [ id 11 label "H" ]'
+	])
+	return [rule_h.loadRule(), rule_c.loadRule()]
+
+amine_carbonyl_closure = []
+# now generate the rules using the above method and add it to the list
+for size in (5,6):
+	rules = create_amine_carbonyl(size)
+	for r in rules:
+		amine_carbonyl_closure.append(r)
+
+for r in amine_carbonyl_closure:
+	r.print()
 
 '''def ringClosureGen():
 	def attachRingNode(r, id):

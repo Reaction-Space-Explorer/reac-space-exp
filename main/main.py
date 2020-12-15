@@ -136,7 +136,7 @@ def check_sdf_matches(dg, sdf_file, draw_structures=True, print_unmatching=False
 		for v in dg.vertices: #dg_new.vertices
 			if v.graph.isomorphism(mol_graph) == 1:
 				matching_structs.append(mol_graph)
-				print("Structure {0} of the SDF found in the network!".format(mol_graph.smiles))
+				print(f"Structure {v.graph.smiles} in the network matches a test set molecule!")
 		if mol_graph not in matching_structs:
 			not_matching.append(mol_graph)
 	if draw_structures == True:
@@ -176,7 +176,7 @@ def count_rules(dg):
 		print(f"{rule} reaction count: {rules_count.count(rule)}")
 
 dgprint = DGPrinter()
-dgprint.withRuleName = True
+#dgprint.withRuleName = True
 dgprint.withShortcutEdges = True
 
 rp = GraphPrinter() # Think of it as a "Rule Printer"
