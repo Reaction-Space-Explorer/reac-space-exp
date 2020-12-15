@@ -44,8 +44,7 @@ def gen_closure_nitrile(ring_size):
 	return r.loadRule()
 
 ring_closure_nitrile = [gen_closure_nitrile(size) for size in (5,6)]
-for ru in ring_closure_nitrile:
-	ru.print()
+
 
 def create_ring_closure(ring_size, is_inverse=False):
 	"""
@@ -165,7 +164,6 @@ amine_nitrile_5 = ruleGMLString("""rule [
 	]
 ]""")
 
-amine_nitrile_5.print()
 
 amine_nitrile_6 = ruleGMLString("""rule [
 	ruleID "Amine Nitrile Ring Closure 6"
@@ -204,7 +202,6 @@ amine_nitrile_6 = ruleGMLString("""rule [
 	]
 ]""")
 
-amine_nitrile_6.print()
 
 amine_imine_5 = ruleGMLString("""rule [
 	ruleID "Amine Imine Ring Closure 5"
@@ -238,7 +235,6 @@ amine_imine_5 = ruleGMLString("""rule [
 	]
 ]""")
 
-amine_imine_5.print()
 
 amine_imine_6 = ruleGMLString("""rule [
 	ruleID "Amine Imine Ring Closure 6"
@@ -275,7 +271,6 @@ amine_imine_6 = ruleGMLString("""rule [
 	]
 ]""")
 
-amine_imine_6.print()
 
 # This rule gets printed horribly, but I think it's correct.
 amidine_nitrile_6 = ruleGMLString("""rule [
@@ -311,12 +306,11 @@ amidine_nitrile_6 = ruleGMLString("""rule [
 		edge [ source 7 target 9 label "-" ] # N-C
 		edge [ source 2 target 9 label "=" ] # C=N
 		# NH2
+		edge [ source 1 target 2 label "-" ] # C-N
 		edge [ source 1 target 6 label "-" ]
 		edge [ source 1 target 10 label "-" ]
 	]
 ]""")
-
-amidine_nitrile_6.print()
 
 amide_nitrile_6 = ruleGMLString("""rule [
 	ruleID "Amide Nitrile Ring Closure 6"
@@ -354,7 +348,6 @@ amide_nitrile_6 = ruleGMLString("""rule [
 	]
 ]""")
 
-amide_nitrile_6.print()
 
 # I wrote it in a way that it will work for ring sizes 5-8
 # but am currently using only 5 and 6
@@ -419,8 +412,6 @@ for size in (5,6):
 	for r in rules:
 		amine_carbonyl_closure.append(r)
 
-for r in amine_carbonyl_closure:
-	r.print()
 
 '''def ringClosureGen():
 	def attachRingNode(r, id):
