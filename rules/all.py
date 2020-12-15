@@ -11,7 +11,6 @@ if True:
 	include("ketoEnolisation.py")
 	include("heyns_rearrangement.py")
 	# The following were taken from the HCN folder (many were modified)
-	#include("hcn_addition.py") # not that common of a reaction
 	include("esterFormationHydrolysisExchange.py")
 	include("cannizarro1.py")
 	include("cannizarro2.py")
@@ -21,12 +20,10 @@ if True:
 	include("cyanogenAmmonolysis.py")
 	include("cyanamideHydration.py")
 	include("carbamylation.py")
-	include("cyanamidation.py")
-	include("amideFormationHydrolysis.py")
 	include("cyanateFromCyanogen.py")
 	include("ketoneCatalyzedDecarboxylation.py")
 	include("amadoriRearrangement.py")
-	include("amideExchange.py")
+	#include("amideExchange.py") # Just reacts combinatorially.
 	include("thialThiene.py")
 	include("sulfideToNitrileAddition.py")
 	include("thioamidineToAmideHydrolysis.py")
@@ -68,6 +65,14 @@ for a in loaded:
 		canNotBeInvertedYet.append(a)
 
 # These rules won't get inverted automatically
+include("ring_hydrol.py") # find a better name?
+include("amide_amidine_exchange.py")
+include("ester_ammonolysis.py")
+include("isocyanate_hydrolysis.py")
+include("cyanamidation.py")
+include("nitrile_amination.py")
+include("hcn_addition.py")
+include("amideFormationHydrolysis.py")
 include("alkeneAddition.py")
 include("elimination.py")
 include("hydration.py")
