@@ -29,6 +29,15 @@ amide_hydrolysis = ruleGMLString("""rule [
 		edge [ source 7 target 4 label "-" ]
 		edge [ source 8 target 2 label "-" ]
 	]
+	# make sure 5 and 6 are connected to only one -N, that way, it won't hydrolyse if the product is a diamine
+	constrainAdj [ id 5 op "=" count 1 
+		nodeLabels [ label "N" ]
+		edgeLabels [ label "-" ]
+	]
+	constrainAdj [ id 6 op "=" count 1 
+		nodeLabels [ label "N" ]
+		edgeLabels [ label "-" ]
+	]
 ]""")
 
 amide_hydrolysis.print()

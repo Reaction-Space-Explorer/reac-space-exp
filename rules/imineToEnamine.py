@@ -18,5 +18,10 @@ imineToEnamine = [ruleGMLString("""rule [
 		edge [ source 2 target 5 label "-" ]
 		edge [ source 2 target 3 label "-" ]
 		edge [ source 3 target 4 label "=" ]
-	]   
+	]
+	# avoid forming diamines
+	constrainAdj [ id 3 op "=" count 0
+		nodeLabels [ label "N" ] # if Carbon 3 already has an -N attached, don't do the reaction
+		edgeLabels [ label "-" ]
+	]
 ]""")]
