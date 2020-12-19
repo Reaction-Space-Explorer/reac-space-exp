@@ -7,16 +7,16 @@ postChapter("Urey-Miller Reaction")
 formaldehyde = smiles("C=O", name="Formaldehyde")
 ammonia = smiles("N", name="Ammonia")
 hcn = smiles("C#N", name="Hydrogen Cyanide")
-cyanamide = smiles("NC#N", name="Cyanamide")
+#cyanamide = smiles("NC#N", name="Cyanamide")
 cyanoacetylene = smiles("C#CC#N", name="Cynaoacetylene")
-acetylene = smiles("C#C", name="acetylene")
+#acetylene = smiles("C#C", name="acetylene")
 water = smiles("O", name="Water")
 
-'''dg = dgDump(inputGraphs, inputRules, "../dumps/formose_4_rounds.dg")
+'''dg = DG.load(inputGraphs, inputRules, "urey_dump.dg")
 print("Finished loading from dump file")'''
 
 # Number of generations we want to perform
-generations = 5
+generations = 3
 
 dg = DG(graphDatabase=inputGraphs,
 	labelSettings=LabelSettings(LabelType.Term, LabelRelation.Specialisation))
@@ -30,10 +30,10 @@ with dg.build() as b:
 	for gen in range(generations):
 		start_time = time.time()
 		print(f"Starting round {gen+1}")
-		res = b.execute(addSubset(subset) >> addUniverse(universe) >> strat, verbosity=8)
+		res = b.execute(addSubset(subset) >> addUniverse(universe) >> strat, verbosity=3)
 		end_time = time.time()
 		print(f"Took {end_time - start_time} seconds to complete round {gen+1}")
-		print('Original subset size:', len(res.subset))
+		print('Products set size:', len(res.subset))
 
 		# The returned subset and universe do not contain redundant tautomers
 		#subset, universe = clean_taut(dg, res, algorithm="CMI")
@@ -43,7 +43,7 @@ with dg.build() as b:
 		#res = b.execute(addSubset(subset) >> addUniverse(universe))
 		# now compare how many of these simulations were found in the MS data.
 		#compare_sims(dg, gen+1, print_extra=False)
-		#export_to_neo4j(dg_obj = dg, generation_num = gen)
+		export_to_neo4j(dg_obj = dg, generation_num = gen)
 		write_gen_output(subset, gen+1, reaction_name="urey_miller")
 	print('Completed')
 
@@ -51,4 +51,4 @@ with dg.build() as b:
 f = dg.dump()
 print("Dump file: ", f)
 
-check_sdf_matches(dg, "../../data/MUAll2.sdf.sdf")
+check_sdf_matches(dg, "../../data/MUAll2.sdf")

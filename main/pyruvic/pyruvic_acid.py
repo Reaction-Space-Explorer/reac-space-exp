@@ -9,7 +9,7 @@ postChapter('Pyruvic Acid')
  
 pyruvic = smiles("CC(=O)C(=O)O", "Pyruvic Acid")
 water = smiles("O", name="Water")# Number of generations we want to perform
-generations = 4
+generations = 5
  
 dg = DG(graphDatabase=inputGraphs,
     labelSettings=LabelSettings(LabelType.Term, LabelRelation.Specialisation))
@@ -29,7 +29,7 @@ with dg.build() as b:
         print(f"Took {end_time - start_time} seconds to complete round {gen+1}")
         print(f'Products in gen {gen+1}:', len(res.subset))
         subset, universe = res.subset, res.universe
-        #export_to_neo4j(dg_obj = dg, generation_num = gen)
+        export_to_neo4j(dg_obj = dg, generation_num = gen)
         write_gen_output(subset, gen+1, reaction_name="pyruvic")
     print('Completed')
  
