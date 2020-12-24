@@ -2,9 +2,9 @@ import os
 import time
 from rdkit.Chem import SDMolSupplier, MolFromSmiles, MolToSmiles, Kekulize
 
+with_formaldehyde=False
 include(os.path.join('..', 'rules/all.py'))
 include("mod_to_neo4j_exporter.py")
-
 
 p = GraphPrinter()
 p.simpleCarbons = True
@@ -175,8 +175,64 @@ def count_rules(dg):
 	for rule in rules_used.keys():
 		print(f"{rule} reaction count: {rules_count.count(rule)}")
 
+
+def count_rules_by_gen(dg, output_txt):
+	"""
+	Counts the number of times a rule was applied, as a function of generation
+	Keyword arguments:
+	dg -- the derivation graph
+	output_txt -- the txt file containing the list of SMILES by generation of appearance (e.g. formose_output.txt)
+
+	Note: make sure there are no duplicates in the .txt
+	"""
+	# a dictionary mapping gen id -> list of SMILES of molecules that appeared in that gen
+	gen_smiles_map = {}
+	gen_rulecount_map = {} # {gen id -> map{rule name -> count}} the count is not cumulative
+	with open(f"{output_txt}", "r") as out_file:
+		lines = out_file.readlines()
+		for line in lines:
+			line = line.rstrip("\n") # get rid of new line character at the end of line
+			line_comps = line.split("\t") # first component is generation (e.g. G1), second is SMILES
+
+			if line_comps[0] in gen_smiles_map.keys(): 
+				gen_smiles_map[line_comps[0]].append(line_comps[1])
+			else:
+				gen_smiles_map[line_comps[0]] = [line_comps[1]]
+	
+	for gen, smiles_list in gen_smiles_map.items():
+		# this list will contain duplicates. the number of instances of a rule name will be the count
+		rules_applied_list = []
+		for edge in dg.edges:
+			produced_this_gen = False
+			# check if the products were produced this generation
+			for target in edge.targets:
+				# was this target produced in this generation 'gen'?
+				if target.graph.smiles in smiles_list:
+					print(f'{target.graph.smiles} ({target.id}) connected by {edge} was produced in {gen}')
+					produced_this_gen = True
+				else:
+					print(f'{target.graph.smiles} ({target.id}) connected by {edge} was not produced in {gen}')
+					produced_this_gen = False
+			if produced_this_gen:
+				for rule in edge.rules:
+					rules_applied_list.append(rule.name)
+		print(f"\nRules in {gen}\n{rules_applied_list}")
+		# map {rule -> count} for this generation
+		rules_count_map = {}
+		for rule in rules_applied_list:
+			# check if there's an entry for this rule in the map already; if so, just increase the count by 1
+			if rule in rules_count_map.keys():
+				rules_count_map[rule] = rules_count_map[rule]+1
+			else:
+				# create an entry with count 1
+				rules_count_map[rule] = 1
+		# add it to the dict of all gens
+		gen_rulecount_map[gen] = rules_count_map
+		print(gen_rulecount_map)
+
+
 dgprint = DGPrinter()
-#dgprint.withRuleName = True
+dgprint.withRuleName = True
 dgprint.withShortcutEdges = True
 
 rp = GraphPrinter() # Think of it as a "Rule Printer"
@@ -190,8 +246,7 @@ methoxy = smiles("[C][O]C", name="methoxy ether substruct", add=False)
 ethoxy = smiles("[C][O]CC", name="Ethoxy Ether Substruct", add=False)
 
 
-def find_substruct_producer(dg, substruct, print_max=50, print_rule=False, condense_str=True
-							,exact_struct=False):
+def find_substruct_producer(dg, substruct, print_max=50, print_rule=False, condense_str=True):
 	"""
 	Find reactions producing a certain substructure.
 	"""
