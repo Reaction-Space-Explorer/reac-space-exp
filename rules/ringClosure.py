@@ -98,6 +98,20 @@ def create_ring_closure(ring_size, is_inverse=False):
 					'edge [ source 2 target 5 label "-" ]',
 					'edge [ source 1 target 4 label "-" ]'
 				])
+				rule.constraints.extend([
+					# make sure only 1  {atom1} is attached to atom 3, to avoid diols, diamines, etc.
+					'constrainAdj [ id 3 op "=" count 1',
+					f'\tnodeLabels [ label "{atom1}" ]',
+					f'\tedgeLabels [ label "-" ]',
+					']'
+				])
+				if atom1 == "O": #avoid creating enols; if * is = bonded to C, it may form an enols
+					rule.constraints.extend([
+						'constrainAdj [ id 3 op "=" count 1',
+						f'\tnodeLabels [ label "C" ]',
+						f'\tedgeLabels [ label "=" ]',
+						']'
+					])
 			else: # right becomes left, left becomes right; add some contraints
 				rule.right.extend([
 					'edge [ source 1 target 2 label "-" ]',
@@ -109,10 +123,17 @@ def create_ring_closure(ring_size, is_inverse=False):
 				])
 				rule.constraints.extend([
 					f'constrainAdj [ id {ring_size+4} op "<=" count 1',
-					f'nodeLabels [ label "{atom2}"]',
-					'edgeLabels [ label "-" ]'
+					f'nodeLabels [ label "{atom2}" ]',
+					'edgeLabels [ label "-" ]',
 					']'
 				])
+				if atom1 == "O": #avoid creating enols; if * is = bonded to C, it may form an enols
+					rule.constraints.extend([
+						'constrainAdj [ id 3 op "=" count 1',
+						f'\tnodeLabels [ label "C" ]',
+						f'\tedgeLabels [ label "=" ]',
+						']'
+					])
 			rules.append(rule)
 
 	return [r.loadRule() for r in rules]
@@ -122,6 +143,8 @@ for ring_size in (5, 6, 7):
 	for r in create_ring_closure(ring_size):
 		ring_closure.append(r)
 
+for r in ring_closure:
+	r.print()
 ring_closure_inv = []
 for ring_size in (5, 6, 7):
 	for r in create_ring_closure(ring_size, is_inverse=True):
