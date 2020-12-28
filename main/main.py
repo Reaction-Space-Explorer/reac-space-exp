@@ -1,8 +1,9 @@
 import os
 import time
+import matplotlib.pyplot as plt
+
 from rdkit.Chem import SDMolSupplier, MolFromSmiles, MolToSmiles, Kekulize
 
-with_formaldehyde=False
 include(os.path.join('..', 'rules/all.py'))
 include("mod_to_neo4j_exporter.py")
 
@@ -185,6 +186,7 @@ def count_rules_by_gen(dg, output_txt):
 
 	Note: make sure there are no duplicates in the .txt
 	"""
+	print("Counting rules by generation!")
 	# a dictionary mapping gen id -> list of SMILES of molecules that appeared in that gen
 	gen_smiles_map = {}
 	gen_rulecount_map = {} # {gen id -> map{rule name -> count}} the count is not cumulative
@@ -198,7 +200,7 @@ def count_rules_by_gen(dg, output_txt):
 				gen_smiles_map[line_comps[0]].append(line_comps[1])
 			else:
 				gen_smiles_map[line_comps[0]] = [line_comps[1]]
-	
+	print("Searching in DG")
 	for gen, smiles_list in gen_smiles_map.items():
 		# this list will contain duplicates. the number of instances of a rule name will be the count
 		rules_applied_list = []
@@ -208,15 +210,15 @@ def count_rules_by_gen(dg, output_txt):
 			for target in edge.targets:
 				# was this target produced in this generation 'gen'?
 				if target.graph.smiles in smiles_list:
-					print(f'{target.graph.smiles} ({target.id}) connected by {edge} was produced in {gen}')
+					#print(f'{target.graph.smiles} ({target.id}) connected by {edge} was produced in {gen}')
 					produced_this_gen = True
 				else:
-					print(f'{target.graph.smiles} ({target.id}) connected by {edge} was not produced in {gen}')
+					#print(f'{target.graph.smiles} ({target.id}) connected by {edge} was not produced in {gen}')
 					produced_this_gen = False
 			if produced_this_gen:
 				for rule in edge.rules:
 					rules_applied_list.append(rule.name)
-		print(f"\nRules in {gen}\n{rules_applied_list}")
+		#print(f"\nRules in {gen}\n{rules_applied_list}")
 		# map {rule -> count} for this generation
 		rules_count_map = {}
 		for rule in rules_applied_list:
@@ -228,7 +230,77 @@ def count_rules_by_gen(dg, output_txt):
 				rules_count_map[rule] = 1
 		# add it to the dict of all gens
 		gen_rulecount_map[gen] = rules_count_map
-		print(gen_rulecount_map)
+	with open("rule_count_by_gen.txt", "w") as op:
+		op.write(str(gen_rulecount_map))
+	print("Exporting .tsv of rule count")
+	export_rule_count(gen_rulecount_map)
+	#plot_rule_count(gen_rulecount_map)
+
+
+def export_rule_count(gen_rulecount_map):
+	"""Export into a TSV"""
+	# maybe it's better to have to deal with a dictionary with rule name: [count_g1, ..., count_gn]
+	rule_countlist_map = {}
+	list_rules_used = []
+	for gen, rule_count_dict in gen_rulecount_map.items():
+		for rule in rule_count_dict.keys():
+			if rule not in list_rules_used:
+				list_rules_used.append(rule)
+				rule_countlist_map[rule] = [0 for gen in gen_rulecount_map.keys()]
+	for gen, rule_count_dict in gen_rulecount_map.items():
+		for rule, count in rule_count_dict.items():
+			rule_countlist_map[rule][int(gen[1])-1] = count
+	# now, it becomes really easy to convert this into a CSV/TSV or a lollipop/bar chart
+	# WARNING: Don't try to create a .csv because some rule names contain a comma ',', which acts
+	# as a column separator in a csv
+	with open('rule_count_by_gen.tsv', 'w') as tsv:
+		tsv.write('Rule') # figure out how to count number of generations at this point.
+		for gen in gen_rulecount_map.keys():
+			tsv.write(f'\tGeneration {gen[1]}')
+		tsv.write('\n')
+		for rule, count_by_gen in rule_countlist_map.items():
+			tsv.write(f'{rule}')
+			for count in count_by_gen:
+				tsv.write(f'\t{count}')
+			tsv.write('\n')
+
+
+def plot_rule_count(gen_rulecount_dict):
+	"""
+	Make a plot of number of applications of a rule as a function of generation.
+	Use an "ID" to represent a rule on the x-axis.
+	P.S. This doesn't give a very easy to navigate plot. It could be made a lollipop or a stacked bar chart.
+	But we settled at making it a table.
+	"""
+	# color for each generation
+	colors = ['r', 'c', 'g', 'b', 'm', 'k', 'purple']
+	# assign each rule a unique ID?
+	rule_id_map = {}
+	id_count = 1 # I will update this count everytime a "new" rule is added to the dict
+	# first, sort them in a way such that rules with highest count are assigned the smallest id
+	# now assign the IDs
+	for gen, rule_count_dict in gen_rulecount_dict.items():
+		# make the dictionary ordered (decreasing order of 'count')
+		sorted_rule_count_map = dict(sorted(rule_count_dict.items(), key=lambda item: item[1], reverse=True))
+		print(sorted_rule_count_map)
+		for rule, count in sorted_rule_count_map.items():
+			if rule in rule_id_map.keys():
+				continue
+			else:
+				rule_id_map[rule] = id_count
+				id_count += 1
+		# create a map of {rule ID -> count}
+		ruleid_count_map = {}
+		for rule, count in rule_count_dict.items():
+			ruleid_count_map[rule_id_map[rule]] = count
+		print(f'{gen}: {ruleid_count_map}')
+		# now plot them :D
+		plt.plot(ruleid_count_map.keys(), ruleid_count_map.values(), f'{colors[int(gen[1])-1]}o',
+					 linewidth=1 ,label=f'Generation {gen[1]}',  markersize=3)
+	plt.yscale('log')
+	plt.legend()
+	plt.show()
+
 
 
 dgprint = DGPrinter()
