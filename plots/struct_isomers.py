@@ -38,6 +38,9 @@ def count_struct_isomers(smiles_list):
 			dict_exactwt[weight] = 1
 	return dict_exactwt # modify this as per your needs
 
+
+# This has now become redundant
+"""
 def plot_spectra(exactwt_freq_dict, gen):
 	"""
 	Stacked Bar Plot using matplotlib
@@ -64,9 +67,13 @@ def plot_spectra(exactwt_freq_dict, gen):
 	#plt.setp(stemlines, linestyle="-", color=gen_colors[gen-1], linewidth=0.5)
 	#plt.setp(markers, markersize=2, label=f"Generation {gen}")
 	#ax[gen-1].legend(loc='upper left')
-	#plt.show()
+	#plt.show()"""
+
 
 def plot_lollipop(exactwt_freq_dict, gen, shared_axis=True):
+	"""
+	Make a (shared axis) lollipop plot of the spectrum.
+	"""
 	# which marker (dot) color to use for which generation
 	gen_colors = ["blue", "red", "cyan", "g", "magenta"]
 	
