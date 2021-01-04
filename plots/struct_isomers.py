@@ -38,55 +38,80 @@ def count_struct_isomers(smiles_list):
 			dict_exactwt[weight] = 1
 	return dict_exactwt # modify this as per your needs
 
-
 def plot_spectra(exactwt_freq_dict, gen):
 	"""
 	Stacked Bar Plot using matplotlib
 	"""
 	# which marker (dot) color to use for which generation
-	gen_colors = ['blue', "green", "darkorange", "crimson", 'black']
+	#gen_colors = ['#ffa600', '#ff6361', '#bc5090', '#58508d', '#003f5c']
+	
+	#
+	#gen_colors= ['gray', 'gold', 'teal', 'dodgerblue', 'orangered']
+	gen_colors = ["royalblue", "forestgreen", 'gold', 'crimson', 'black'] #"darkorchid"
 	
 	weights = exactwt_freq_dict.keys()
 	freqs = exactwt_freq_dict.values()
-	plt.bar(weights, freqs, width=0.5, color=list(reversed(gen_colors))[gen-1], label=f'Generation {gen}')
+	plt.vlines(x=weights, ymin=0, ymax=freqs, color=list(reversed(gen_colors))[gen-1], label=f'Generation {gen}')
+	#plt.bar(weights, freqs, width=0.5, color=list(reversed(gen_colors))[gen-1], label=f'Generation {gen}')
 	plt.xlabel("Exact Mass")
 	plt.ylabel("Cumulative Frequency")
 	plt.yscale("log")
 	#ax[gen-1].set_yscale('log')
 	#ax[gen-1].set_yticks([10,100,1000])
+	#plt.xlim(l right=202)
+	plt.ylim(bottom=0.625)
 	plt.title("Mass spectra of simulated glucose network")
 	#plt.setp(stemlines, linestyle="-", color=gen_colors[gen-1], linewidth=0.5)
 	#plt.setp(markers, markersize=2, label=f"Generation {gen}")
 	#ax[gen-1].legend(loc='upper left')
 	#plt.show()
 
-def plot_lollipop(exactwt_freq_dict, gen):
+def plot_lollipop(exactwt_freq_dict, gen, shared_axis=True):
 	# which marker (dot) color to use for which generation
-	gen_colors = ["blue", "red", "cyan", "green", "magenta"]
+	gen_colors = ["blue", "red", "cyan", "g", "magenta"]
 	
-	weights = exactwt_freq_dict.keys()
-	freqs = exactwt_freq_dict.values()
-	# if basefmt is not " " it will draw a coloured horizontal baseline at y=0
-	(markers, stemlines, baseline) = plt.stem(weights, freqs, basefmt="gray",
-				 markerfmt=f"{gen_colors[gen-1][0]}o", use_line_collection=True)
-	plt.xlabel("Exact Mass")
-	plt.ylabel("Cumulative Frequency")
-	plt.yscale("log")
-	plt.ylim(bottom=0.625)
-	#ax[gen-1].set_yscale('log')
-	#ax[gen-1].set_yticks([10,100,1000])
-	plt.title("Mass spectra of simulated glucose network")
-	plt.setp(stemlines, linestyle="-", color='gray', linewidth=0.5)
-	plt.setp(markers, markersize=2, label=f"Generation {gen}")
+	weights = list(exactwt_freq_dict.keys())
+	# normalized freqs
+	freqs = list(exactwt_freq_dict.values())
+	# custom ticks (avoid overlapping, increase tick range for certain subplots, etc.)
+	axis_ticks = [
+		[10, 100],
+		[1,10,100],
+		[10,100],
+		[1,10,100,1000],
+		[1,10,100,1000]
+	]
+	if shared_axis == True:
+		# if basefmt is not " " it will draw a coloured horizontal baseline at y=0
+		(markers, stemlines, baseline) = axes[gen-1].stem(weights, freqs, basefmt=" ",
+				 markerfmt=f"ko", use_line_collection=True)
+		#axes[gen-1].bar(weights, freqs, color='black', width=0.25, label=f'Generation {gen}')
+		axes[gen-1].set_yscale('log')
+		axes[gen-1].set_yticks(axis_ticks[gen-1])
+		plt.setp(stemlines, linestyle="-", color='gray', linewidth=0.75)
+		plt.setp(markers, markersize=1, label=f"Generation {gen}")
+		axes[gen-1].legend(loc='upper left')
+		# get rid of space between subplots
+		plt.subplots_adjust(wspace=0, hspace=0)
+	else:
+		(markers, stemlines, baseline) = plt.stem(weights, freqs, basefmt="gray",
+				 markerfmt=f"{gen_colors[gen-1][0]}o", use_line_collection=True )
+		plt.setp(stemlines, linestyle="-", color='gray', linewidth=0.75)
+		plt.setp(markers, markersize=2, label=f"Generation {gen}")
+		#plt.title("Mass spectra of simulated glucose network")
+		plt.yscale("log")
+		plt.legend()
+	
+	
 
 # Only one fig
-fig = plt.figure(figsize=(8,8))
-ax = fig.add_subplot(111)
-#fig, ax = plt.subplots(5, sharex=True, sharey=True)
-#fig.suptitle("Mass spectra of the model reaction network")
-gs = gspec.GridSpec(4,4)
+#fig = plt.figure(figsize=(8,8))
+#ax = fig.add_subplot(111)
+fig, axes = plt.subplots(5, figsize=(8,8), sharex=True)
+fig.suptitle("Mass spectra of the model glucose reaction network", y=0.91)
+
 # Plot exact wt vs. number of compounds
-with open("glucose/glucose_degradation_output.txt") as output:
+with open("../main/glucose/glucose_degradation_output.txt") as output:
 	lines = output.readlines()
 	gen_smiles_dict = {}
 	for line in lines:
@@ -103,12 +128,21 @@ with open("glucose/glucose_degradation_output.txt") as output:
 	for gen, smiles_list in gen_smiles_dict.items():
 		cumulative_list.extend(smiles_list)
 	count = 0
+	# use this for normalization later on
+	highest_peak = -1
 	for gen in range(len(gen_smiles_dict.keys()), 0, -1):
 		exactwt_count = count_struct_isomers(cumulative_list)
-		plot_spectra(exactwt_count, gen)
-
+		#print(exactwt_count)
+		#plot_spectra(exactwt_count, gen)
+		#plot_subplots(exactwt_count, gen)
+		highest_peak = max(highest_peak, max(exactwt_count.values()))
+		print(f'highest freq: {highest_peak}')
+		plot_lollipop(exactwt_count, gen)
 		#ax2 = fig.add_subplot(111)
 		#plot_lollipop(exactwt_count, gen)
 		cumulative_list = [x for x in cumulative_list if x not in gen_smiles_dict[gen]]
-	plt.legend(loc='upper left')
+	#plt.legend(loc='upper left')
+	plt.xlabel('Exact Mass')
+	plt.ylabel('Cumulative Frequency')
+	plt.savefig('model_spectra.jpg', dpi=300)
 	plt.show()
