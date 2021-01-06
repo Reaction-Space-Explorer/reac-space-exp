@@ -107,7 +107,7 @@ def create_ring_closure(ring_size, is_inverse=False):
 				])
 				if atom1 == "O": #avoid creating enols; if * is = bonded to C, it may form an enols
 					rule.constraints.extend([
-						'constrainAdj [ id 3 op "=" count 1',
+						'constrainAdj [ id 3 op "=" count 0',
 						f'\tnodeLabels [ label "C" ]',
 						f'\tedgeLabels [ label "=" ]',
 						']'
