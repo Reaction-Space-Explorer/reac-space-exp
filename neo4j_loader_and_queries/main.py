@@ -889,7 +889,7 @@ def take_network_snapshot(generation_num, query_results_folder, mod_exports_fold
                                                 this_out_folder = query_results_folder,
                                                 ring_size_range = (3, 5),
                                                 feeder_molecule_generation_range = None,
-                                                num_structures_limit = 1000) # set to 100 for small batch testing
+                                                num_structures_limit = 100) # set to 100 for small batch testing
     
     analyze_possible_autocatalytic_cycles(generation_num = generation_num,
                                           mod_exports_folder_path = mod_exports_folder_path,
@@ -956,7 +956,7 @@ def get_change_in_node_degree_by_molecule_per_gen(df, query_results_folder):
         df_mol.sort_values(by = ['snapshot_generation_num'],
                            ascending = True,
                            inplace = True)
-        df_mol['count_rels_diff_by_mol_by_gen'] = df_mol['count_relationships'].diff()
+        df_mol['count_rels_diff_by_mol_by_gen'] = df_mol['count_relationships'].diff().fillna(0)
         df_mol = df_mol[['smiles_str', 'snapshot_generation_num', 'count_rels_diff_by_mol_by_gen']]
         df_mols_with_rels_diff = pd.concat([df_mols_with_rels_diff, df_mol])
     
@@ -1110,8 +1110,10 @@ if __name__ == "__main__":
     # mod_exports_folder_path = "../main/Neo4j_Imports"
     # mod_exports_folder_path = "../radicals/all7/Neo4j_Imports"
     
-    formose_MOD_exports_path = "../data/formose/Neo4j_Imports"
+    
     glucose_MOD_exports_path = "../data/glucose/Neo4j_Imports"
+    # formose_MOD_exports_path = "../data/formose/Neo4j_Imports"
+    formose_MOD_exports_path = "../data/pyruvic_acid/Neo4j_Imports"
     exports_folder_paths = [formose_MOD_exports_path, glucose_MOD_exports_path]
     
     for mod_export_folder_path in exports_folder_paths:
@@ -1123,7 +1125,7 @@ if __name__ == "__main__":
     # query_results_folder = "2020-10-15_17-35-22-778323"
     # generation_num = 2
     # network_visualization_by_gen(query_results_folder, generation_num)
-    
+
 
 
 
