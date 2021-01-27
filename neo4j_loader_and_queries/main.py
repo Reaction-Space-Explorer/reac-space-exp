@@ -13,6 +13,7 @@ import matplotlib.pyplot as plt
 from shutil import copytree
 import math
 # from graph_tool.all import *
+import json
 
 
 # If NETWORK_SNAPSHOTS is True, the program gathers data on the network at each generation
@@ -916,6 +917,10 @@ def get_node_degree_rank_by_gen(df, query_results_folder):
     # for ranking node degree (lowest rank is highest node degree)
     df['rank_node_deg_by_gen'] = df.groupby(by=['snapshot_generation_num'])['count_relationships'].rank(ascending=False,
                                                                                                         method="max") # so rank values are integer only
+    
+    
+    # plot the results: count_relationships vs rank_node_deg_by_gen coloring
+    # by snapshot_generation_num
     # print(df.head())
     # now plot fig 7
     # fig, ax = plt.subplots()
@@ -933,6 +938,13 @@ def get_node_degree_rank_by_gen(df, query_results_folder):
     # ax.set_xlabel("Node Degree Rank")
     # ax.set_ylabel("Log of Node Degree")
     # plt.savefig(f"output/{query_results_folder}/node_deg_by_rank_plot.png")
+    
+    # df.plot(x = 'rank_node_deg_by_gen',
+    #         y = 'count_relationships',
+    #         )
+    
+    # df.plot.area(x='rank_node_deg_by_gen',
+    #              y='count_relationships')
     return df
 
 
@@ -968,9 +980,35 @@ def get_change_in_node_degree_by_molecule_per_gen(df, query_results_folder):
                   how = "left",
                   on = ['smiles_str', 'snapshot_generation_num'])
     
+    # plot the results: count_rels_diff_by_mol_by_gen vs rank_node_deg_by_gen coloring
+    # by snapshot_generation_num
+    
+    
     # finally, return the df
     return df
 
+
+def get_ring_rels_rule_sequence_motifs(df):
+    """
+    Example ringRels cell entry:
+    [{'rxn_id': '31', 'generation_formed': 1, 'rule': "'Hemiacetal Formation for 7 membered rings'"}, {'rxn_id': '254', 'rule': "'Elimination + enol to keto'", 'generation_formed': 1}, {'rxn_id': '126', 'rule': "'Cannizarro 2", 'generation_formed': 1}, {'rxn_id': '155', 'rule': "'Knoevenagel H (inv)'", 'generation_formed': 1}, {'rxn_id': '40', 'rule': "'Aldol Condensation'", 'generation_formed': 1}]
+    """
+    # convert string representation of list of dicts to objects
+    # all_rings = list(df['ringRels'].unique())
+    # all_rings_cleaned = []
+    # for ring_str in all_rings:
+    #     # cleaned_str = ring_str.replace("'","\"\"")
+    #     ring_rels = json.loads(ring_str)
+    #     all_rings_cleaned.append(ring_rels)
+    # 
+    # # record all rule sequences and count of how many times the sequence appears
+    # rule_sequences = {} # hold counts of rule sequences
+    # for ring in all_rings_cleaned:
+    #     for rel in ring:
+    #         print(rel['rule'])
+    #     wait = input("Press enter...")
+    pass
+    
 
 
 def compile_all_generations_data(query_results_folder, generation_limit):
@@ -1009,10 +1047,14 @@ def compile_all_generations_data(query_results_folder, generation_limit):
     df_autocat_all_gens.to_csv(out_dir + "/all_generations_autocat_pattern_matches.csv",
                                index = False)
     
+    # get rule sequence motifs (frequently found sequences in the ring relationships)
+    get_ring_rels_rule_sequence_motifs(df_autocat_all_gens)
+    
+    
 
 
 
-def import_data_from_MOD_exports(mod_exports_folder_path, generation_limit):
+def import_data_from_MOD_exports(mod_exports_folder_path, network_name, generation_limit):
     """
     Clear the database and import the network depending on the Neo4j_Imports
     folder selected.
@@ -1044,7 +1086,7 @@ def import_data_from_MOD_exports(mod_exports_folder_path, generation_limit):
         generation_limit = max(all_gens)
     
     # set up the output folder for snapshots (statistics/visualizations) of the network
-    query_results_folder = get_timestamp()
+    query_results_folder = network_name + "_" + get_timestamp()
     # query_results_folder = "2020-08-01_18-39-23-986232" # manually override folder name for debugging
     os.mkdir("output/" + query_results_folder)
     # Optional: save the state of the Neo4j_Imports folder at the time this was run
@@ -1118,7 +1160,9 @@ if __name__ == "__main__":
     
     for mod_export_folder_path in exports_folder_paths:
         print(f"Importing the network from the following path: {mod_export_folder_path}")
+        network_name = mod_export_folder_path.split('/')[-2]
         import_data_from_MOD_exports(mod_exports_folder_path = mod_export_folder_path,
+                                     network_name = network_name,
                                      generation_limit = 2) # Set to None or Integer. The generation limit at which to import
     
     # test functions
