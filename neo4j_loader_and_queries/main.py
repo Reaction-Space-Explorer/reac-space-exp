@@ -1163,7 +1163,7 @@ if __name__ == "__main__":
         network_name = mod_export_folder_path.split('/')[-2]
         import_data_from_MOD_exports(mod_exports_folder_path = mod_export_folder_path,
                                      network_name = network_name,
-                                     generation_limit = 2) # Set to None or Integer. The generation limit at which to import
+                                     generation_limit = None) # Set to None or Integer. The generation limit at which to import
     
     # test functions
     # query_results_folder = "2020-10-15_17-35-22-778323"
