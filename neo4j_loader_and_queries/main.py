@@ -885,24 +885,23 @@ def compute_likely_abundance_by_molecule(generation_num, query_results_folder):
 
 def take_network_snapshot(generation_num, query_results_folder, mod_exports_folder_path):
     # do pattern match query on possible autocatalytic cycles
-    get_tabulated_possible_autocatalytic_cycles(generation_num = generation_num,
-                                                mod_exports_folder_path = mod_exports_folder_path,
-                                                this_out_folder = query_results_folder,
-                                                ring_size_range = (3, 5),
-                                                feeder_molecule_generation_range = None,
-                                                num_structures_limit = 100) # set to 100 for small batch testing
-    
-    analyze_possible_autocatalytic_cycles(generation_num = generation_num,
-                                          mod_exports_folder_path = mod_exports_folder_path,
-                                          query_results_folder = query_results_folder)
+    # get_tabulated_possible_autocatalytic_cycles(generation_num = generation_num,
+    #                                             mod_exports_folder_path = mod_exports_folder_path,
+    #                                             this_out_folder = query_results_folder,
+    #                                             ring_size_range = (3, 5),
+    #                                             feeder_molecule_generation_range = None,
+    #                                             num_structures_limit = 50) # set to 100 for small batch testing
+    # analyze_possible_autocatalytic_cycles(generation_num = generation_num,
+    #                                       mod_exports_folder_path = mod_exports_folder_path,
+    #                                       query_results_folder = query_results_folder)
     
     # do network statistics and get plots
     network_statistics(generation_num = generation_num,
                        query_results_folder = query_results_folder)
     
-    # get Cytoscape network visualization
-    network_visualization_by_gen(query_results_folder = query_results_folder,
-                                 generation_num = generation_num)
+    # # get Cytoscape network visualization
+    # network_visualization_by_gen(query_results_folder = query_results_folder,
+    #                              generation_num = generation_num)
     
     # compute likely abundance by molecule
     compute_likely_abundance_by_molecule(generation_num = generation_num,
@@ -1122,7 +1121,7 @@ def import_data_from_MOD_exports(mod_exports_folder_path, network_name, generati
                     create_relationship_if_not_exists(rxn_id = rel_data[0],
                                                       from_smiles = rel_data[1],
                                                       to_smiles = rel_data[2],
-                                                      rule = rel_data[3],
+                                                      rule = ','.join(rel_data[3:]),
                                                       generation_formed = generation_num)
             
             # Now that the generation's data has been loaded into the network,
@@ -1153,9 +1152,9 @@ if __name__ == "__main__":
     # mod_exports_folder_path = "../radicals/all7/Neo4j_Imports"
     
     
-    glucose_MOD_exports_path = "../data/glucose/Neo4j_Imports"
     # formose_MOD_exports_path = "../data/formose/Neo4j_Imports"
     formose_MOD_exports_path = "../data/pyruvic_acid/Neo4j_Imports"
+    glucose_MOD_exports_path = "../data/glucose/Neo4j_Imports"
     exports_folder_paths = [formose_MOD_exports_path, glucose_MOD_exports_path]
     
     for mod_export_folder_path in exports_folder_paths:
