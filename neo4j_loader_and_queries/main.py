@@ -16,13 +16,50 @@ import math
 import json
 
 
+# Choose a path for the Neo4j_Imports folder to import the data from MOD into Neo4j
+# formose_MOD_exports_path = "../data/formose/Neo4j_Imports"
+formose_MOD_exports_path = "../data/pyruvic_acid/Neo4j_Imports"
+glucose_MOD_exports_path = "../data/glucose/Neo4j_Imports"
+# exports_folder_paths = [formose_MOD_exports_path, glucose_MOD_exports_path]
+EXPORT_PATHS = [glucose_MOD_exports_path]
+
+# Filter out these molecules by smiles string from being imported into Neo4j
+# for pattern match / network statistic calculations.
+MOLECULE_FILTER = ['O']
+
+# If True, will match for autocatalytic pattern mattches using the pattern match
+# query in graph_queries/_FINAL_QUERY_PARAMETERIZED.txt. If not, will skip this
+# and just do node degree / rank calculations. (One reason you might want to disable
+# pattern match query results is because this is very computationally intensive
+# and takes a lot of time; so disable if you are just looking for network statistics.)
+PATTERN_MATCHES = False
+# Rather than disabling completely if running into performance issues, limit the
+# number of patterns that can be matched so that the query stops executing as
+# soon as it reaches the pattern limit, and the matches are returned.
+NUM_STRUCTURES_LIMIT = 100
+
+# Limit the number of generations that each network can be imported on. If None,
+# no limit--will default to the maximum number of generations generated. You may
+# want to limit this to ~4 generations or less if performance is an issue; the
+# network will grow exponentially, so pattern match queries might take too long
+# to produce results.
+GENERATION_LIMIT = None
+
+
 # If NETWORK_SNAPSHOTS is True, the program gathers data on the network at each generation
 # in the reaction netowrk. If False, the program gathers data only on the state of
-# the network once the generation has completely finished being loaded (snapshot
+# the network once all generations have completely finished being loaded (snapshot
 # only of the final generation).
 NETWORK_SNAPSHOTS = True
 
-# configure network database
+
+# Set this to True if you want to generate a static image of the network after
+# loading. Might run into Out of Memory error. Default leaving this as False
+# because we generated a much nicer visualization of the full network using Gephi.
+FULL_NETWORK_VISUALIZATION = False
+
+
+# configure network database Neo4j
 url = "bolt://neo4j:0000@localhost:7687"
 graph = Graph(url)
 matcher = NodeMatcher(graph)
@@ -31,6 +68,7 @@ rel_matcher = RelationshipMatcher(graph)
 
 def get_timestamp():
     return str(datetime.datetime.now()).replace(":","-").replace(" ","_").replace(".","-")
+
 
 def rxn_query_str(reactant, product, rxn_id):
     """
@@ -104,7 +142,7 @@ def create_molecule_if_not_exists(smiles_str, exact_mass, generation_formed):
         # nodes_debug_file.write(f"\nMolecule,{smiles_str},{exact_mass},{generation_formed}")
         # nodes_debug_file.close()
     else:
-        # molecule exists, do nothing
+        # molecule already exists, do nothing
         pass
 
 
@@ -120,10 +158,6 @@ def import_molecules():
         for molecule in molecules:
             create_molecule_if_not_exists(smiles_str = molecule,
                                           generation_formed = generation)
-
-
-def import_reactions():
-    pass
 
 
 
@@ -188,6 +222,7 @@ def save_query_results(generation_num, query_result, file_name, this_out_folder)
         json.dump(query_result, file_data_out)
     data_df = pd.read_json(f'output/' + this_out_folder + f"/{generation_num}/{file_name}.json")
     data_df.to_csv(f'output/' + this_out_folder + f"/{generation_num}/{file_name}.csv", index=False)
+
 
 def run_single_value_query(query, value):
     return graph.run(query).data()[0][value]
@@ -668,8 +703,15 @@ def network_statistics(generation_num, query_results_folder):
     print("\tNetwork statistics done.")
     plt.close('all')
 
+
 def graph_from_cypher(data):
-    """ From: https://stackoverflow.com/questions/59289134/constructing-networkx-graph-from-neo4j-query-result
+    """
+    Setting FULL_NETWORK_VISUALIZATION to False because we generated a plot in
+    Gephi for the whole network visualizations; not needed in this module. Only
+    keeping in case we want to programmatically generate a static network
+    visualization.
+    
+    From: https://stackoverflow.com/questions/59289134/constructing-networkx-graph-from-neo4j-query-result
     
     Constructs a networkx graph from the results of a neo4j cypher query.
     Example of use:
@@ -677,7 +719,9 @@ def graph_from_cypher(data):
     >>> G = graph_from_cypher(result.data())
 
     Nodes have fields 'labels' (frozenset) and 'properties' (dicts). Node IDs correspond to the neo4j graph.
-    Edges have fields 'type_' (string) denoting the type of relation, and 'properties' (dict)."""
+    Edges have fields 'type_' (string) denoting the type of relation, and 'properties' (dict).
+    
+    """
 
     G = nx.MultiDiGraph()
     def add_node(node):
@@ -885,23 +929,25 @@ def compute_likely_abundance_by_molecule(generation_num, query_results_folder):
 
 def take_network_snapshot(generation_num, query_results_folder, mod_exports_folder_path):
     # do pattern match query on possible autocatalytic cycles
-    # get_tabulated_possible_autocatalytic_cycles(generation_num = generation_num,
-    #                                             mod_exports_folder_path = mod_exports_folder_path,
-    #                                             this_out_folder = query_results_folder,
-    #                                             ring_size_range = (3, 5),
-    #                                             feeder_molecule_generation_range = None,
-    #                                             num_structures_limit = 50) # set to 100 for small batch testing
-    # analyze_possible_autocatalytic_cycles(generation_num = generation_num,
-    #                                       mod_exports_folder_path = mod_exports_folder_path,
-    #                                       query_results_folder = query_results_folder)
+    if PATTERN_MATCHES:
+        get_tabulated_possible_autocatalytic_cycles(generation_num = generation_num,
+                                                    mod_exports_folder_path = mod_exports_folder_path,
+                                                    this_out_folder = query_results_folder,
+                                                    ring_size_range = (3, 5),
+                                                    feeder_molecule_generation_range = None,
+                                                    num_structures_limit = NUM_STRUCTURES_LIMIT) # set to 100 for small batch testing
+        # analyze_possible_autocatalytic_cycles(generation_num = generation_num,
+        #                                       mod_exports_folder_path = mod_exports_folder_path,
+        #                                       query_results_folder = query_results_folder)
     
     # do network statistics and get plots
     network_statistics(generation_num = generation_num,
                        query_results_folder = query_results_folder)
     
     # # get Cytoscape network visualization
-    # network_visualization_by_gen(query_results_folder = query_results_folder,
-    #                              generation_num = generation_num)
+    if FULL_NETWORK_VISUALIZATION:
+        network_visualization_by_gen(query_results_folder = query_results_folder,
+                                     generation_num = generation_num)
     
     # compute likely abundance by molecule
     compute_likely_abundance_by_molecule(generation_num = generation_num,
@@ -1050,7 +1096,13 @@ def compile_all_generations_data(query_results_folder, generation_limit):
     get_ring_rels_rule_sequence_motifs(df_autocat_all_gens)
     
     
-
+def smiles_passes_filter(smiles_str):
+    passes_filter = True
+    for filt_mol in MOLECULE_FILTER:
+        if filt_mol == smiles_str:
+            passes_filter = False
+    return passes_filter
+    
 
 
 def import_data_from_MOD_exports(mod_exports_folder_path, network_name, generation_limit):
@@ -1107,9 +1159,11 @@ def import_data_from_MOD_exports(mod_exports_folder_path, network_name, generati
                 if node != "":
                     node_data = node.split(',')
                     # print(node_data[0])
-                    create_molecule_if_not_exists(smiles_str = node_data[1],
-                                                  exact_mass = node_data[2],
-                                                  generation_formed = generation_num)
+                    smiles_str = node_data[1]
+                    if smiles_passes_filter(smiles_str):
+                        create_molecule_if_not_exists(smiles_str = smiles_str,
+                                                      exact_mass = node_data[2],
+                                                      generation_formed = generation_num)
 
             # create relationship edges
             print("\t\tImporting relationships...")
@@ -1118,11 +1172,14 @@ def import_data_from_MOD_exports(mod_exports_folder_path, network_name, generati
             for rel in rels:
                 if rel != "":
                     rel_data = rel.split(',')
-                    create_relationship_if_not_exists(rxn_id = rel_data[0],
-                                                      from_smiles = rel_data[1],
-                                                      to_smiles = rel_data[2],
-                                                      rule = ','.join(rel_data[3:]),
-                                                      generation_formed = generation_num)
+                    from_smiles = rel_data[1]
+                    to_smiles = rel_data[2]
+                    if smiles_passes_filter(from_smiles) and smiles_passes_filter(to_smiles):
+                        create_relationship_if_not_exists(rxn_id = rel_data[0],
+                                                          from_smiles = from_smiles,
+                                                          to_smiles = to_smiles,
+                                                          rule = ','.join(rel_data[3:]),
+                                                          generation_formed = generation_num)
             
             # Now that the generation's data has been loaded into the network,
             # take a snapshot of it. Only take snapshot at each generation,
@@ -1147,22 +1204,12 @@ def import_data_from_MOD_exports(mod_exports_folder_path, network_name, generati
     
 
 if __name__ == "__main__":
-    # choose a path for the Neo4j_Imports folder to import the data from MOD into Neo4j
-    # mod_exports_folder_path = "../main/Neo4j_Imports"
-    # mod_exports_folder_path = "../radicals/all7/Neo4j_Imports"
-    
-    
-    # formose_MOD_exports_path = "../data/formose/Neo4j_Imports"
-    formose_MOD_exports_path = "../data/pyruvic_acid/Neo4j_Imports"
-    glucose_MOD_exports_path = "../data/glucose/Neo4j_Imports"
-    exports_folder_paths = [formose_MOD_exports_path, glucose_MOD_exports_path]
-    
-    for mod_export_folder_path in exports_folder_paths:
+    for mod_export_folder_path in EXPORT_PATHS:
         print(f"Importing the network from the following path: {mod_export_folder_path}")
         network_name = mod_export_folder_path.split('/')[-2]
         import_data_from_MOD_exports(mod_exports_folder_path = mod_export_folder_path,
                                      network_name = network_name,
-                                     generation_limit = None) # Set to None or Integer. The generation limit at which to import
+                                     generation_limit = GENERATION_LIMIT) # Set to None or Integer. The generation limit at which to import
     
     # test functions
     # query_results_folder = "2020-10-15_17-35-22-778323"
