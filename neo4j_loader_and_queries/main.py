@@ -14,6 +14,7 @@ from shutil import copytree
 import math
 # from graph_tool.all import *
 import json
+import random
 
 
 # Choose a path for the Neo4j_Imports folder to import the data from MOD into Neo4j
@@ -22,6 +23,21 @@ formose_MOD_exports_path = "../data/pyruvic_acid/Neo4j_Imports"
 glucose_MOD_exports_path = "../data/glucose/Neo4j_Imports"
 # exports_folder_paths = [formose_MOD_exports_path, glucose_MOD_exports_path]
 EXPORT_PATHS = [glucose_MOD_exports_path]
+
+# Set the following to False if you want to leave order of import records in
+# each generation file the same; set to True to randomly shuffle the order of
+# the records within each file. By shuffling the order, the order at which the
+# molecules are imported into Neo4j will be randomized, and thus the start point
+# at which the cycles pattern match begins is randomized each time, so we can
+# get samples at different starting points in the network since it is too
+# computationally intensive to match for all possible patterns in the network.
+SHUFFLE_GENERATION_DATA = True
+# Repeat the whole import and pattern match routine REPEAT_RUNS amount of times.
+# Pair this with SHUFFLE_GENERATION_DATA so that if SHUFFLE_GENERATION_DATA
+# is True, sample pattern matches on the graph REPEAT_RUNS amount of times
+# starting from random points on the graph from the shuffling, where each
+# run matches up to NUM_STRUCTURES_LIMIT of patterns.
+REPEAT_RUNS = 10
 
 # Filter out these molecules by smiles string from being imported into Neo4j
 # for pattern match / network statistic calculations.
@@ -32,7 +48,7 @@ MOLECULE_FILTER = ['O']
 # and just do node degree / rank calculations. (One reason you might want to disable
 # pattern match query results is because this is very computationally intensive
 # and takes a lot of time; so disable if you are just looking for network statistics.)
-PATTERN_MATCHES = False
+PATTERN_MATCHES = True
 # Rather than disabling completely if running into performance issues, limit the
 # number of patterns that can be matched so that the query stops executing as
 # soon as it reaches the pattern limit, and the matches are returned.
@@ -45,13 +61,11 @@ NUM_STRUCTURES_LIMIT = 100
 # to produce results.
 GENERATION_LIMIT = None
 
-
 # If NETWORK_SNAPSHOTS is True, the program gathers data on the network at each generation
 # in the reaction netowrk. If False, the program gathers data only on the state of
 # the network once all generations have completely finished being loaded (snapshot
 # only of the final generation).
-NETWORK_SNAPSHOTS = True
-
+NETWORK_SNAPSHOTS = False
 
 # Set this to True if you want to generate a static image of the network after
 # loading. Might run into Out of Memory error. Default leaving this as False
@@ -110,7 +124,14 @@ def create_relationship_if_not_exists(rxn_id, from_smiles, to_smiles, rule, gene
         new_r = Relationship(from_molecule, "FORMS", to_molecule,
                              rule=rule,
                              rxn_id=rxn_id,
-                             generation_formed = generation_formed)
+                             generation_formed=generation_formed)
+        print(f"""
+              from molecule: {from_molecule}
+              to molecule: {to_molecule}
+              rule: {rule}
+              rxn_id: {rxn_id}
+              generation_formed: {generation_formed}
+              """)
         tx.create(new_r)
         tx.commit()
         
@@ -122,7 +143,7 @@ def create_relationship_if_not_exists(rxn_id, from_smiles, to_smiles, rule, gene
     #     print(f"pattern already exists: {from_smiles}, {to_smiles}, {rule}, {rxn_id}, {generation_formed}")
 
 
-def create_molecule_if_not_exists(smiles_str, exact_mass, generation_formed):
+def create_molecule_if_not_exists(smiles_str, generation_formed, exact_mass=0):
     """
     Create molecule in DB if not exists.
     """
@@ -1104,6 +1125,34 @@ def smiles_passes_filter(smiles_str):
     return passes_filter
     
 
+def split_rels_into_from_and_to_mols(rels):
+    """
+    To parse Aayush's and Romulo's rels output format.
+    """
+    from_mols = []
+    to_mols = []
+    for rel in rels:
+        rel_data = rel.split('\t')
+        try:
+            # if first char of first element is an integer, this is a
+            # generated molecule from the reaction, so put it in to_mols
+            val = int(rel_data[0][0]) # first element in rel_data for a to_molecule is the rxn_id; if this is successful if it is a to_mol. If error is thrown, first element must be a smiles_str, which is the row format for a from_molecule
+            to_mols.append(rel)
+        except:
+            # otherwise, it's a consumed molecule, so put it in the from_mols list
+            from_mols.append(rel)
+    return from_mols, to_mols
+
+def filter_to_mols_by_rxn_id(rxn_id, to_mols):
+    filtered_to_mols = []
+    for rel in to_mols:
+        rel_data = rel.split("\t")
+        this_rxn_id = rel_data[0]
+        if this_rxn_id == rxn_id:
+            filtered_to_mols.append(rel)
+    return filtered_to_mols
+
+
 
 def import_data_from_MOD_exports(mod_exports_folder_path, network_name, generation_limit):
     """
@@ -1127,14 +1176,16 @@ def import_data_from_MOD_exports(mod_exports_folder_path, network_name, generati
         generation_num = int(generation_file.split("_")[1].split(".")[0])
         all_gens.append(generation_num)
     all_gens.sort()
+    max_all_gens = max(all_gens)
+    # all_gens.append(max_all_gens + 1) # for rels_import_gen shift; explained below
     
     # if no given generation_limit, set the generation limit to the
     # max (so no data type issue between None/Integer)
     if generation_limit == None:
-        generation_limit = max(all_gens)
+        generation_limit = max_all_gens
     # don't let the generation limit go above the max exported from MOD
-    if generation_limit > max(all_gens):
-        generation_limit = max(all_gens)
+    if generation_limit > max_all_gens:
+        generation_limit = max_all_gens
     
     # set up the output folder for snapshots (statistics/visualizations) of the network
     query_results_folder = network_name + "_" + get_timestamp()
@@ -1143,43 +1194,93 @@ def import_data_from_MOD_exports(mod_exports_folder_path, network_name, generati
     # Optional: save the state of the Neo4j_Imports folder at the time this was run
     copytree(mod_exports_folder_path, 'output/' + query_results_folder + "/Neo4j_Imports")
     
-    # now import the data!
+    # now import the data.
     for generation_num in all_gens:
+        print(f"\tGeneration number {generation_num}...")
+        # Shift the rels data import number by 1 because the nodes_1.txt file
+        # actually represents the 0th generation. So when nodes_1.txt file imports,
+        # no rels file will import, then when nodes_2.txt file imports, rels_1.txt
+        # will import, and so on.
+        # rels_import_gen = generation_num - 1
         if generation_num <= generation_limit:
-            print(f"\tGeneration number {generation_num}...")
+            # load in this generation's data
+            rels_generation_file = "rels_" + str(generation_num) + ".txt"
+            rels = open(rels_folder + "/" + rels_generation_file,'r').read().split('\n')
+            from_mols, to_mols = split_rels_into_from_and_to_mols(rels)
             
+            # do not import nodes_6.txt (max_all_gens) because it does not exist;
+            # however, the generation number - 1, rels_5.txt, does exist and still
+            # needs to be imported.
+            # if generation_num <= max_all_gens:
             # create an output folder for this generation within query_results_folder
             os.mkdir("output/" + query_results_folder + f"/{generation_num}")
             
             # import molecule nodes
             print("\t\tImporting nodes...")
-            nodes_generation_file = "nodes_" + str(generation_num) + ".txt"
-            nodes = open(nodes_folder + "/" + nodes_generation_file,'r').read().split('\n')
-            for node in nodes:
-                if node != "":
-                    node_data = node.split(',')
-                    # print(node_data[0])
-                    smiles_str = node_data[1]
-                    if smiles_passes_filter(smiles_str):
-                        create_molecule_if_not_exists(smiles_str = smiles_str,
-                                                      exact_mass = node_data[2],
-                                                      generation_formed = generation_num)
-
+            # nodes_generation_file = "nodes_" + str(generation_num) + ".txt"
+            # nodes = open(nodes_folder + "/" + nodes_generation_file,'r').read().split('\n')
+            # if SHUFFLE_GENERATION_DATA is implemented, shuffle the order
+            # of the molecules to be imported
+            if SHUFFLE_GENERATION_DATA:
+                random.shuffle(rels) # random.shuffle(nodes)
+            # iterate through molecules (make sure all molecule nodes are imported
+            # before we try to merge edges onto them)
+            # for node in nodes:
+            #     if node != "":
+            #         node_data = node.split('\t')
+            #         # print(node_data[0])
+            #         smiles_str = node_data[1]
+            #         if smiles_passes_filter(smiles_str):
+            #             # if smiles_str == "C(C(C(C(C(CO)O)O)O)O)=O":
+            #             #     print("Molecule imported")
+            #             create_molecule_if_not_exists(smiles_str = smiles_str,
+            #                                           exact_mass = node_data[2],
+            #                                           generation_formed = generation_num)
+            for rel in from_mols:
+                rel_data = rel.split('\t')
+                smiles_str = rel_data[0]
+                if smiles_str != "":
+                    create_molecule_if_not_exists(smiles_str = smiles_str,
+                                                  generation_formed = generation_num)
+            for rel in to_mols:
+                rel_data = rel.split('\t')
+                smiles_str = rel_data[1]
+                if smiles_str != "":
+                    create_molecule_if_not_exists(smiles_str = smiles_str,
+                                                  generation_formed = generation_num)
+            
             # create relationship edges
             print("\t\tImporting relationships...")
-            rels_generation_file = "rels_" + str(generation_num) + ".txt"
-            rels = open(rels_folder + "/" + rels_generation_file,'r').read().split('\n')
-            for rel in rels:
+            # if rels_import_gen > 0:
+            # print("FROM MOLS:")
+            # print(from_mols)
+            # print("TO MOLS:")
+            # print(to_mols)
+            # wait = input("Presse enter")
+            for rel in from_mols:
+                # for each molecule being consumed, find all reactions by this
+                # reaction ID that are being formed, and create an edge
+                # between each
                 if rel != "":
-                    rel_data = rel.split(',')
-                    from_smiles = rel_data[1]
-                    to_smiles = rel_data[2]
-                    if smiles_passes_filter(from_smiles) and smiles_passes_filter(to_smiles):
-                        create_relationship_if_not_exists(rxn_id = rel_data[0],
-                                                          from_smiles = from_smiles,
-                                                          to_smiles = to_smiles,
-                                                          rule = ','.join(rel_data[3:]),
-                                                          generation_formed = generation_num)
+                    rel_data_from = rel.split('\t')
+                    from_smiles = rel_data_from[0]
+                    rxn_id = rel_data_from[1]
+                    rxn_rule = rel_data_from[2]
+                    print(from_smiles)
+                    if smiles_passes_filter(from_smiles):
+                        to_mols_this_rxn = filter_to_mols_by_rxn_id(rxn_id, to_mols)
+                        for to_mol_this_rxn in to_mols_this_rxn:
+                            # just get to_smiles from to_mol_this_rxn data; reaction
+                            # ID and rule should be the same
+                            rel_data_to = to_mol_this_rxn.split("\t")
+                            to_smiles = rel_data_to[1]
+                            print("\t" + to_smiles)
+                            if smiles_passes_filter(to_smiles):
+                                create_relationship_if_not_exists(rxn_id = rxn_id,
+                                                                  from_smiles = from_smiles,
+                                                                  to_smiles = to_smiles,
+                                                                  rule = rxn_rule,
+                                                                  generation_formed = generation_num)
             
             # Now that the generation's data has been loaded into the network,
             # take a snapshot of it. Only take snapshot at each generation,
@@ -1204,12 +1305,13 @@ def import_data_from_MOD_exports(mod_exports_folder_path, network_name, generati
     
 
 if __name__ == "__main__":
-    for mod_export_folder_path in EXPORT_PATHS:
-        print(f"Importing the network from the following path: {mod_export_folder_path}")
-        network_name = mod_export_folder_path.split('/')[-2]
-        import_data_from_MOD_exports(mod_exports_folder_path = mod_export_folder_path,
-                                     network_name = network_name,
-                                     generation_limit = GENERATION_LIMIT) # Set to None or Integer. The generation limit at which to import
+    for _ in range(REPEAT_RUNS):
+        for mod_export_folder_path in EXPORT_PATHS:
+            print(f"Importing the network from the following path: {mod_export_folder_path}")
+            network_name = mod_export_folder_path.split('/')[-2]
+            import_data_from_MOD_exports(mod_exports_folder_path = mod_export_folder_path,
+                                         network_name = network_name,
+                                         generation_limit = GENERATION_LIMIT) # Set to None or Integer. The generation limit at which to import
     
     # test functions
     # query_results_folder = "2020-10-15_17-35-22-778323"
