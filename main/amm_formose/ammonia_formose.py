@@ -19,6 +19,8 @@ dg = DG(graphDatabase=inputGraphs,
 
 subset = inputGraphs
 universe = []
+# dump initial reactants as part of "G0"
+write_gen_output(subset, generation=0, reaction_name="formose_amm")
 
 with dg.build() as b:
 	for gen in range(generations):
@@ -29,7 +31,7 @@ with dg.build() as b:
 		print(f"Took {end_time - start_time} seconds to complete round {gen+1}")
 		print(f'Products in generation {gen+1}:', len(res.subset))
 		subset, universe = res.subset, res.universe
-		export_to_neo4j(dg_obj = dg, generation_num = gen)
+		export_to_neo4j(dg_obj = dg, generation_num = gen+1)
 		write_gen_output(subset, gen+1, reaction_name="formose_amm")
 	print('Completed')
 
