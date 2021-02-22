@@ -3,7 +3,6 @@ with_formaldehyde = False
 
 include("../main.py")
 # including these files using MOD's include() so that MOD's functions are callable in them
-include("compare_ms.py")
 include("../mod_to_neo4j_exporter.py")
 #include('clean_tautomers.py')
 
@@ -11,19 +10,39 @@ postChapter('Alkaline Glucose Degradation')
 
 open_glucose = smiles("O=CC(O)C(O)C(O)C(O)C(O)", "Open Chain Glucose")
 water = smiles("O", name="Water")
-#glucose = smiles('OC[C@H]1O[C@H](O)[C@H](O)[C@@H](O)[C@@H]1O', name='Closed Chain Glucose')
 
 # Number of generations we want to perform
 generations = 5
 
-'''dg = dgDump(inputGraphs, inputRules, "../dumps/4_gens_glucose.dg")
-print("Finished loading from dump file")'''
+'''print("Loading .DG file")
+start_t = time.time()
+
+dg = DG.load(inputGraphs, inputRules, "glucose_5g_21jan.dg")
+print(f"Finished loading from dump file, took {time.time() - start_t} seconds")'''
+
+
+# TODO: make this a more general method, which can be called in other reactions.
+'''print('Exporting reactions list for thermo calculations.')
+with open('reactions_list_smi.txt', 'w') as reac_list:
+	for edge in dg.edges:
+		#print(f"Edge: {edge.id}")
+		source_smiles = [s.graph.smiles for s in edge.sources]
+		#print('Sources:', source_smiles)
+		target_smiles = [t.graph.smiles for t in edge.targets]
+		#print('Targets', target_smiles)
+		reaction_str = f"{' + '.join(source_smiles)} -> {' + '.join(target_smiles)}"
+		reac_list.write(f'{reaction_str}\n')'''
+
 
 dg = DG(graphDatabase=inputGraphs,
 	labelSettings=LabelSettings(LabelType.Term, LabelRelation.Specialisation))
 
 subset = inputGraphs
 universe = []
+
+# dump initial reactants as part of "G0"
+write_gen_output(subset, generation=0, reaction_name="glucose_degradation")
+
 # In the following block, apart from generating the reactions, we may print structures
 # and reactions forming them that are not in the MS
 #postSection("Structures not found in MS")
@@ -42,9 +61,7 @@ with dg.build() as b:
 		#print('Subset size after removal:', len(subset))
 		# This step replaces the previous subset (containing tautomers) with the cleaned subset
 		#res = b.execute(addSubset(subset) >> addUniverse(universe))
-		# now compare how many of these simulations were found in the MS data.
-		#compare_sims(dg, gen+1, print_extra=False)
-		#export_to_neo4j(dg_obj = dg, generation_num = gen)
+		export_to_neo4j(dg_obj = dg, generation_num = gen+1)
 		write_gen_output(subset, gen+1, reaction_name="glucose_degradation")
 	print('Completed')
 
@@ -52,7 +69,7 @@ with dg.build() as b:
 f = dg.dump()
 print("Dump file: ", f)
 
+
 check_sdf_matches(dg, "../../data/NewAlkalineHydrolysisStructures.sdf")
 
-# Make a mass spectra (a histogram of the masses) of the molecules
-make_mass_spectra([v.graph.smiles for v in dg.vertices])
+#count_rules_by_gen(dg, 'glucose_degradation_output.txt')

@@ -18,6 +18,8 @@ dg = DG(graphDatabase=inputGraphs,
 
 subset = inputGraphs
 universe = []
+# dump initial reactants as part of "G0"
+write_gen_output(subset, generation=0, reaction_name="glucose_amm")
 
 with dg.build() as b:
 	for gen in range(generations):

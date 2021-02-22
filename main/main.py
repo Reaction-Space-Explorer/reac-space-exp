@@ -230,8 +230,6 @@ def count_rules_by_gen(dg, output_txt):
 				rules_count_map[rule] = 1
 		# add it to the dict of all gens
 		gen_rulecount_map[gen] = rules_count_map
-	with open("rule_count_by_gen.txt", "w") as op:
-		op.write(str(gen_rulecount_map))
 	print("Exporting .tsv of rule count")
 	export_rule_count(gen_rulecount_map)
 	#plot_rule_count(gen_rulecount_map)
@@ -250,6 +248,13 @@ def export_rule_count(gen_rulecount_map):
 	for gen, rule_count_dict in gen_rulecount_map.items():
 		for rule, count in rule_count_dict.items():
 			rule_countlist_map[rule][int(gen[1])-1] = count
+	
+	# sort the map in a way such that the rules with the highest "count" in the last generation are at the top
+	highest_gen = int(max(gen_rulecount_map.keys())[1])
+	# the highest gen will be 'G5' or 'G6', but we care only about the '5' or '6', hence the [1]
+	sorted_rule_countlist_map = dict(sorted(rule_countlist_map.items(), key=lambda item: item[1][highest_gen-1],
+								 reverse=True)) # descending order
+	
 	# now, it becomes really easy to convert this into a CSV/TSV or a lollipop/bar chart
 	# WARNING: Don't try to create a .csv because some rule names contain a comma ',', which acts
 	# as a column separator in a csv
@@ -258,11 +263,12 @@ def export_rule_count(gen_rulecount_map):
 		for gen in gen_rulecount_map.keys():
 			tsv.write(f'\tGeneration {gen[1]}')
 		tsv.write('\n')
-		for rule, count_by_gen in rule_countlist_map.items():
+		for rule, count_by_gen in sorted_rule_countlist_map.items():
 			tsv.write(f'{rule}')
 			for count in count_by_gen:
 				tsv.write(f'\t{count}')
 			tsv.write('\n')
+	print(f'Successfully exported {tsv.name}')
 
 
 def plot_rule_count(gen_rulecount_dict):
@@ -302,10 +308,41 @@ def plot_rule_count(gen_rulecount_dict):
 	plt.show()
 
 
+def read_smiles_output(file_path):
+	"""
+	There are .txt dump files (e.g. glucose_degradation_output.txt) which contain the list of species' smiles
+	separated by generation of first appearance.
+	There are a lot of places where these txt files are used. This method is to read such files and return the info
+	contained in them.
+
+	Returns: A dictionary mapping generation number to a list containing smiles of all species that first appeared
+	in that generation
+	 e.g. {1: ['OC=O', 'CC(=O)O'], 2: ['CCC(=O)O', 'CCC(=O)']}
+	Generations start at 1 and not 0. (I prefer to think of G0 as the initial reactants)
+	"""
+	# A map {gen_num -> [smiles]}
+	gen_smiles_map = {}
+	with open(file_path, 'r') as output_file:
+		lines = output_file.readlines()
+		for line in lines:
+			# get rid of new line character at the end
+			line = line.rstrip('\n')
+			components = line.split('\t')
+			gen = components[0]
+			smiles_str = components[1]
+			# gen is a string, e.g. 'G1'
+			gen_num = int(gen[1])
+			if gen_num in gen_smiles_map.keys():
+				gen_smiles_map[gen_num].append(smiles_str)
+			else:
+				gen_smiles_map[gen_num] = [smiles_str]
+	return gen_smiles_map
+
 
 dgprint = DGPrinter()
 dgprint.withRuleName = True
 dgprint.withShortcutEdges = True
+dgprint.graphPrinter.withIndex = True
 
 rp = GraphPrinter() # Think of it as a "Rule Printer"
 rp.withIndex = True
@@ -335,6 +372,8 @@ def find_substruct_producer(dg, substruct, print_max=50, print_rule=False, conde
 					if substruct.monomorphism(g) > 0:
 						count += 1
 						print(f"Found {substruct.name}! Made by {rule}")
+						print(f"Edge {e} sources: {[s.smiles for s in sources]}")
+						print(f"Targets: {[t.smiles for t in targets]}")
 						dg2 = DG(graphDatabase=inputGraphs)
 						if condense_str == False:
 							dgprint.graphPrinter.collapseHydrogens = False

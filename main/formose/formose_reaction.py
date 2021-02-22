@@ -10,7 +10,7 @@ formaldehyde = smiles("C=O", name="Formaldehyde")
 glycoladehyde = smiles("OCC=O", name="Glycolaldehyde")
 water = smiles("O", name="Water")
 
-'''dg = dgDump(inputGraphs, inputRules, "../dumps/formose_4_rounds.dg")
+'''dg = DG.load(inputGraphs, inputRules, "formose_6rounds_dec21.dg")
 print("Finished loading from dump file")'''
 
 # Number of generations we want to perform
@@ -21,9 +21,10 @@ dg = DG(graphDatabase=inputGraphs,
 
 subset = inputGraphs
 universe = []
-# In the following block, apart from generating the reactions, we may print structures
-# and reactions forming them that are not in the MS
-#postSection("Structures not found in MS")
+
+# dump initial reactants as part of "G0"
+write_gen_output(subset, generation=0, reaction_name="formose")
+
 with dg.build() as b:
 	for gen in range(generations):
 		start_time = time.time()
@@ -40,8 +41,8 @@ with dg.build() as b:
 		# This step replaces the previous subset (containing tautomers) with the cleaned subset
 		#res = b.execute(addSubset(subset) >> addUniverse(universe))
 		
-		export_to_neo4j(dg_obj = dg, generation_num = gen)
-		write_gen_output(subset, gen+1, reaction_name="formose")
+		#export_to_neo4j(dg_obj = dg, generation_num = gen)
+		#write_gen_output(subset, gen+1, reaction_name="formose")
 	print('Completed')
 
 # Dump the dg so it can be loaded again quickly without having to generate it from scratch.
@@ -49,3 +50,6 @@ f = dg.dump()
 print("Dump file: ", f)
 
 check_sdf_matches(dg, "../../data/FormoseTestSetPlus5.sdf")
+
+#count_rules_by_gen(dg, 'formose_output.txt')
+
