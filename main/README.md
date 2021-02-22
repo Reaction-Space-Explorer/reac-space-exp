@@ -1,7 +1,9 @@
 ### Main Directory
 * Each folder in this directory was meant to be for running a separate reaction (e.g. "glucose" is for glucose degradation).
 * [main.py](main.py) contains methods and settings that will be used by reactions running in all subdirectories. It also contains some utility methods useful for seeing what's going on and debugging.
-* [mod_to_neo4j_exporter.py](mod_to_neo4j_exporter.py) contains method(s) to create exports of reaction information that was later loaded into a [Neo4j](https://neo4j.com/) module for running graph queries (searching for autocatalytic cycles, etc.). The format of the *rels_i.txt* (where *i* is a number) files for reactions is
+* [mod_to_neo4j_exporter.py](mod_to_neo4j_exporter.py) contains method(s) to create exports of reaction information that was later loaded into a [Neo4j](https://neo4j.com/) module for running graph queries (searching for autocatalytic cycles, etc.).
+
+The neo4j exporter creates two kinds of files, one which shows *relations* between species (reactions) and others just show which species exist. The format of the *rels_i.txt* (where *i* is a number) files for reactions is
 ```
 REACTION_ID MOLECULE_SMILES CONSUMPTION/CREATION    RULE_NAME
 ```
@@ -18,6 +20,6 @@ An example is
 ```
 which represents ```C#N + C#N -> C(C=N)#N``` happening.
 
-##TODO:
+## TODO:
 * explain the format of glucose_degradation_output.txt
 * the (redundant, as of now) tautomer cleaning methods.
