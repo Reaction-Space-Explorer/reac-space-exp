@@ -12,13 +12,13 @@ def export_to_neo4j(dg_obj, generation_num):
 			#print(v)
 			# node_id, smiles_str, exact_mass, node_label #Romulo: termolecular species Md and radiation Hf has ficticious mass
 			if (v.graph.smiles != "[Hf]" and v.graph.smiles != "[Md]"):
-				nodes_file.write(str(v.id) + "," + v.graph.smiles + "," + str(v.graph.exactMass) + ",Molecule" "\n")
-			
+				nodes_file.write(str(v.id) + '\t' + v.graph.smiles + '\t' + str(v.graph.exactMass) + '\t' +
+						 'Molecule' + '\n')
 			if (v.graph.smiles == "[Hf]" ): 
-				nodes_file.write(str(v.id) + "," + v.graph.smiles + "," + "Without mass" + ",Radiation" "\n")
+				nodes_file.write(str(v.id) + "\t" + v.graph.smiles + "\t" + "Without mass" + "\tRadiation" "\n")
 			
 			if (v.graph.smiles == "[Md]" ): 
-				nodes_file.write(str(v.id) + "," + v.graph.smiles + "," + "Mass of the most abundat" + ",Termolecular" "\n")
+				nodes_file.write(str(v.id) + "\t" + v.graph.smiles + "\t" + "Mass of the most abundat" + "\t" + "Termolecular" "\n")
 					
 	# write relationships (rels) text file	
 	with open(dg_files_path + "/rels/rels_" + generation_num + ".txt", 'a') as rels_file:
@@ -35,18 +35,11 @@ def export_to_neo4j(dg_obj, generation_num):
 				print("\tSource:" + str(s) + "," + str(s.graph.smiles)+"," + str(s.id))
 			for t in e.targets:
 				print("\tTarget:" + str(t) + "," + str(t.graph.smiles)+"," + str(t.id))
-			
-			
-			# only one target per edge, but is collected in a list; same with reaction rule
-			#target = list(e.targets)[0]
-			rule = list(e.rules)[0]
-			#print(str(e.rules))
-			
-			for target in e.targets:
-			# write line for each target molecule
+			# for all rules in e.rules
+			for i in range(len(e.rules)):
+				# use 'i' as a "sub-index"
 				for source in e.sources:
-					source_smiles = str(source.graph.smiles)
-					target_smiles = str(target.graph.smiles)
-					reaction_rule = str(rule)
-					# edge_id, source_smiles_str, target_smiles_str, reaction_rule_str
-					rels_file.write(str(e.id) + "," + source_smiles + "," + target_smiles + "," + reaction_rule + "\n")
+					rels_file.write(f'{e.id}_{i}' + '\t' + source.graph.smiles + '\t' + '-1' + '\t' + list(e.rules)[i].name + '\n')
+				for target in e.targets:
+					rels_file.write(f'{e.id}_{i}' + '\t' + target.graph.smiles + '\t' + '1' + '\t' + list(e.rules)[i].name + '\n')
+		
