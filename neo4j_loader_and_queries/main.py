@@ -59,7 +59,7 @@ NUM_STRUCTURES_LIMIT = 100
 # want to limit this to ~4 generations or less if performance is an issue; the
 # network will grow exponentially, so pattern match queries might take too long
 # to produce results.
-GENERATION_LIMIT = None # 4
+GENERATION_LIMIT = 3 # None
 
 # If NETWORK_SNAPSHOTS is True, the program gathers data on the network at each generation
 # in the reaction netowrk. If False, the program gathers data only on the state of
@@ -1103,9 +1103,12 @@ def compile_all_generations_data(query_results_folder, generation_limit):
     for generation_num in range(generation_limit + 1):
         # append molecule data
         gen_file_path = out_dir + f"/{generation_num}/likely_abundance_score_by_molecule.csv"
-        df_gen = pd.read_csv(gen_file_path)
-        df_gen['snapshot_generation_num'] = generation_num
-        df_all_gens = pd.concat([df_all_gens, df_gen])
+        try:
+            df_gen = pd.read_csv(gen_file_path)
+            df_gen['snapshot_generation_num'] = generation_num
+            df_all_gens = pd.concat([df_all_gens, df_gen])
+        except:
+            pass
         
         # append autocat query results data
         autocat_gen_file_path = out_dir + f"/{generation_num}/autocat_query_results.csv"
@@ -1214,13 +1217,13 @@ def import_data_from_MOD_exports(mod_exports_folder_path, network_name, generati
     
     # now import the data.
     for generation_num in all_gens:
-        print(f"\tGeneration number {generation_num}...")
         # Shift the rels data import number by 1 because the nodes_1.txt file
         # actually represents the 0th generation. So when nodes_1.txt file imports,
         # no rels file will import, then when nodes_2.txt file imports, rels_1.txt
         # will import, and so on.
         # rels_import_gen = generation_num - 1
         if generation_num <= generation_limit:
+            print(f"\tGeneration number {generation_num}...")
             # load in this generation's data
             rels_generation_file = "rels_" + str(generation_num) + ".txt"
             rels = open(rels_folder + "/" + rels_generation_file,'r').read().split('\n')
@@ -1290,9 +1293,9 @@ def import_data_from_MOD_exports(mod_exports_folder_path, network_name, generati
     
     # now that all snapshots of the network have been taken, compile all of the
     # data into one source (only if NETWORK_SNAPSHOTS enabled)
-    if NETWORK_SNAPSHOTS:
-        compile_all_generations_data(query_results_folder,
-                                     generation_limit)
+    # if NETWORK_SNAPSHOTS:
+    #     compile_all_generations_data(query_results_folder,
+    #                                  generation_limit)
 
 
 if __name__ == "__main__":
