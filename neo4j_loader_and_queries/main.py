@@ -59,13 +59,17 @@ NUM_STRUCTURES_LIMIT = 100
 # want to limit this to ~4 generations or less if performance is an issue; the
 # network will grow exponentially, so pattern match queries might take too long
 # to produce results.
-GENERATION_LIMIT = None
+GENERATION_LIMIT = None # 4
 
 # If NETWORK_SNAPSHOTS is True, the program gathers data on the network at each generation
 # in the reaction netowrk. If False, the program gathers data only on the state of
 # the network once all generations have completely finished being loaded (snapshot
 # only of the final generation).
-NETWORK_SNAPSHOTS = False
+NETWORK_SNAPSHOTS = True
+
+# Enable this only if you want to capture network statistics (such as node degree
+# plots over generation)
+COLLECT_NETWORK_STATISTICS = False
 
 # Set this to True if you want to generate a static image of the network after
 # loading. Might run into Out of Memory error. Default leaving this as False
@@ -243,6 +247,14 @@ def save_query_results(generation_num, query_result, file_name, this_out_folder)
         json.dump(query_result, file_data_out)
     data_df = pd.read_json(f'output/' + this_out_folder + f"/{generation_num}/{file_name}.json")
     data_df.to_csv(f'output/' + this_out_folder + f"/{generation_num}/{file_name}.csv", index=False)
+
+
+def read_query_results(file_path):
+    try:
+        df = pd.read_csv(file_path)
+    except:
+        df = pd.DataFrame()
+    return df
 
 
 def run_single_value_query(query, value):
@@ -671,22 +683,24 @@ def network_statistics(generation_num, query_results_folder):
                        file_name = incoming_rels_count_file,
                        this_out_folder = query_results_folder)
     fig, ax = plt.subplots()
-    node_deg_df = pd.read_csv(f"output/{query_results_folder}/{generation_num}/{incoming_rels_count_file}.csv")
+    # node_deg_df = pd.read_csv(f"output/{query_results_folder}/{generation_num}/{incoming_rels_count_file}.csv")
+    node_deg_df = read_query_results(f"output/{query_results_folder}/{generation_num}/{incoming_rels_count_file}.csv")
     # node_deg_df['count_relationships'].value_counts().plot(ax=ax,
     #                                                        kind='bar',
     #                                                        title="Node Degree Distribution by Generation Formed")
-    node_deg_pivot = pd.pivot_table(node_deg_df,
-                                    values="smiles_str",
-                                    index=["count_incoming"],
-                                    columns=["generation_formed"],
-                                    aggfunc=lambda x: math.log10(len(x.unique()))) # the square of the count of unique smiles_str
-    node_deg_pivot.plot(ax=ax,
-                        kind="bar",
-                        title="Square of Molecule Degree by Generation Formed for Incoming Relationships",
-                        figsize = (8,5))
-    ax.set_xlabel("Molecule Degree (count of incoming edges)")
-    ax.set_ylabel("log10(Count of Molecules)")
-    plt.savefig(f"output/{query_results_folder}/{generation_num}/{incoming_rels_count_file}.png")
+    if not node_deg_df.empty:
+        node_deg_pivot = pd.pivot_table(node_deg_df,
+                                        values="smiles_str",
+                                        index=["count_incoming"],
+                                        columns=["generation_formed"],
+                                        aggfunc=lambda x: math.log10(len(x.unique()))) # the square of the count of unique smiles_str
+        node_deg_pivot.plot(ax=ax,
+                            kind="bar",
+                            title="Square of Molecule Degree by Generation Formed for Incoming Relationships",
+                            figsize = (8,5))
+        ax.set_xlabel("Molecule Degree (count of incoming edges)")
+        ax.set_ylabel("log10(Count of Molecules)")
+        plt.savefig(f"output/{query_results_folder}/{generation_num}/{incoming_rels_count_file}.png")
     
     # outgoing relationships by molecule
     outgoing_rels_count_file = "outgoing_rels_count"
@@ -703,22 +717,21 @@ def network_statistics(generation_num, query_results_folder):
                        file_name = outgoing_rels_count_file,
                        this_out_folder = query_results_folder)
     fig, ax = plt.subplots()
-    node_deg_df = pd.read_csv(f"output/{query_results_folder}/{generation_num}/{outgoing_rels_count_file}.csv")
-    # node_deg_df['count_relationships'].value_counts().plot(ax=ax,
-    #                                                        kind='bar',
-    #                                                        title="Node Degree Distribution by Generation Formed")
-    node_deg_pivot = pd.pivot_table(node_deg_df,
-                                    values="smiles_str",
-                                    index=["count_outgoing"],
-                                    columns=["generation_formed"],
-                                    aggfunc=lambda x: math.log10(len(x.unique()))) # the square of the count of unique smiles_str
-    node_deg_pivot.plot(ax=ax,
-                        kind="bar",
-                        title="Square of Molecule Degree by Generation Formed for Outgoing Relationships",
-                        figsize = (8,5))
-    ax.set_xlabel("Molecule Degree (count of outgoing edges)")
-    ax.set_ylabel("log10(Count of Molecules)")
-    plt.savefig(f"output/{query_results_folder}/{generation_num}/{outgoing_rels_count_file}.png")
+    # node_deg_df = pd.read_csv(f"output/{query_results_folder}/{generation_num}/{outgoing_rels_count_file}.csv")
+    node_deg_df = read_query_results(f"output/{query_results_folder}/{generation_num}/{outgoing_rels_count_file}.csv")
+    if not node_deg_df.empty:
+        node_deg_pivot = pd.pivot_table(node_deg_df,
+                                        values="smiles_str",
+                                        index=["count_outgoing"],
+                                        columns=["generation_formed"],
+                                        aggfunc=lambda x: math.log10(len(x.unique()))) # the square of the count of unique smiles_str
+        node_deg_pivot.plot(ax=ax,
+                            kind="bar",
+                            title="Square of Molecule Degree by Generation Formed for Outgoing Relationships",
+                            figsize = (8,5))
+        ax.set_xlabel("Molecule Degree (count of outgoing edges)")
+        ax.set_ylabel("log10(Count of Molecules)")
+        plt.savefig(f"output/{query_results_folder}/{generation_num}/{outgoing_rels_count_file}.png")
     
     # close all plots so they don't accumulate memory
     print("\tNetwork statistics done.")
@@ -919,12 +932,17 @@ def compute_likely_abundance_by_molecule(generation_num, query_results_folder):
                 }
     full_df = pd.DataFrame()
     for dataset in datasets.keys():
-        df = pd.read_csv(f"output/{query_results_folder}/{generation_num}/{dataset}.csv")
-        df = df[datasets[dataset]] # filter only by the needed columns
-        if dataset == "node_distribution_results":
-            full_df = df
-        else:
-            full_df = pd.merge(full_df, df, on="smiles_str", how='left')
+        try:
+            df = pd.read_csv(f"output/{query_results_folder}/{generation_num}/{dataset}.csv")
+            df = df[datasets[dataset]] # filter only by the needed columns
+            if dataset == "node_distribution_results":
+                full_df = df
+            else:
+                full_df = pd.merge(full_df, df, on="smiles_str", how='left')
+        except:
+            # If the df is empty (such as if COLLECT_NETWORK_STATISTICS = False
+            # which will make some datasets not exist), then pass
+            pass
     
     # Query for all relationships and their parent (consumed) & child (produced)
     # molecules. Groupby molecule and reaction, mulitiply each
@@ -957,13 +975,11 @@ def take_network_snapshot(generation_num, query_results_folder, mod_exports_fold
                                                     ring_size_range = (3, 5),
                                                     feeder_molecule_generation_range = None,
                                                     num_structures_limit = NUM_STRUCTURES_LIMIT) # set to 100 for small batch testing
-        # analyze_possible_autocatalytic_cycles(generation_num = generation_num,
-        #                                       mod_exports_folder_path = mod_exports_folder_path,
-        #                                       query_results_folder = query_results_folder)
     
     # do network statistics and get plots
-    network_statistics(generation_num = generation_num,
-                       query_results_folder = query_results_folder)
+    if COLLECT_NETWORK_STATISTICS:
+        network_statistics(generation_num = generation_num,
+                           query_results_folder = query_results_folder)
     
     # # get Cytoscape network visualization
     if FULL_NETWORK_VISUALIZATION:
@@ -1302,7 +1318,7 @@ def import_data_from_MOD_exports(mod_exports_folder_path, network_name, generati
     if NETWORK_SNAPSHOTS:
         compile_all_generations_data(query_results_folder,
                                      generation_limit)
-    
+
 
 if __name__ == "__main__":
     for _ in range(REPEAT_RUNS):
