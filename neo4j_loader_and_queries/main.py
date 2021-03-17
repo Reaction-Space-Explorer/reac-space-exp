@@ -129,13 +129,13 @@ def create_relationship_if_not_exists(rxn_id, from_smiles, to_smiles, rule, gene
                              rule=rule,
                              rxn_id=rxn_id,
                              generation_formed=generation_formed)
-        print(f"""
-              from molecule: {from_molecule}
-              to molecule: {to_molecule}
-              rule: {rule}
-              rxn_id: {rxn_id}
-              generation_formed: {generation_formed}
-              """)
+        # print(f"""
+        #       from molecule: {from_molecule}
+        #       to molecule: {to_molecule}
+        #       rule: {rule}
+        #       rxn_id: {rxn_id}
+        #       generation_formed: {generation_formed}
+        #       """)
         tx.create(new_r)
         tx.commit()
         
@@ -1148,15 +1148,17 @@ def split_rels_into_from_and_to_mols(rels):
     from_mols = []
     to_mols = []
     for rel in rels:
-        rel_data = rel.split('\t')
-        try:
-            # if first char of first element is an integer, this is a
-            # generated molecule from the reaction, so put it in to_mols
-            val = int(rel_data[0][0]) # first element in rel_data for a to_molecule is the rxn_id; if this is successful if it is a to_mol. If error is thrown, first element must be a smiles_str, which is the row format for a from_molecule
-            to_mols.append(rel)
-        except:
-            # otherwise, it's a consumed molecule, so put it in the from_mols list
-            from_mols.append(rel)
+        if rel != '':
+            rel_data = rel.split('\t')
+            gen_consumpt_scalar = int(rel_data[2])
+            if gen_consumpt_scalar == -1:
+                # generation/consumption scalar is negative; this species must be
+                # being consumed in the reaction
+                from_mols.append(rel)
+            elif gen_consumpt_scalar == 1:
+                # generation/consumption scalar is positive; this species must be
+                # being generated in the reaction
+                to_mols.append(rel)
     return from_mols, to_mols
 
 def filter_to_mols_by_rxn_id(rxn_id, to_mols):
@@ -1222,67 +1224,40 @@ def import_data_from_MOD_exports(mod_exports_folder_path, network_name, generati
             # load in this generation's data
             rels_generation_file = "rels_" + str(generation_num) + ".txt"
             rels = open(rels_folder + "/" + rels_generation_file,'r').read().split('\n')
+            # if SHUFFLE_GENERATION_DATA is implemented, shuffle the order
+            # of the molecules to be imported
+            if SHUFFLE_GENERATION_DATA:
+                random.shuffle(rels) # random.shuffle(nodes)
             from_mols, to_mols = split_rels_into_from_and_to_mols(rels)
             
-            # do not import nodes_6.txt (max_all_gens) because it does not exist;
-            # however, the generation number - 1, rels_5.txt, does exist and still
-            # needs to be imported.
-            # if generation_num <= max_all_gens:
             # create an output folder for this generation within query_results_folder
             os.mkdir("output/" + query_results_folder + f"/{generation_num}")
             
             # import molecule nodes
             print("\t\tImporting nodes...")
-            # nodes_generation_file = "nodes_" + str(generation_num) + ".txt"
-            # nodes = open(nodes_folder + "/" + nodes_generation_file,'r').read().split('\n')
-            # if SHUFFLE_GENERATION_DATA is implemented, shuffle the order
-            # of the molecules to be imported
-            if SHUFFLE_GENERATION_DATA:
-                random.shuffle(rels) # random.shuffle(nodes)
+            
             # iterate through molecules (make sure all molecule nodes are imported
             # before we try to merge edges onto them)
-            # for node in nodes:
-            #     if node != "":
-            #         node_data = node.split('\t')
-            #         # print(node_data[0])
-            #         smiles_str = node_data[1]
-            #         if smiles_passes_filter(smiles_str):
-            #             # if smiles_str == "C(C(C(C(C(CO)O)O)O)O)=O":
-            #             #     print("Molecule imported")
-            #             create_molecule_if_not_exists(smiles_str = smiles_str,
-            #                                           exact_mass = node_data[2],
-            #                                           generation_formed = generation_num)
-            for rel in from_mols:
-                rel_data = rel.split('\t')
-                smiles_str = rel_data[0]
-                if smiles_str != "":
-                    create_molecule_if_not_exists(smiles_str = smiles_str,
-                                                  generation_formed = generation_num)
-            for rel in to_mols:
-                rel_data = rel.split('\t')
-                smiles_str = rel_data[1]
-                if smiles_str != "":
-                    create_molecule_if_not_exists(smiles_str = smiles_str,
-                                                  generation_formed = generation_num)
+            for rel in rels:
+                if rel != '':
+                    rel_data = rel.split('\t')
+                    smiles_str = rel_data[1]
+                    if smiles_str != "":
+                        create_molecule_if_not_exists(smiles_str = smiles_str,
+                                                      generation_formed = generation_num)
             
             # create relationship edges
             print("\t\tImporting relationships...")
-            # if rels_import_gen > 0:
-            # print("FROM MOLS:")
-            # print(from_mols)
-            # print("TO MOLS:")
-            # print(to_mols)
-            # wait = input("Presse enter")
             for rel in from_mols:
                 # for each molecule being consumed, find all reactions by this
                 # reaction ID that are being formed, and create an edge
                 # between each
                 if rel != "":
                     rel_data_from = rel.split('\t')
-                    from_smiles = rel_data_from[0]
-                    rxn_id = rel_data_from[1]
-                    rxn_rule = rel_data_from[2]
-                    print(from_smiles)
+                    from_smiles = rel_data_from[1]
+                    rxn_id = rel_data_from[0]
+                    # gen_consumpt_scalar = rel_data_from[2]
+                    rxn_rule = rel_data_from[3]
                     if smiles_passes_filter(from_smiles):
                         to_mols_this_rxn = filter_to_mols_by_rxn_id(rxn_id, to_mols)
                         for to_mol_this_rxn in to_mols_this_rxn:
@@ -1290,13 +1265,13 @@ def import_data_from_MOD_exports(mod_exports_folder_path, network_name, generati
                             # ID and rule should be the same
                             rel_data_to = to_mol_this_rxn.split("\t")
                             to_smiles = rel_data_to[1]
-                            print("\t" + to_smiles)
                             if smiles_passes_filter(to_smiles):
                                 create_relationship_if_not_exists(rxn_id = rxn_id,
                                                                   from_smiles = from_smiles,
                                                                   to_smiles = to_smiles,
                                                                   rule = rxn_rule,
                                                                   generation_formed = generation_num)
+                                # print(f"SUCCESS: {from_smiles}->{to_smiles}")
             
             # Now that the generation's data has been loaded into the network,
             # take a snapshot of it. Only take snapshot at each generation,
