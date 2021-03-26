@@ -59,7 +59,7 @@ NUM_STRUCTURES_LIMIT = 100
 # want to limit this to ~4 generations or less if performance is an issue; the
 # network will grow exponentially, so pattern match queries might take too long
 # to produce results.
-GENERATION_LIMIT = 3 # None
+GENERATION_LIMIT = 4 # None
 
 # If NETWORK_SNAPSHOTS is True, the program gathers data on the network at each generation
 # in the reaction netowrk. If False, the program gathers data only on the state of
