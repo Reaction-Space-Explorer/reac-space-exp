@@ -1164,7 +1164,7 @@ def import_data_from_MOD_exports(mod_exports_folder_path, network_name, generati
                     rel_data = rel.split('\t')
                     # import molecule node
                     smiles_str = rel_data[1]
-                    if smiles_str != "":
+                    if smiles_str != "" and smiles_str not in MOLECULE_FILTER:
                         create_molecule_if_not_exists(smiles_str = smiles_str,
                                                       generation_formed = generation_num)
                     # import reaction node
@@ -1183,19 +1183,20 @@ def import_data_from_MOD_exports(mod_exports_folder_path, network_name, generati
                     rel_data = rel.split('\t')
                     rxn_id = rel_data[0]
                     smiles_str = rel_data[1]
-                    gen_consumpt_scalar = int(rel_data[2])
-                    rxn_rule = rel_data[3]
-                    if gen_consumpt_scalar == 1:
-                        # this molecule is being generated, therefore it is a PRODUCT
-                        create_product_rel_if_not_exists(smiles_str = smiles_str,
-                                                         rxn_id = rxn_id,
-                                                         generation_formed = generation_num)
-                    elif gen_consumpt_scalar == -1:
-                        # this molecule is being consumed, therefore it is a REACTANT
-                        create_reactant_rel_if_not_exists(smiles_str = smiles_str,
-                                                          rxn_id = rxn_id,
-                                                          generation_formed = generation_num)
-            # wait = input("Press enter...")
+                    if smiles_str not in MOLECULE_FILTER:
+                        gen_consumpt_scalar = int(rel_data[2])
+                        rxn_rule = rel_data[3]
+                        if gen_consumpt_scalar == 1:
+                            # this molecule is being generated, therefore it is a PRODUCT
+                            create_product_rel_if_not_exists(smiles_str = smiles_str,
+                                                             rxn_id = rxn_id,
+                                                             generation_formed = generation_num)
+                        elif gen_consumpt_scalar == -1:
+                            # this molecule is being consumed, therefore it is a REACTANT
+                            create_reactant_rel_if_not_exists(smiles_str = smiles_str,
+                                                              rxn_id = rxn_id,
+                                                              generation_formed = generation_num)
+            wait = input("Press enter...")
             
             # Now that the generation's data has been loaded into the network,
             # take a snapshot of it. Only take snapshot at each generation,
