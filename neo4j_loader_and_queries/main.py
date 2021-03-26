@@ -88,65 +88,6 @@ def get_timestamp():
     return str(datetime.datetime.now()).replace(":","-").replace(" ","_").replace(".","-")
 
 
-def rxn_query_str(reactant, product, rxn_id):
-    """
-    Generate cypher MERGE query for reactant and product node.
-    """
-    return "MERGE (r: Molecule {smiles_str:\""+ reactant +"\"}) MERGE (p: Molecule {smiles_str:\""+ product +"\"}) MERGE (r)-[:FORMS {rxn_id: "+ str(rxn_id) +"}]->(p)"
-
-
-def create_reaction_if_not_exists(from_smiles, to_smiles):
-    from_molecule = matcher.match("Molecule", smiles_str = from_smiles).first()
-    to_molecule = matcher.match("Molecule", smiles_str = to_smiles).first()
-    if len(list(graph.match(nodes=(from_molecule, to_molecule), r_type="FORMS"))) <= 0:
-        # relationship does not exist
-        tx = graph.begin()
-        new_r = Relationship(from_molecule, "FORMS", to_molecule)
-        tx.create(new_r)
-        tx.commit()
-
-
-def create_relationship_if_not_exists(rxn_id, from_smiles, to_smiles, rule, generation_formed):
-    from_molecule = matcher.match("Molecule", smiles_str = from_smiles).first()
-    to_molecule = matcher.match("Molecule", smiles_str = to_smiles).first()
-    match_pattern = rel_matcher.match(nodes=(from_molecule, to_molecule),
-                                      r_type="FORMS",
-                                      properties = {"rule": rule,
-                                                    "rxn_id": rxn_id,
-                                                    "generation_formed": generation_formed,
-                                                    "from_smiles": from_smiles,
-                                                    "to_smiles": to_smiles
-                                                    }
-                                      )
-    if len(list(match_pattern)) <= 0:
-        # print(f"new pattern: {from_smiles}, {to_smiles}, {rule}, {rxn_id}, {generation_formed}")
-        # relationship does not exist
-        tx = graph.begin()
-        # see documentation for weird Relationship function; order of args go:
-        # from node, relationship, to node, and then kwargs for relationship properties
-        # https://py2neo.org/v4/data.html#py2neo.data.Relationship
-        new_r = Relationship(from_molecule, "FORMS", to_molecule,
-                             rule=rule,
-                             rxn_id=rxn_id,
-                             generation_formed=generation_formed)
-        # print(f"""
-        #       from molecule: {from_molecule}
-        #       to molecule: {to_molecule}
-        #       rule: {rule}
-        #       rxn_id: {rxn_id}
-        #       generation_formed: {generation_formed}
-        #       """)
-        tx.create(new_r)
-        tx.commit()
-        
-        # debug (share data for others to import into Neo4j)
-        # rels_debug_file = open("mock_data/exported/rels.txt",'a')
-        # rels_debug_file.write(f"\n{from_smiles},FORMS,{to_smiles},{rule},{rxn_id},{generation_formed}")
-        # rels_debug_file.close()
-    # else:
-    #     print(f"pattern already exists: {from_smiles}, {to_smiles}, {rule}, {rxn_id}, {generation_formed}")
-
-
 def create_molecule_if_not_exists(smiles_str, generation_formed, exact_mass=0):
     """
     Create molecule in DB if not exists.
@@ -161,85 +102,62 @@ def create_molecule_if_not_exists(smiles_str, generation_formed, exact_mass=0):
                      generation_formed = generation_formed)
         tx.create(new_m)
         tx.commit()
-        
-        # debug (share data for others to import into Neo4j)
-        # nodes_debug_file = open("mock_data/exported/nodes.txt",'a')
-        # nodes_debug_file.write(f"\nMolecule,{smiles_str},{exact_mass},{generation_formed}")
-        # nodes_debug_file.close()
-    else:
-        # molecule already exists, do nothing
-        pass
+        return new_m
+    return molecule
 
-
-def import_molecules():
-    """
-    Takes all output .txt files from data folder and parses the text files for
-    any new molecules each generation.
-    """
-    txt_file_names = os.listdir(os.path.join(os.getcwd(), "data"))
-    for file_name in txt_file_names:
-        generation = int(file_name.split(".")[0][-1])
-        molecules = open(f"data/molecules/{file_name}").read().split("\n")
-        for molecule in molecules:
-            create_molecule_if_not_exists(smiles_str = molecule,
-                                          generation_formed = generation)
-
-
-
-def load_simple_graph():
-    """
-    Connect to Neo4j and load graph.
+def create_reaction_if_not_exists(id, rule, generation_formed):
+    reaction = matcher.match("Reaction", id = id).first()
+    if reaction is None:
+        tx = graph.begin()
+        new_rxn = Node("Reaction",
+                       id = id,
+                       rule = rule,
+                       generation_formed = generation_formed)
+        tx.create(new_rxn)
+        tx.commit()
+        return new_rxn
+    return reaction
     
-    Usually, graph import is split up into nodes.csv and relationships.csv,
-    but since this is a single label & single relationship graph for now,
-    this makes the import simpler.
-    """
-    
-    # first, delete all from db
-    db.cypher_query("MATCH (n) DETACH DELETE n")
-    
-    # prepare import data
-    data = pd.read_csv("mock_data/simple_graph_import.csv")
-    all_molecules = []
-    for col in data.columns:
-        if col != 'rxn_id':
-            all_molecules.extend(list(data[col].unique()))
-    all_molecules = list(set(all_molecules)) # get unique set of all molecules and convert back to list
-    # all_molecules = [mol for mol in all_molecules if mol != np.nan]
-    # load db with import data
-    # first, make sure all molecules exist, and create if not with MERGE
-    for mol in all_molecules:
-        try:
-            db.cypher_query("MERGE (:Molecule {smiles_str:\""+mol+"\"})")
-        except:
-            pass
-        
-    # then, merge on relationships
-    for _, rxn in data.iterrows():
-        results, meta1 = db.cypher_query(rxn_query_str(reactant = rxn['reactant_1'], product = rxn['product'], rxn_id = int(rxn['rxn_id'])))
-        results, meta2 = db.cypher_query(rxn_query_str(reactant = rxn['reactant_2'], product = rxn['product'], rxn_id = int(rxn['rxn_id'])))
-        # print(meta1, meta2) # print meta data on cypher query for each reaction; suppress if too many import records
 
-def import_mock_data():
-    """
-    Import simple fake dataset to test queries out on.
-    """
-    # read in data
-    molecules = pd.read_csv("mock_data/molecules.csv")
-    reactions = pd.read_csv("mock_data/reactions.csv")
+def create_reactant_rel_if_not_exists(smiles_str, rxn_id, generation_formed):
+    molecule = matcher.match("Molecule", smiles_str = smiles_str).first()
+    reaction = matcher.match("Reaction", id = rxn_id).first()
+    match_pattern = rel_matcher.match(nodes=(molecule, reaction),
+                                      r_type="REACTANT" #,
+                                      # properties = {"generation_formed": generation_formed}
+                                      )
+    # if pattern does not exist in db
+    if len(list(match_pattern)) <= 0:
+        tx = graph.begin()
+        # see documentation for weird Relationship function; order of args go:
+        # from node, relationship, to node, and then kwargs for relationship properties
+        # https://py2neo.org/v4/data.html#py2neo.data.Relationship
+        new_r = Relationship(molecule, "REACTANT", reaction,
+                             generation_formed=generation_formed)
+        tx.create(new_r)
+        tx.commit()
+        return new_r
+    return match_pattern
 
-    # create nodes
-    for _, row in molecules.iterrows():
-        create_molecule_if_not_exists(smiles_str = row['smiles_str'],
-                                      generation_formed = 0) # doesn't matter yet
-
-    # create relationships
-    for _, row in reactions.iterrows():
-        create_reaction_if_not_exists(from_smiles = row['from_node'],
-                                      to_smiles = row['to_node'])
-        # merge_query = rxn_query_str(reactant=row['from_node'],
-        #                             product=row['to_node'],
-        #                             rxn_id=row['rxn_id'])
+def create_product_rel_if_not_exists(smiles_str, rxn_id, generation_formed):
+    molecule = matcher.match("Molecule", smiles_str = smiles_str).first()
+    reaction = matcher.match("Reaction", id = rxn_id).first()
+    match_pattern = rel_matcher.match(nodes=(reaction, molecule),
+                                      r_type="PRODUCT" #,
+                                      # properties = {"generation_formed": generation_formed}
+                                      )
+    # if pattern does not exist in db
+    if len(list(match_pattern)) <= 0:
+        tx = graph.begin()
+        # see documentation for weird Relationship function; order of args go:
+        # from node, relationship, to node, and then kwargs for relationship properties
+        # https://py2neo.org/v4/data.html#py2neo.data.Relationship
+        new_r = Relationship(reaction, "PRODUCT", molecule,
+                             generation_formed=generation_formed)
+        tx.create(new_r)
+        tx.commit()
+        return new_r
+    return match_pattern
 
 
 def save_query_results(generation_num, query_result, file_name, this_out_folder):
@@ -795,91 +713,91 @@ def graph_from_cypher(data):
                 raise TypeError("Unrecognized object")
     return G
 
-def nx2gt(nxG):
-    """
-    Converts a networkx graph to a graph-tool graph.
-    
-    Thanks to: https://bbengfort.github.io/snippets/2016/06/23/graph-tool-from-networkx.html
-    """
-    # Phase 0: Create a directed or undirected graph-tool Graph
-    gtG = gt.Graph(directed=nxG.is_directed())
-
-    # Add the Graph properties as "internal properties"
-    for key, value in nxG.graph.items():
-        # Convert the value and key into a type for graph-tool
-        tname, value, key = get_prop_type(value, key)
-
-        prop = gtG.new_graph_property(tname) # Create the PropertyMap
-        gtG.graph_properties[key] = prop     # Set the PropertyMap
-        gtG.graph_properties[key] = value    # Set the actual value
-
-    # Phase 1: Add the vertex and edge property maps
-    # Go through all nodes and edges and add seen properties
-    # Add the node properties first
-    nprops = set() # cache keys to only add properties once
-    for node, data in nxG.nodes_iter(data=True):
-
-        # Go through all the properties if not seen and add them.
-        for key, val in data.items():
-            if key in nprops: continue # Skip properties already added
-
-            # Convert the value and key into a type for graph-tool
-            tname, _, key  = get_prop_type(val, key)
-
-            prop = gtG.new_vertex_property(tname) # Create the PropertyMap
-            gtG.vertex_properties[key] = prop     # Set the PropertyMap
-
-            # Add the key to the already seen properties
-            nprops.add(key)
-
-    # Also add the node id: in NetworkX a node can be any hashable type, but
-    # in graph-tool node are defined as indices. So we capture any strings
-    # in a special PropertyMap called 'id' -- modify as needed!
-    gtG.vertex_properties['id'] = gtG.new_vertex_property('string')
-
-    # Add the edge properties second
-    eprops = set() # cache keys to only add properties once
-    for src, dst, data in nxG.edges_iter(data=True):
-
-        # Go through all the edge properties if not seen and add them.
-        for key, val in data.items():
-            if key in eprops: continue # Skip properties already added
-
-            # Convert the value and key into a type for graph-tool
-            tname, _, key = get_prop_type(val, key)
-
-            prop = gtG.new_edge_property(tname) # Create the PropertyMap
-            gtG.edge_properties[key] = prop     # Set the PropertyMap
-
-            # Add the key to the already seen properties
-            eprops.add(key)
-
-    # Phase 2: Actually add all the nodes and vertices with their properties
-    # Add the nodes
-    vertices = {} # vertex mapping for tracking edges later
-    for node, data in nxG.nodes_iter(data=True):
-
-        # Create the vertex and annotate for our edges later
-        v = gtG.add_vertex()
-        vertices[node] = v
-
-        # Set the vertex properties, not forgetting the id property
-        data['id'] = str(node)
-        for key, value in data.items():
-            gtG.vp[key][v] = value # vp is short for vertex_properties
-
-    # Add the edges
-    for src, dst, data in nxG.edges_iter(data=True):
-
-        # Look up the vertex structs from our vertices mapping and add edge.
-        e = gtG.add_edge(vertices[src], vertices[dst])
-
-        # Add the edge properties
-        for key, value in data.items():
-            gtG.ep[key][e] = value # ep is short for edge_properties
-
-    # Done, finally!
-    return gtG
+# def nx2gt(nxG):
+#     """
+#     Converts a networkx graph to a graph-tool graph.
+# 
+#     Thanks to: https://bbengfort.github.io/snippets/2016/06/23/graph-tool-from-networkx.html
+#     """
+#     # Phase 0: Create a directed or undirected graph-tool Graph
+#     gtG = gt.Graph(directed=nxG.is_directed())
+# 
+#     # Add the Graph properties as "internal properties"
+#     for key, value in nxG.graph.items():
+#         # Convert the value and key into a type for graph-tool
+#         tname, value, key = get_prop_type(value, key)
+# 
+#         prop = gtG.new_graph_property(tname) # Create the PropertyMap
+#         gtG.graph_properties[key] = prop     # Set the PropertyMap
+#         gtG.graph_properties[key] = value    # Set the actual value
+# 
+#     # Phase 1: Add the vertex and edge property maps
+#     # Go through all nodes and edges and add seen properties
+#     # Add the node properties first
+#     nprops = set() # cache keys to only add properties once
+#     for node, data in nxG.nodes_iter(data=True):
+# 
+#         # Go through all the properties if not seen and add them.
+#         for key, val in data.items():
+#             if key in nprops: continue # Skip properties already added
+# 
+#             # Convert the value and key into a type for graph-tool
+#             tname, _, key  = get_prop_type(val, key)
+# 
+#             prop = gtG.new_vertex_property(tname) # Create the PropertyMap
+#             gtG.vertex_properties[key] = prop     # Set the PropertyMap
+# 
+#             # Add the key to the already seen properties
+#             nprops.add(key)
+# 
+#     # Also add the node id: in NetworkX a node can be any hashable type, but
+#     # in graph-tool node are defined as indices. So we capture any strings
+#     # in a special PropertyMap called 'id' -- modify as needed!
+#     gtG.vertex_properties['id'] = gtG.new_vertex_property('string')
+# 
+#     # Add the edge properties second
+#     eprops = set() # cache keys to only add properties once
+#     for src, dst, data in nxG.edges_iter(data=True):
+# 
+#         # Go through all the edge properties if not seen and add them.
+#         for key, val in data.items():
+#             if key in eprops: continue # Skip properties already added
+# 
+#             # Convert the value and key into a type for graph-tool
+#             tname, _, key = get_prop_type(val, key)
+# 
+#             prop = gtG.new_edge_property(tname) # Create the PropertyMap
+#             gtG.edge_properties[key] = prop     # Set the PropertyMap
+# 
+#             # Add the key to the already seen properties
+#             eprops.add(key)
+# 
+#     # Phase 2: Actually add all the nodes and vertices with their properties
+#     # Add the nodes
+#     vertices = {} # vertex mapping for tracking edges later
+#     for node, data in nxG.nodes_iter(data=True):
+# 
+#         # Create the vertex and annotate for our edges later
+#         v = gtG.add_vertex()
+#         vertices[node] = v
+# 
+#         # Set the vertex properties, not forgetting the id property
+#         data['id'] = str(node)
+#         for key, value in data.items():
+#             gtG.vp[key][v] = value # vp is short for vertex_properties
+# 
+#     # Add the edges
+#     for src, dst, data in nxG.edges_iter(data=True):
+# 
+#         # Look up the vertex structs from our vertices mapping and add edge.
+#         e = gtG.add_edge(vertices[src], vertices[dst])
+# 
+#         # Add the edge properties
+#         for key, value in data.items():
+#             gtG.ep[key][e] = value # ep is short for edge_properties
+# 
+#     # Done, finally!
+#     return gtG
 
 
 def network_visualization_by_gen(query_results_folder, generation_num):
@@ -1231,50 +1149,53 @@ def import_data_from_MOD_exports(mod_exports_folder_path, network_name, generati
             # of the molecules to be imported
             if SHUFFLE_GENERATION_DATA:
                 random.shuffle(rels) # random.shuffle(nodes)
-            from_mols, to_mols = split_rels_into_from_and_to_mols(rels)
+            # from_mols, to_mols = split_rels_into_from_and_to_mols(rels)
             
             # create an output folder for this generation within query_results_folder
             os.mkdir("output/" + query_results_folder + f"/{generation_num}")
             
             # import molecule nodes
-            print("\t\tImporting nodes...")
+            print("\t\tImporting Molecule and Reaction nodes...")
             
             # iterate through molecules (make sure all molecule nodes are imported
             # before we try to merge edges onto them)
             for rel in rels:
                 if rel != '':
                     rel_data = rel.split('\t')
+                    # import molecule node
                     smiles_str = rel_data[1]
                     if smiles_str != "":
                         create_molecule_if_not_exists(smiles_str = smiles_str,
                                                       generation_formed = generation_num)
+                    # import reaction node
+                    rxn_id = rel_data[0]
+                    rxn_rule = rel_data[3]
+                    if rxn_id != "":
+                        create_reaction_if_not_exists(id = rxn_id,
+                                                      rule = rxn_rule,
+                                                      generation_formed = generation_num)
+            # wait = input("Press enter...")
             
             # create relationship edges
-            print("\t\tImporting relationships...")
-            for rel in from_mols:
-                # for each molecule being consumed, find all reactions by this
-                # reaction ID that are being formed, and create an edge
-                # between each
-                if rel != "":
-                    rel_data_from = rel.split('\t')
-                    from_smiles = rel_data_from[1]
-                    rxn_id = rel_data_from[0]
-                    # gen_consumpt_scalar = rel_data_from[2]
-                    rxn_rule = rel_data_from[3]
-                    if smiles_passes_filter(from_smiles):
-                        to_mols_this_rxn = filter_to_mols_by_rxn_id(rxn_id, to_mols)
-                        for to_mol_this_rxn in to_mols_this_rxn:
-                            # just get to_smiles from to_mol_this_rxn data; reaction
-                            # ID and rule should be the same
-                            rel_data_to = to_mol_this_rxn.split("\t")
-                            to_smiles = rel_data_to[1]
-                            if smiles_passes_filter(to_smiles):
-                                create_relationship_if_not_exists(rxn_id = rxn_id,
-                                                                  from_smiles = from_smiles,
-                                                                  to_smiles = to_smiles,
-                                                                  rule = rxn_rule,
-                                                                  generation_formed = generation_num)
-                                # print(f"SUCCESS: {from_smiles}->{to_smiles}")
+            print("\t\tImporting REACTANT/PRODUCT edges...")
+            for rel in rels:
+                if rel != '':
+                    rel_data = rel.split('\t')
+                    rxn_id = rel_data[0]
+                    smiles_str = rel_data[1]
+                    gen_consumpt_scalar = int(rel_data[2])
+                    rxn_rule = rel_data[3]
+                    if gen_consumpt_scalar == 1:
+                        # this molecule is being generated, therefore it is a PRODUCT
+                        create_product_rel_if_not_exists(smiles_str = smiles_str,
+                                                         rxn_id = rxn_id,
+                                                         generation_formed = generation_num)
+                    elif gen_consumpt_scalar == -1:
+                        # this molecule is being consumed, therefore it is a REACTANT
+                        create_reactant_rel_if_not_exists(smiles_str = smiles_str,
+                                                          rxn_id = rxn_id,
+                                                          generation_formed = generation_num)
+            # wait = input("Press enter...")
             
             # Now that the generation's data has been loaded into the network,
             # take a snapshot of it. Only take snapshot at each generation,
