@@ -1196,22 +1196,22 @@ def import_data_from_MOD_exports(mod_exports_folder_path, network_name, generati
                             create_reactant_rel_if_not_exists(smiles_str = smiles_str,
                                                               rxn_id = rxn_id,
                                                               generation_formed = generation_num)
-            wait = input("Press enter...")
+            # wait = input("Press enter...")
             
             # Now that the generation's data has been loaded into the network,
             # take a snapshot of it. Only take snapshot at each generation,
             # if NETWORK_SNAPSHOTS is True. Otherwise, only take a snapshot
             # if this is the last generation.
-            if ((not NETWORK_SNAPSHOTS) and (generation_num == generation_limit)):
-                print("\t\tTaking statistics/visualizations snapshot of network...")
-                take_network_snapshot(generation_num,
-                                      query_results_folder,
-                                      mod_exports_folder_path)
-            elif NETWORK_SNAPSHOTS:
-                print("\t\tTaking statistics/visualizations snapshot of network...")
-                take_network_snapshot(generation_num,
-                                      query_results_folder,
-                                      mod_exports_folder_path)
+            # if ((not NETWORK_SNAPSHOTS) and (generation_num == generation_limit)):
+            #     print("\t\tTaking statistics/visualizations snapshot of network...")
+            #     take_network_snapshot(generation_num,
+            #                           query_results_folder,
+            #                           mod_exports_folder_path)
+            # elif NETWORK_SNAPSHOTS:
+            #     print("\t\tTaking statistics/visualizations snapshot of network...")
+            #     take_network_snapshot(generation_num,
+            #                           query_results_folder,
+            #                           mod_exports_folder_path)
     
     # now that all snapshots of the network have been taken, compile all of the
     # data into one source (only if NETWORK_SNAPSHOTS enabled)
