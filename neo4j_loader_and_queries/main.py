@@ -1174,7 +1174,6 @@ def import_data_from_MOD_exports(mod_exports_folder_path, network_name, generati
                         create_reaction_if_not_exists(id = rxn_id,
                                                       rule = rxn_rule,
                                                       generation_formed = generation_num)
-            # wait = input("Press enter...")
             
             # create relationship edges
             print("\t\tImporting REACTANT/PRODUCT edges...")
