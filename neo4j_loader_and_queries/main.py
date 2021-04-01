@@ -53,6 +53,10 @@ PATTERN_MATCHES = True
 # number of patterns that can be matched so that the query stops executing as
 # soon as it reaches the pattern limit, and the matches are returned.
 NUM_STRUCTURES_LIMIT = 100
+# Limit the range of the ring size. Note that the ring size includes molecule
+# and reaction nodes, so if a ring of 3 molecules to 6 molecules is desired,
+# for example, then RING_SIZE_RANGE would be (3*2, 6*2), or (6, 12)
+RING_SIZE_RANGE = (6, 8) # (6, 8) is size 6-8 reaction+molecule nodes, or 3-4 molecule nodes only
 
 # Limit the number of generations that each network can be imported on. If None,
 # no limit--will default to the maximum number of generations generated. You may
@@ -182,7 +186,7 @@ def run_single_value_query(query, value):
 def get_tabulated_possible_autocatalytic_cycles(generation_num,
                                                 mod_exports_folder_path,
                                                 this_out_folder,
-                                                ring_size_range = (3,7),
+                                                ring_size_range = (6,8),
                                                 feeder_molecule_generation_range = None,
                                                 num_structures_limit = 100
                                                 ):
@@ -890,7 +894,7 @@ def take_network_snapshot(generation_num, query_results_folder, mod_exports_fold
         get_tabulated_possible_autocatalytic_cycles(generation_num = generation_num,
                                                     mod_exports_folder_path = mod_exports_folder_path,
                                                     this_out_folder = query_results_folder,
-                                                    ring_size_range = (3, 5),
+                                                    ring_size_range = RING_SIZE_RANGE,
                                                     feeder_molecule_generation_range = None,
                                                     num_structures_limit = NUM_STRUCTURES_LIMIT) # set to 100 for small batch testing
     
@@ -1201,16 +1205,16 @@ def import_data_from_MOD_exports(mod_exports_folder_path, network_name, generati
             # take a snapshot of it. Only take snapshot at each generation,
             # if NETWORK_SNAPSHOTS is True. Otherwise, only take a snapshot
             # if this is the last generation.
-            # if ((not NETWORK_SNAPSHOTS) and (generation_num == generation_limit)):
-            #     print("\t\tTaking statistics/visualizations snapshot of network...")
-            #     take_network_snapshot(generation_num,
-            #                           query_results_folder,
-            #                           mod_exports_folder_path)
-            # elif NETWORK_SNAPSHOTS:
-            #     print("\t\tTaking statistics/visualizations snapshot of network...")
-            #     take_network_snapshot(generation_num,
-            #                           query_results_folder,
-            #                           mod_exports_folder_path)
+            if ((not NETWORK_SNAPSHOTS) and (generation_num == generation_limit)):
+                print("\t\tTaking statistics/visualizations snapshot of network...")
+                take_network_snapshot(generation_num,
+                                      query_results_folder,
+                                      mod_exports_folder_path)
+            elif NETWORK_SNAPSHOTS:
+                print("\t\tTaking statistics/visualizations snapshot of network...")
+                take_network_snapshot(generation_num,
+                                      query_results_folder,
+                                      mod_exports_folder_path)
     
     # now that all snapshots of the network have been taken, compile all of the
     # data into one source (only if NETWORK_SNAPSHOTS enabled)

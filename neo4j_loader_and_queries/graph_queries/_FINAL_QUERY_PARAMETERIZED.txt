@@ -1,0 +1,56 @@
+// Match the 4 major structures for the autocatalytic pattern match
+
+// 0. Ring structure
+MATCH ringPath=(beginMol:Molecule)-[*{{MIN_RING_SIZE}}..{{MAX_RING_SIZE}}]->(beginMol:Molecule)
+WITH NODES(ringPath) AS ringNodes, ringPath, beginMol
+UNWIND ringNodes AS rN
+WITH [node in NODES(ringPath) WHERE (node:Molecule) | node.smiles_str] AS ringMols, ringPath, relationships(ringPath) as ringRels, beginMol, [node in NODES(ringPath) WHERE (node:Reaction) | node.id] AS rxn_ids, ringNodes
+WHERE size(ringMols) > 2
+AND size(ringRels) = (size(ringMols) - 1) * 2 // beginMol is double counted, hence the -1. ringMols only includes molecule nodes, not reaction node, so double the number of molecule nodes to get the number of molecule nodes + number of reaction nodes. Then, the number of reaction nodes + molecule nodes should equal the total number of edges in the ring. Any less edges means the pattern is not a ring shape; it is probably a deformed figure 8 looking shape
+//RETURN ringMols, ringPath, ringRels, rxn_ids // , size(ringRels), size(ringMols)
+//LIMIT 1
+
+// 1. Molecule in ring splitting to form the beginMol (autocatalytic cord structure)
+MATCH autocatPath=(catRxnInRing:Reaction)-[:PRODUCT]->(catPathMol:Molecule)-[:REACTANT]->(catPathRxn:Reaction)-[:PRODUCT]->(beginMol:Molecule)
+WHERE catRxnInRing.id IN rxn_ids
+AND NOT catPathMol IN ringNodes
+WITH ringMols, ringPath, ringRels, beginMol, catRxnInRing, autocatPath, relationships(autocatPath) as autocatPathRels, nodes(autocatPath) as autocatPathNodes, ringNodes
+//RETURN ringMols, ringPath, ringRels, beginMol, catRxnInRing, autocatPath, relationships(autocatPath) as autocatPathRels, nodes(autocatPath) as autocatPathNodes
+//LIMIT 1
+
+
+// 2. Ring consumer structure
+MATCH branchedBeginMolPath=(beginMol:Molecule)-[*1..3]->(beginMolConsumer:Molecule)
+WHERE beginMol <> beginMolConsumer
+WITH branchedBeginMolPath, beginMol, beginMolConsumer, ringMols as ringMols, ringPath as ringPath, ringRels as ringRels, catRxnInRing, autocatPath, autocatPathRels, autocatPathNodes, ringNodes
+//RETURN branchedBeginMolPath, beginMol, beginMolConsumer, ringMols as ringMols, ringPath as ringPath, ringRels as ringRels, catRxnInRing, autocatPath, autocatPathRels, autocatPathNodes
+//LIMIT 1
+
+
+
+// 3. Feeder structure
+MATCH attachedPath=(feederMol:Molecule)-[rR1:REACTANT]->(rxnF:Reaction)-[rP1:PRODUCT]->(intermediateMol:Molecule)-[rR2:REACTANT]-(rxnC:Reaction)-[rP2:PRODUCT]->(consumerMol:Molecule)
+WITH feederMol, intermediateMol, consumerMol, ringMols as ringMols, ringPath as ringPath, ringRels as ringRels, beginMol as beginMol, beginMolConsumer as beginMolConsumer, branchedBeginMolPath as branchedBeginMolPath, attachedPath as attachedPath, catRxnInRing, autocatPath, autocatPathRels, autocatPathNodes, ringNodes, rR1, rR2
+WHERE NOT beginMolConsumer.smiles_str IN ringMols
+AND beginMolConsumer <> feederMol
+AND beginMol <> feederMol
+AND feederMol <> consumerMol
+AND beginMol <> consumerMol
+AND NOT feederMol.smiles_str IN ringMols
+AND NOT consumerMol.smiles_str IN ringMols
+AND intermediateMol.smiles_str IN ringMols
+AND beginMolConsumer <> consumerMol
+AND intermediateMol <> beginMol
+AND intermediateMol <> beginMol
+AND rxnF IN ringNodes
+AND NOT rR1 in ringRels
+AND NOT rR2 in ringRels
+//AND NOT (beginMol:Molecule)<-[*]->(beginMol:Molecule) // Assert that the relationships in the ringPath must travel all in the same direction
+// control the generation range at which the cycle is formed by assuming it can't exist until after the feederMol is formed
+{{COMMENT_OUT_FEEDER_GEN_LOGIC}}AND feederMol.generation_formed >= {{MIN_FEEDER_GENERATION}} 
+{{COMMENT_OUT_FEEDER_GEN_LOGIC}}AND feederMol.generation_formed <= {{MAX_FEEDER_GENERATION}}
+
+
+// Finally, return matching structure(s) to look at! (Tabulate results of many using a different query)
+RETURN ringMols, size(ringMols) as countMolsInRing, ringRels, [r in ringRels | r.rule] as ringRules, relationships(branchedBeginMolPath) as branchedBeginMolPathRels, relationships(attachedPath) as attachedPathRels, beginMol, beginMolConsumer, feederMol, intermediateMol, consumerMol, nodes(ringPath) as ringPathNodes, nodes(branchedBeginMolPath) as branchedBeginMolPathNodes, nodes(attachedPath) as attachedPathNodes, catRxnInRing, autocatPathRels, autocatPathNodes // ringPath, branchedBeginMolPath, attachedPath, autocatPath
+LIMIT {{NUM_STRUCTURES_LIMIT}}

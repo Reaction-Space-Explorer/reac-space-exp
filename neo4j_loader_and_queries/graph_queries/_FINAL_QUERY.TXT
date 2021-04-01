@@ -11,8 +11,9 @@ AND size(ringRels) = (size(ringMols) - 1) * 2 // beginMol is double counted, hen
 //LIMIT 1
 
 // 1. Molecule in ring splitting to form the beginMol (autocatalytic cord structure)
-MATCH autocatPath=(catRxnInRing:Reaction)-[*1..3]->(beginMol:Molecule)
+MATCH autocatPath=(catRxnInRing:Reaction)-[:PRODUCT]->(catPathMol:Molecule)-[:REACTANT]->(catPathRxn:Reaction)-[:PRODUCT]->(beginMol:Molecule)
 WHERE catRxnInRing.id IN rxn_ids
+AND NOT catPathMol IN ringNodes
 WITH ringMols, ringPath, ringRels, beginMol, catRxnInRing, autocatPath, relationships(autocatPath) as autocatPathRels, nodes(autocatPath) as autocatPathNodes, ringNodes
 //RETURN ringMols, ringPath, ringRels, beginMol, catRxnInRing, autocatPath, relationships(autocatPath) as autocatPathRels, nodes(autocatPath) as autocatPathNodes
 //LIMIT 1
