@@ -54,3 +54,11 @@ AND NOT rR2 in ringRels
 // Finally, return matching structure(s) to look at! (Tabulate results of many using a different query)
 RETURN ringMols, size(ringMols) as countMolsInRing, ringRels, [r in ringRels | r.rule] as ringRules, relationships(branchedBeginMolPath) as branchedBeginMolPathRels, relationships(attachedPath) as attachedPathRels, beginMol, beginMolConsumer, feederMol, intermediateMol, consumerMol, nodes(ringPath) as ringPathNodes, nodes(branchedBeginMolPath) as branchedBeginMolPathNodes, nodes(attachedPath) as attachedPathNodes, catRxnInRing, autocatPathRels, autocatPathNodes // ringPath, branchedBeginMolPath, attachedPath, autocatPath
 LIMIT {{NUM_STRUCTURES_LIMIT}}
+
+
+
+
+
+
+
+
