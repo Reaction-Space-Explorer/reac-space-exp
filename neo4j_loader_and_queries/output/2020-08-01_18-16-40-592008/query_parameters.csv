@@ -1,6 +1,0 @@
-parameter,value
-min_ring_size,3.0
-max_ring_size,5.0
-min_feeder_gen,
-max_feeder_gen,
-num_structures_limit,10000.0
