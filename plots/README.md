@@ -11,6 +11,8 @@ The code is contained in [mass_spectra_plot.ipynb](mass_spectra_plot.ipynb). A f
 ## Structural isomers counts
 Count of structural isomers in the network as a function of generation, plotted against exact weight. Code is available in [struct_isomers.py](struct_isomers.py).
 
+## Network growth by generation
+[growth_by_gen.py](growth_by_gen.py): How the number of products, rule applications and computation time varied with generation.
 ## Effect of upper limit on allowed molecular weight
 [mass_limit_effect.py](mass_limit_effect.py): to see how the number of products blows up if the limit on the max MW allowed in the network is varied. The data used came from run logs, summarized below.
 
