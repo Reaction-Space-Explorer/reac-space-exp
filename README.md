@@ -16,5 +16,4 @@ To-be-updated.
 
 * ~Try to match all the possible structures in the Y&M paper.~
     * 96% structures have matched for glucose degradation, 100% for formose.
-* ~~See which step in the tautomer cleaning process is the most inefficient.~~
-    * The slowest part is enumerating all possible tautomers for the given molecules. Takes more time to enumerate the possibilties than it does to produce the molecules themselves.
+* For the future take into account Kinetics for the molecules in the network (https://rmg.mit.edu/) 

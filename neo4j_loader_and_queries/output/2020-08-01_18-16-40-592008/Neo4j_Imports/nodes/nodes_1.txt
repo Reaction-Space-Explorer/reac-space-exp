@@ -1,4 +1,0 @@
-0,[Md],Mass of the most abundat,Termolecular
-1,C,16.031300127999998,Molecule
-2,[CH3],15.023475095999999,Molecule
-3,[H],1.007825032,Molecule
