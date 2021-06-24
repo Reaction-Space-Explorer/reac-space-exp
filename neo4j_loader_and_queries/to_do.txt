@@ -1,0 +1,9 @@
+3 membered cycle and 4 membered cycle
+
+show CSV output in supporting examples section
+
+do samples on glucose network only
+
+try to seed query start different place every time (try to random shuffle entries in each generation)
+
+try networkx diagram for autocatalysis pattern
