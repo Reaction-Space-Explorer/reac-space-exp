@@ -1,7 +1,9 @@
 # Installation
-I made this tut because I thought some people were having trouble setting MOD up. I made this guide for Ubuntu based builds but I think you can build it on Windows too. A Ubuntu VM might work equally well.
+I made this tut because I thought some people were having trouble setting MOD up. I made this guide for Ubuntu based builds but I've heard it can be built on [Windows subsystem for Linux](https://en.wikipedia.org/wiki/Windows_Subsystem_for_Linux) as well. A Ubuntu VM on Windows might work equally well. And personally, I now use it on Manjaro which is based on Arch.
 
-Some of the steps might seem like a copy-off from the installation website but I tried to add a few words to make life easy for others. I've also updated to provide resolutions for many bugs.
+**2021 Update**: A ```conda``` package as well as a Docker image is available for MOD (see [this page](http://jakobandersen.github.io/mod/installation.html)), though for a few people, conda couldn't do the job due to some weird reasons. A lot of the dependencies I listed below can be installed quickly if you do it using the ```bindep``` file (see [official compilation from source instructions](http://jakobandersen.github.io/mod/compiling.html)) and the also the ```requirements.txt```. Nevertheless, I believe the following is still relevant in case someone gets stuck. Let me know if something is outdated and I will try to fix that.
+
+These are based on the instructions on Andersen's website but I tried to add a few words and resolution of a few errors to make life simpler for others.
 
 First off, install the following (which is a huge list)
 * CMake
@@ -37,40 +39,35 @@ First off, install the following (which is a huge list)
 * Some LaTeX distribution (MOD uses LaTeX to generate the PDF output) with some science packages (they were needed in my case)
     * Here are some terminal commands to make it easier for you
     ```bash
-    sudo apt install -y texlive-base tex-livescience texlive-latex-base texlive-latex-extra
+    sudo apt install -y texlive-base texlive-science texlive-latex-base texlive-latex-extra
     ```
 * OpenBabel
     ```bash
     sudo apt-get install -y openbabel libopenbabel-dev
     ```
-    * Note: Apparently MOD wants to use some version of 2.0 series. If "babel -v" prints something like OpenBabel 2.3.2, there should be no problem. There was a problem for those who had 3.0.
-    * Note 2: In Ubuntu 20.04, older versions of most packages aren't available under ```sudo apt``` (so this applies even to openbabel and libopenbabel-dev as well) but this can be resolved. There is a file named **sources.list** in the folder ```/etc/apt/``` which contains the list of sources where ```apt``` gets its list of packages from. To edit this file, you need root privileges, so perhaps running the text editor using ```sudo``` should help.
+    * *2021 Update*: MOD works fine with openbabel v3
+#### Note 2:
+In Ubuntu 20.04, certain versions of a few packages aren't available under ```apt``` (so this applies even to openbabel and libopenbabel-dev as well) but this can be resolved. There is a file named **sources.list** in the folder ```/etc/apt/``` which contains the list of sources where ```apt``` gets its list of packages from. To edit this file, you need root privileges, so perhaps running the text editor using ```sudo``` should help.
     ```sudo gedit /etc/apt/sources.list```
     Then add this line to the bottom of the file and save
     ```bash
     deb http://cz.archive.ubuntu.com/ubuntu eoan main universe
     ```
     Then run the following in the terminal
-    Now you should be able to access **eoan** packages(Eoan Ermine is the name of Ubuntu 19.10 release), which supported the versions we desire. Don't worry, everything's safe.
+    Now you should be able to access **eoan** packages (Eoan is the name of Ubuntu 19.10 release), which supported the versions we desire. Don't worry, everything's safe.
 
     Then you need to do ```sudo apt update``` which will refresh the list of packages available (this time, it will include those eoan packages). You can then do:
     ```bash
-    sudo apt install openbabel=2.4.1+dfsg-3 libopenbabel-dev=2.4.1+dfsg-3
+    sudo apt install openbabel libopenbabel-dev
     ```
     Note that we have told **apt** to forcefully install specific versions of these packages.
-* Sphinx (which is a documentation generator for Python)
+* **Optional:**Sphinx, which is a documentation generator for Python, is not needed if you're setting ```-DBUILD_DOC=off``` while running ```cmake``` to build MOD. Personally, I never used the local documentation anyways and relied on 
     * I think I used the command-line
     ```bash
     pip install -U sphinx
     ```
-    * Ubuntu 20.04 users might not receive the minimum required version (>=2.3.1) through ```sudo apt``` so pip is preferable (which installed 3.1.1 for me). Otherwise, after adding the following to your **/etc/apt/sources.list** to force 2.4.3
-    ```deb http://cz.archive.ubuntu.com/ubuntu groovy main```
+    * Again, ```apt``` might not have the latest version for sphinx, I think ```pip``` is safer.
 
-    do
-    ```bash
-    sudo apt update
-    sudo apt install python3-sphinx=2.4.3-2ubuntu2
-    ```
 
 ## Clone the GitHub repository
 Once you have all those dependencies installed (which would take a bit of time but there's no alternative), clone the [GitHub repo](https://github.com/jakobandersen/mod) of MOD
@@ -93,13 +90,15 @@ cmake ../ <options>
 make -j 
 make install
 ```
-In the ```<options>```, you **have to** turn -DBUILD_PY_MOD=on and -DBUILD_POST_MOD=on for our purposes. I recommend passing almost all options (atleast those which were =on) on the main [installation page](http://jakobandersen.github.io/mod/installation.html). For your convenience, here's what I used
+In the ```<options>```, you **have to** turn ```-DBUILD_PY_MOD=on``` and ```-DBUILD_POST_MOD=on``` for our purposes. Check the main [compilation from source instructions](http://jakobandersen.github.io/mod/compiling.html) for detail about these . For your convenience, here's what I used
 
 ```bash
-cmake ../ -DBUILD_DOC=on -DBUILD_POST_MOD=on -DBUILD_PY_MOD=on -DBUILD_TESTING_SANITIZERS=on -DENABLE_SYMBOL_HIDING=on -DENABLE_DEP_SYMBOL_HIDING=on -DENABLE_IPO=on -DUSE_NESTED_GRAPH_CANON=on -DWITH_OPENBABEL=on
+cmake ../ -DBUILD_DOC=off -DBUILD_POST_MOD=on -DBUILD_PY_MOD=on -DBUILD_TESTING_SANITIZERS=on -DENABLE_SYMBOL_HIDING=on -DENABLE_DEP_SYMBOL_HIDING=on -DENABLE_IPO=on -DUSE_NESTED_GRAPH_CANON=on -DWITH_OPENBABEL=on
 ```
-
-*Note: The above process takes quite a bit of time.*
+The log of this might be worth keeping for inspection, in case you want to see which version of which dependency it picked up. The next step is to
+```
+make
+```
 In case you get some error like "Can't write/create" or "Permission denied" or anything of the sort in the last command. Try using **sudo** prefix, which is intended to give you root privileges while executing the command
 
 ```bash
@@ -117,13 +116,12 @@ Some people on Ubuntu 20.04 (including myself) or those with problems with Boost
 ```python
 ImportError: /usr/lib/x86_64-linux-gnu/libboost_python38.so.1.67.0: undefined symbol: _Py_tracemalloc_config
 ```
-Apparently ```sudo``` prefix before the **mod** command seemed to have had fixed it. But that's an illusion: the problem is that the boost libraries were built with python 3.8 (Ubuntu 20.04 comes with 3.8) and a different python version is being used to run it. This is because ```sudo``` overrides environment variables and aliases (check the difference between ```python3 --version``` and ```sudo python3 --version```)
-Don't use ```sudo``` to run any code (as Dr. Andersen himself said). The solution for me was to install Boost using **conda**.
+Apparently ```sudo``` prefix before the **mod** command seemed to have had fixed it. But that's an illusion: the problem is that the boost libraries were built with python 3.8 (Ubuntu 20.04 comes with 3.8) and a different python version is being used to run it. This is because ```sudo``` overrides environment variables and aliases (check the difference between ```python3 --version``` and ```sudo python3 --version```). The solution for me was to install Boost using **conda**.
 
 ```bash
 conda install -c anaconda boost
 ```
-And pass an additional option to **cmake** to force it to use this version of boost ```-DBOOST_ROOT=~/anaconda3```
+And pass this additional parameter to ```cmake``` to force it to search this installation of boost: ```-DBOOST_ROOT=~/anaconda3``` (it would be ```miniconda3``` if you are using that instead).
 
 ## How to run files with MOD
 If you have a file you want to run, type the command
@@ -140,7 +138,7 @@ in your code. But as you might figure out that importing it gives you a package 
 ```bash
 mod
 ```
-which outputs something like
+which outputs something like (note: this is a year old and the latest mod version is **0.12** but the essence is the same).
 ```bash
 MØD Wrapper --------------------------------------------------------
 Prefix: /usr/local/bin/..
@@ -158,4 +156,4 @@ For a more permanent addition, go to your $HOME directory and view the hidden fi
 export PYTHONPATH=$PYTHONPATH:/usr/local/lib/
 ```
 ## Still having trouble?
-Some of your problems might be well known, so google your errors and see if you can fix them. Message me on Slack in the #reactionnetworkgeneration channel or personally (whichever you prefer).
+Some of your problems might be well known, so google your errors and see if you can fix them. Message me on Slack or personally (whichever you prefer).
