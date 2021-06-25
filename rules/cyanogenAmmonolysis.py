@@ -34,4 +34,3 @@ cyanogenAmonolysis = [ruleGMLString("""rule [
 	]
 ]""")
 ]
-

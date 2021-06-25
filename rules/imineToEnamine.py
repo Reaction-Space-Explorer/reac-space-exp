@@ -13,7 +13,7 @@ imineToEnamine = [ruleGMLString("""rule [
 		node [ id 3 label "C" ]
 		node [ id 4 label "C" ]
 		node [ id 5 label "H" ]
-	]	
+	]
 	right [
 		edge [ source 2 target 5 label "-" ]
 		edge [ source 2 target 3 label "-" ]

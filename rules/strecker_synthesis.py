@@ -55,3 +55,5 @@ strecker_syn = ruleGMLString("""rule [
         edgeLabels [ label "=" ]
     ]
 ]""")
+
+#strecker_syn.print()

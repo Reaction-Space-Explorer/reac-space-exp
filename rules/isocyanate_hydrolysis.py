@@ -25,4 +25,4 @@ isocyanate_hydro = ruleGMLString("""rule [
     ]
 ]""")
 
-isocyanate_hydro.print()
+#isocyanate_hydro.print()

@@ -143,8 +143,8 @@ for ring_size in (5, 6, 7):
 	for r in create_ring_closure(ring_size):
 		ring_closure.append(r)
 
-for r in ring_closure:
-	r.print()
+'''for r in ring_closure:
+	r.print()'''
 ring_closure_inv = []
 for ring_size in (5, 6, 7):
 	for r in create_ring_closure(ring_size, is_inverse=True):

@@ -43,5 +43,5 @@ def create_ring_hydro(ring_size):
 
 ring_hydro_rules = [create_ring_hydro(size) for size in (5,6)]
 
-for r in ring_hydro_rules:
-    r.print()
+'''for r in ring_hydro_rules:
+    r.print()'''

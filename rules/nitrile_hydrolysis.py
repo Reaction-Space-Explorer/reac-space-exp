@@ -25,3 +25,5 @@ nitrile_hydrol = ruleGMLString("""rule [
     ]
 ]
 """)
+
+#nitrile_hydrol.print()

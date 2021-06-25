@@ -41,4 +41,3 @@ def streckerDegradationDicarbonylGen():
 				for r4 in attach_H_C(r3, 14, 16):
 					yield r4.loadRule()
 streckerDegradationDicarbonyl = [a for a in streckerDegradationDicarbonylGen()]
-

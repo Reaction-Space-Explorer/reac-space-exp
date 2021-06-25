@@ -1,3 +1,5 @@
+with_formaldehyde=False
+
 # Note: with_formaldehyde is a variable that must be initialized before you include main.py
 # or all.py or anything in your job file. Otherwise it will crash.
 if with_formaldehyde == True:
@@ -167,3 +169,5 @@ else:
 		return [ox_rule.loadRule(), red_rule.loadRule()]
 
 	cannizarro_glucose_rule = gen_cann_glucose()
+
+	cannizarro_glucose_rule[0].print()

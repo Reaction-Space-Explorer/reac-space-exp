@@ -10,8 +10,9 @@ postChapter('Pyruvic Acid')
 pyruvic = smiles("CC(=O)C(=O)O", "Pyruvic Acid")
 water = smiles("O", name="Water")# Number of generations we want to perform
 generations = 5
- 
-dg = DG(graphDatabase=inputGraphs,
+
+dg = DG.load(inputGraphs, inputRules, 'pyruvic_6gens_dec26.dg')
+'''dg = DG(graphDatabase=inputGraphs,
     labelSettings=LabelSettings(LabelType.Term, LabelRelation.Specialisation))
  
 subset = inputGraphs
@@ -39,4 +40,9 @@ print("Dump file: ", f)
 
 with open('pyruvic_4gens.txt', 'w') as wr:
     for v in dg.vertices:
-        wr.write(f'{v.graph.smiles}\n')
+        wr.write(f'{v.graph.smiles}\n')'''
+        
+enol = smiles("[C]=[C]O", name="enol substruct", add=False)
+diol = smiles("O[C]O", name="diol substruct", add=False)
+find_substruct_producer(dg, enol, print_rule=True)
+find_substruct_producer(dg, diol, print_rule=True)

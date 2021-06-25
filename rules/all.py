@@ -66,7 +66,6 @@ for a in loaded:
 
 # These rules won't get inverted automatically
 include("ring_hydrol.py") # find a better name?
-include("amide_amidine_exchange.py")
 include("ester_ammonolysis.py")
 include("isocyanate_hydrolysis.py")
 include("cyanamidation.py")

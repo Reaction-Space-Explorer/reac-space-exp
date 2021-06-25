@@ -40,7 +40,7 @@ amide_hydrolysis = ruleGMLString("""rule [
 	]
 ]""")
 
-amide_hydrolysis.print()
+#amide_hydrolysis.print()
 
 # The following does only hydrolysis, not formation. Hydrolysis is not the preferred direction
 # in basic medium
@@ -100,5 +100,5 @@ amideFormationHydrolysis= [a for a in amideFormationHydrolysisGen()]
 p = GraphPrinter()
 p.withColour = True
 p.withIndex = True
-for r in amideFormationHydrolysis:
-	r.print(p)
+'''for r in amideFormationHydrolysis:
+	r.print(p)'''

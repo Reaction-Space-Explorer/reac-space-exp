@@ -2,7 +2,7 @@ import os
 import time
 import matplotlib.pyplot as plt
 
-from rdkit.Chem import SDMolSupplier, MolFromSmiles, MolToSmiles, Kekulize
+#from rdkit.Chem import SDMolSupplier, MolFromSmiles, MolToSmiles, Kekulize
 
 include(os.path.join('..', 'rules/all.py'))
 include("mod_to_neo4j_exporter.py")
@@ -58,21 +58,23 @@ for file_name in bad_rings_aromatics:
 allowed_structs = [smiles("O=C=O", name="Carbon Dioxide", add=False),
 					smiles("[N]=C=O", name="isocyanates", add=False)]
 
+
 # Make this a global variable (advantage being it can be changed in other reactions individually)
 max_mass_limit = 200
 
+print('MW limit = ', max_mass_limit)
 def pred(derivation):
 	"""
 	Keyword arguments:
 	d --- a derivation graph object
 	"""
 	for g in derivation.right:
+		if g.exactMass >= max_mass_limit:
+			return False
 		for allowed in allowed_structs:
 			if g.monomorphism(allowed) > 0:
 				return True
 		# Allow masses only lower than a certain maximum
-		if g.exactMass >= max_mass_limit:
-			return False
 		for fb in forbidden:
 			if fb.monomorphism(g, labelSettings=
 			LabelSettings(LabelType.Term, LabelRelation.Specialisation)) > 0:
@@ -113,6 +115,7 @@ with dg_new.build() as b:
 end_time = time.time()
 print("Time taken for this 4th round: ", end_time-start_time)'''
 
+':'
 
 def check_sdf_matches(dg, sdf_file, draw_structures=True, print_unmatching=False):
 	"""
@@ -195,27 +198,36 @@ def count_rules_by_gen(dg, output_txt):
 		for line in lines:
 			line = line.rstrip("\n") # get rid of new line character at the end of line
 			line_comps = line.split("\t") # first component is generation (e.g. G1), second is SMILES
-
-			if line_comps[0] in gen_smiles_map.keys(): 
-				gen_smiles_map[line_comps[0]].append(line_comps[1])
+			# line_comps[0] is 'Gn' while line_comps[0][1] gives just 'n'
+			if int(line_comps[0][1]) in gen_smiles_map.keys(): 
+				gen_smiles_map[line_comps[0][1]].append(line_comps[1])
 			else:
-				gen_smiles_map[line_comps[0]] = [line_comps[1]]
+				gen_smiles_map[line_comps[0][1]] = [line_comps[1]]
 	print("Searching in DG")
 	for gen, smiles_list in gen_smiles_map.items():
 		# this list will contain duplicates. the number of instances of a rule name will be the count
 		rules_applied_list = []
 		for edge in dg.edges:
-			produced_this_gen = False
-			# check if the products were produced this generation
+			# if all the targets appeared in this generation or before
+			# with at least one target appearing this gen, then it's safe to say it belongs to this gen.
+			flag_after_this_gen = False # is there a single 'target' which was produced after 'gen'
+			one_product_this_gen = False
+			# if this method looks sloppy, it's safest to use the Neo4j imports which have each reaction in each gen anyways.
 			for target in edge.targets:
-				# was this target produced in this generation 'gen'?
 				if target.graph.smiles in smiles_list:
 					#print(f'{target.graph.smiles} ({target.id}) connected by {edge} was produced in {gen}')
-					produced_this_gen = True
+					one_product_this_gen = True
 				else:
-					#print(f'{target.graph.smiles} ({target.id}) connected by {edge} was not produced in {gen}')
-					produced_this_gen = False
-			if produced_this_gen:
+					flag_list = [] # A list of True and False, depending on the 'if' test that follows
+					for i in range(1, len(gen)):
+						if target.graph.smiles in gen_smiles_map[i]:
+							#print(f'{target.graph.smiles} ({target.id}) connected by {edge} first appeared in  in {i}')
+							flag_list.append(True)
+						else:
+							flag_list.append(False)
+					if sum(flag_list) == 0: # A 'True' is worth 1. if it's not found in any gen before, then sum is 0
+						flag_after_this_gen = True
+			if flag_after_this_gen is not True:
 				for rule in edge.rules:
 					rules_applied_list.append(rule.name)
 		#print(f"\nRules in {gen}\n{rules_applied_list}")

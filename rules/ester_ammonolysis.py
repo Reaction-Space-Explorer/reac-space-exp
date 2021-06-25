@@ -28,4 +28,4 @@ ammonolysis_ester = ruleGMLString("""rule [
     ]
 ]""")
 
-ammonolysis_ester.print()
+#ammonolysis_ester.print()

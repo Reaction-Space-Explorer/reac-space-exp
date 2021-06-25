@@ -129,9 +129,3 @@ enamine_hydration = ruleGMLString("""rule [
 		edgeLabels [ label "=" ]
 	]
 ]""")
-
-p = GraphPrinter()
-p.withColour = True
-p.withIndex = True
-
-enamine_hydration.print(p)
