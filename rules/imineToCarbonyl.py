@@ -23,5 +23,7 @@ imineToCarbonyl = [ruleGMLString("""rule [
 		edge [ source 2 target 7 label "=" ]
 		edge [ source 4 target 6 label "-" ]
 		edge [ source 4 target 8 label "-" ]
-	]   
+	]
 ]""")]
+
+#imineToCarbonyl[0].print()

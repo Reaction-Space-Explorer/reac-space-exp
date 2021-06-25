@@ -14,7 +14,7 @@ water = smiles("O", name="Water")
 print("Finished loading from dump file")'''
 
 # Number of generations we want to perform
-generations = 6
+generations = 3
 
 dg = DG(graphDatabase=inputGraphs,
 	labelSettings=LabelSettings(LabelType.Term, LabelRelation.Specialisation))
@@ -42,14 +42,21 @@ with dg.build() as b:
 		#res = b.execute(addSubset(subset) >> addUniverse(universe))
 		
 		#export_to_neo4j(dg_obj = dg, generation_num = gen)
-		#write_gen_output(subset, gen+1, reaction_name="formose")
+		write_gen_output(subset, gen+1, reaction_name="formose")
 	print('Completed')
 
 # Dump the dg so it can be loaded again quickly without having to generate it from scratch.
 f = dg.dump()
 print("Dump file: ", f)
 
-check_sdf_matches(dg, "../../data/FormoseTestSetPlus5.sdf")
+#check_sdf_matches(dg, "../../data/FormoseTestSetPlus5.sdf")
 
 #count_rules_by_gen(dg, 'formose_output.txt')
 
+enol = smiles("[C]=[C]O", name="enol substruct", add=False)
+diol = smiles("O[C]O", name="diol substruct", add=False)
+
+print_reaction(dg, 'Aldol')
+
+find_substruct_producer(dg, enol, print_rule=True)
+find_substruct_producer(dg, diol, print_rule=True)

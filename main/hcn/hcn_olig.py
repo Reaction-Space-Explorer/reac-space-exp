@@ -1,26 +1,26 @@
 with_formaldehyde = False
-include("../main.py")
 
+include("../main.py")
 postChapter("HCN Oligmerisation")
 
 hcn = smiles("C#N", name="Hydrogen Cyanide")
 ammonia = smiles("N", name="Ammonia")
 water = smiles("O", name="Water")
 
-'''dg = DG.load(inputGraphs, inputRules, "5_dec17.dg")
+'''dg = DG.load(inputGraphs, inputRules, "4rounds_dec25.dg")
 print("Finished loading from dump file")'''
 
 # Number of generations we want to perform
-generations = 6
+generations = 7
 
 dg = DG(graphDatabase=inputGraphs,
 	labelSettings=LabelSettings(LabelType.Term, LabelRelation.Specialisation))
 
 subset = inputGraphs
 universe = []
-# In the following block, apart from generating the reactions, we may print structures
-# and reactions forming them that are not in the MS
-#postSection("Structures not found in MS")
+# dump initial reactants as part of "G0"
+write_gen_output(subset, generation=0, reaction_name="hcn_olig")
+
 with dg.build() as b:
 	for gen in range(generations):
 		start_time = time.time()
@@ -36,10 +36,8 @@ with dg.build() as b:
 		#print('Subset size after removal:', len(subset))
 		# This step replaces the previous subset (containing tautomers) with the cleaned subset
 		#res = b.execute(addSubset(subset) >> addUniverse(universe))
-		# now compare how man
-		# y of these simulations were found in the MS data.
-		#compare_sims(dg, gen+1, print_extra=False)
-		export_to_neo4j(dg_obj = dg, generation_num = gen)
+		# export some info for further analysis
+		export_to_neo4j(dg_obj = dg, generation_num = gen+1)
 		write_gen_output(subset, gen+1, reaction_name="hcn_olig")
 	print('Completed')
 
@@ -54,20 +52,19 @@ for v in dg.vertices:
 
 
 # Dump the dg so it can be loaded again quickly without having to generate it from scratch.
+
+
 f = dg.dump()
 print("Dump file: ", f)
 
-count_rules(dg)
+# NOTE: turn this on when you need to export it.
+#count_rules_by_gen(dg, 'hcn_olig_output.txt')
+#dg.print()
 
-'''with open("smiles5.txt", "w") as wr:
-	for v in dg.vertices:
-		wr.write(f"{v.graph.smiles}\n")'''
-		#if exoaminering.monomorphism(v.graph, labelSettings=
-		#	LabelSettings(LabelType.Term, LabelRelation.Specialisation)) > 0:
-		#	v.graph.print()
-		#	print("Found relevant structure!")
 
 check_sdf_matches(dg, "../../data/HCNfixed.sdf")
+
+# Check if any reactions are producing unwanted tautomers
 
 iminol = smiles("[N]=[C]O", name="iminol", add=False)
 aminol = smiles("[N][C]O", name="aminol", add=False)
@@ -78,8 +75,3 @@ find_substruct_producer(dg, aminol, print_rule=True)
 ##find_substruct_producer(dg, enol, print_rule=True)
 #find_substruct_producer(dg, diol, print_rule=True)
 find_substruct_producer(dg, diamine, print_rule=True)
-
-rule_names= ["nitriles", "Ring Closure", "Exoamine", "Ammonolysis", "CN", "Amine", "Amide"]
-# see what rules containing these words are doing
-#for name in rule_names:
-#	print_reaction(dg, reac_name=name)

@@ -132,9 +132,12 @@ def clean_taut(dg, dg_execute, algorithm="CMI"):
 	print(f"Took {time.time() - start_removing} to remove tautomers from the network")
 	return subset, universe
 
+
 def clean_taut_rdkit(dg, dg_execute):
 	"""
-	Clean tautomers from the derivation graph
+	Clean tautomers from the derivation graph using RDKit
+	This was initially created as a test but it turns out RDKit does too many proton shifts
+	and identifies unique species as tautomers. Considering that, Ambit with CMI algo could be a decent bet.
 
 	Keyword arguments:
 	dg          --- a DG (DerivationGraph) object instance holding the network

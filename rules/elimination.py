@@ -148,6 +148,12 @@ hydration_amine = ruleGMLString("""rule [
 		nodeLabels [ label "N" ]
 		edgeLabels [ label "-" ]
 	] 
+	constrainAdj [ id 2 op "=" count 0
+		nodeLabels [ label "O" ]
+		edgeLabels [ label "-" ]
+	]
+
+	# not amide/amidine, etc.
 	constrainAdj [ id 7 op "=" count 0 
 		nodeLabels [ label "O" label "N" ]
 		edgeLabels [ label "=" ]
@@ -158,4 +164,4 @@ hydration_amine = ruleGMLString("""rule [
 	]
 ]""")
 
-hydration_amine.print()
+#hydration_amine.print()

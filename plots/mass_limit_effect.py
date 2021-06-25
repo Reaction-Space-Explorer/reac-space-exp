@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
 
 # sorry for the spaghetti code, I know it can be written much more compactly but I was rushing.
-
 gen = [1, 2, 3]
 
 time_200 = [0.06462, 0.79871, 26.78112]

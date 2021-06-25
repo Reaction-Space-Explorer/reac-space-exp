@@ -10,6 +10,7 @@ from rdkit.Chem import MolFromSmiles
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gspec
 
+
 def count_struct_isomers(smiles_list):
 	"""
 	Counts the number of molecules with the same molecular formula
@@ -42,9 +43,9 @@ def count_struct_isomers(smiles_list):
 # This has now become redundant
 """
 def plot_spectra(exactwt_freq_dict, gen):
-	"""
+	'''
 	Stacked Bar Plot using matplotlib
-	"""
+	'''
 	# which marker (dot) color to use for which generation
 	#gen_colors = ['#ffa600', '#ff6361', '#bc5090', '#58508d', '#003f5c']
 	
@@ -75,7 +76,7 @@ def plot_lollipop(exactwt_freq_dict, gen, shared_axis=True):
 	Make a (shared axis) lollipop plot of the spectrum.
 	"""
 	# which marker (dot) color to use for which generation
-	gen_colors = ["blue", "red", "cyan", "g", "magenta"]
+	gen_colors = ["blue", "red", "cyan", "green", "magenta"]
 	
 	weights = list(exactwt_freq_dict.keys())
 	# normalized freqs
@@ -91,10 +92,12 @@ def plot_lollipop(exactwt_freq_dict, gen, shared_axis=True):
 	if shared_axis == True:
 		# if basefmt is not " " it will draw a coloured horizontal baseline at y=0
 		(markers, stemlines, baseline) = axes[gen-1].stem(weights, freqs, basefmt=" ",
-				 markerfmt=f"ko", use_line_collection=True)
+				 markerfmt=f"ko", use_line_collection=True) # replace 'k' by {gen_colors[gen-1][0]} for color by geneartion
 		#axes[gen-1].bar(weights, freqs, color='black', width=0.25, label=f'Generation {gen}')
 		axes[gen-1].set_yscale('log')
-		axes[gen-1].set_yticks(axis_ticks[gen-1])
+		axes[gen-1].set_yticks([10, 100, 1000]) # equal ticks for all subplots
+		# use below line for diff ticks for each subplot.
+		#axes[gen-1].set_yticks(axis_ticks[gen-1])
 		plt.setp(stemlines, linestyle="-", color='gray', linewidth=0.75)
 		plt.setp(markers, markersize=1, label=f"Generation {gen}")
 		axes[gen-1].legend(loc='upper left')
@@ -114,16 +117,19 @@ def plot_lollipop(exactwt_freq_dict, gen, shared_axis=True):
 # Only one fig
 #fig = plt.figure(figsize=(8,8))
 #ax = fig.add_subplot(111)
-fig, axes = plt.subplots(5, figsize=(8,8), sharex=True)
-fig.suptitle("Mass spectra of the model glucose reaction network", y=0.91)
+fig, axes = plt.subplots(5, figsize=(8,8), sharex=True, sharey=True)
+#fig.suptitle("Mass spectra of the model glucose reaction network", y=0.91)
 
 # Plot exact wt vs. number of compounds
-with open("../main/glucose/glucose_degradation_output.txt") as output:
+with open("../main/glucose/glucose_degradation_output_10mar.txt") as output:
 	lines = output.readlines()
 	gen_smiles_dict = {}
 	for line in lines:
 		comps = line.split("\t")
 		gen = int(comps[0][1])
+		## Don't add G0, that's just initial reactants.
+		if gen == 0:
+			continue
 		smiles_str = comps[1]
 		if gen in gen_smiles_dict:
 			gen_smiles_dict[gen].append(smiles_str)
@@ -151,5 +157,6 @@ with open("../main/glucose/glucose_degradation_output.txt") as output:
 	#plt.legend(loc='upper left')
 	plt.xlabel('Exact Mass')
 	plt.ylabel('Cumulative Frequency')
-	plt.savefig('model_spectra.jpg', dpi=300)
+	plt.tight_layout()
+	plt.savefig('struct_isomer_freq_gray.jpg', dpi=300)
 	plt.show()

@@ -4,10 +4,10 @@ import jpype.imports
 from jpype.types import *
 from rdkit.Chem import MolFromSmiles, MolToSmiles
 
-# Note: this will work if your working directory is reac-space-exp/main
-# If your working directory is reac-space-exp/ instead, you need to get rid of the ".."
+# Note: this will work if your working directory is reac-space-exp/main/<reaction_name>
+# If your working directory is reac-space-exp/ instead, you need to get rid of the "../../"
 # Prefer doing "libs/whatever.jar" instead of the entire os.path.join thing
-jpype.startJVM(classpath=[os.path.join('..','libs/ambit-tautomers-2.0.0-SNAPSHOT.jar'),
+jpype.startJVM(classpath=[os.path.join('../','libs/ambit-tautomers-2.0.0-SNAPSHOT.jar'),
         os.path.join('..','libs/cdk-2.3.jar')], convertStrings=True)
 
 from java.lang import System
