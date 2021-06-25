@@ -3,7 +3,7 @@
 * [main.py](main.py) contains methods and settings that will be used by reactions running in all subdirectories. It also contains some utility methods useful for seeing what's going on and debugging.
 * [mod_to_neo4j_exporter.py](mod_to_neo4j_exporter.py) contains method(s) to export networks from the MØD pipeline that we  later loaded into a [Neo4j](https://neo4j.com/) MØDule for running graph queries (searching for autocatalytic cycles, etc.).
 
-#### Custom dump file formats
+### Custom dump file formats
 **Species by generation**:
 
 It was important to keep track of which species was created in which generation. ```.txt``` files with names such as ```reaction_name_output.txt``` contain exactly this. For instance, here's an excerpt from ```glucose_degradation_output.txt```
