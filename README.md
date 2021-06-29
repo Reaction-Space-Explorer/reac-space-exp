@@ -18,10 +18,7 @@ You will notice there are some weird calls to methods that you may think have no
 ## Publications
 To-be-updated.
 ## TODO:
-
-<<<<<<< Updated upstream
 * ~Try to match all the possible structures in the Y&M paper.~
     * 96% structures have matched for glucose degradation, 100% for formose.
 * For the future take into account Kinetics for the molecules in the network (https://rmg.mit.edu/) 
-=======
->>>>>>> Stashed changes
+
