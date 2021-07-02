@@ -1,6 +1,6 @@
 
 # Welcome to the cycles pattern match sub-project!
-![network pattern match example result](query_images/Size4_Pattern Match Rxn and Molecule Labels.JPG)
+![network pattern match example result](./query_images/Size4_Pattern Match Rxn and Molecule Labels.JPG)
 
 
 # Installation
