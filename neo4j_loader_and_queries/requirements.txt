@@ -114,7 +114,7 @@ python-twitter==3.5
 pytz==2018.5
 pywin32==225
 pywinpty==0.5.7
-PyYAML==5.3.1
+PyYAML==5.4
 pyzmq==19.0.1
 redis==2.10.6
 reportlab==3.5.57
