@@ -102,7 +102,7 @@ pyasn1-modules==0.2.8
 pycparser==2.20
 pydub==0.23.1
 pygame==1.9.4
-Pygments==2.3.1
+Pygments==2.7.4
 PyHamcrest==2.0.2
 PyJWT==1.7.1
 pyOpenSSL==19.1.0
