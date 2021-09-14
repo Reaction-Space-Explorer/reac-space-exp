@@ -9,7 +9,7 @@ import pandas as pd
 import numpy as np
 
 # find number of rule applications from the rule_count csv
-rule_count_data = pd.read_csv('../main/glucose/rule_count_by_gen.tsv', sep='\t', header=0)
+rule_count_data = pd.read_csv('../main/glucose/glucose_rule_count_aug2021.tsv', sep='\t', header=0)
 # sum each column
 reaction_count_list = [sum(rule_count_data[f'Generation {n}']) for n in range(1, 6)] # sum for gens 1 to 5
 print(reaction_count_list)
@@ -37,24 +37,27 @@ generations = [i for i in range(1, 6)]
 
 # convert into hours
 time_taken_list = [x/3600 for x in (0.1533, 1.6984, 57.5974, 3837.0811, 241417.7317)]
-fig, count_ax = plt.subplots(figsize=(8,8))
+fig, count_ax = plt.subplots(figsize=(6, 6))
 time_ax = count_ax.twinx()
 # plot
-products = count_ax.plot(generations, products_count_list, color='darkolivegreen', marker='o',
-						markersize=4, label='Products')
-rules = count_ax.plot(generations, reaction_count_list, color='darkolivegreen', marker='o',
-						markersize=4, linestyle='--', label='Rule Applications')
-time = time_ax.plot(generations, time_taken_list, 'mo-.', label='Computation time', markersize=4)
+products = count_ax.plot(generations, products_count_list, color='silver', mfc='cornflowerblue', marker='^',
+						mew=0.3, mec='k', ms=9, label='Products')
+rules = count_ax.plot(generations, reaction_count_list, color='darkgray', mfc='cornflowerblue', marker='*', mec='k',
+						mew=0.3, ms=12, ls='-.', label='Rule Applications')
+time = time_ax.plot(generations, time_taken_list, color='darkgray', ls='--', marker='o', mfc='deeppink', mec='k', mew=0.3,
+						 ms=8, label='Computation time',)
 
 plt.xticks(generations)
 
-count_ax.set_xlabel('Generation')
-count_ax.set_ylabel('Count', color='darkolivegreen')
+count_ax.set_xlabel('Generation', fontsize=12)
+count_ax.set_ylabel('Count', color='cornflowerblue', fontsize=12)
 count_ax.set_yscale('log')
-time_ax.set_ylabel('Time taken (h)', color='m')
+time_ax.set_ylabel('Time taken (h)', color='deeppink', fontsize=12)
 time_ax.set_yscale('log')
 
 plots = products + rules + time
 legend_labels = [p.get_label() for p in plots]
-plt.legend(plots, legend_labels, loc=0)
+plt.legend(plots, legend_labels, loc=0, fontsize=12)
+plt.subplots_adjust(right=0.88)
+plt.savefig('growth_by_gen.png', dpi=300)
 plt.show()
