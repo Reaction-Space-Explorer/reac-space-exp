@@ -14,22 +14,35 @@ products_300 = [16, 184, 13832]
 
 fig, axes = plt.subplots(1, 2, sharex=True, figsize=(12, 6))
 
-axes[0].plot(gen, products_200, color='magenta', marker='o', linestyle='-.', label='200')
-axes[0].plot(gen, products_250, color='gray', marker='o', linestyle='-.', label='250')
-axes[0].plot(gen, products_300, color='royalblue', marker='o', linestyle='-.', label='300')
-axes[0].set_xlabel('Generation')
-axes[0].set_ylabel('New Products')
-axes[0].legend(loc='upper left')
+axes[0].plot(gen, products_200, color='gray', marker='^', ms=9, mec='k', mew=0.2,
+			 mfc='cornflowerblue', ls='--', label='200')
+axes[0].plot(gen, products_250, color='gray', marker='o', ms=8, mec='k', mew=0.2,
+			 mfc='deeppink', ls='-', label='250')
+axes[0].plot(gen, products_300, color='gray', marker='*', ms=11, mec='k', mew=0.2,
+			 mfc='cornflowerblue', ls='-.', label='300')
+axes[0].set_xlabel('Generation', fontsize=13)
+axes[0].set_ylabel('New Products', fontsize=13)
+axes[0].legend(loc='upper left', title='Mass limit', fontsize=12, title_fontsize=12)
 axes[0].set_xticks([1, 2, 3])
 axes[0].set_yscale('log')
-
-axes[1].plot(gen, time_200, color='magenta', marker='o', linestyle='--', label='200')
-axes[1].plot(gen, time_250, color='gray', marker='o', linestyle='--', label='250')
-axes[1].plot(gen, time_300, color='royalblue', marker='o', linestyle='--', label='300')
-axes[1].set_xlabel('Generation')
-axes[1].set_ylabel('Time (seconds)')
-axes[1].legend(loc='upper left')
+axes[1].plot(gen, time_200, color='gray', marker='^', ms=9, mec='k', mew=0.2,
+			 mfc='cornflowerblue', ls='--', label='200')
+axes[1].plot(gen, time_250, color='gray', marker='o', ms=8, mec='k', mew=0.2,
+			 mfc='deeppink', ls='-', label='250')
+axes[1].plot(gen, time_300, color='gray', marker='*', ms=11, mec='k', mew=0.2,
+			 mfc='cornflowerblue', ls='-.', label='300')
+axes[1].set_xlabel('Generation', fontsize=13)
+axes[1].set_ylabel('Time (seconds)', fontsize=13)
+axes[1].legend(loc='upper left', title='Mass limit', fontsize=12, title_fontsize=12)
 axes[1].set_xticks([1,2,3])
 axes[1].set_yscale('log')
 
+
+
+# make ticks larger:
+axes[0].tick_params(axis='both', labelsize=13)
+axes[1].tick_params(axis='both', labelsize=13)
+
+plt.tight_layout()
+plt.savefig('mass_limit_effect.jpg', dpi=300)
 plt.show()
