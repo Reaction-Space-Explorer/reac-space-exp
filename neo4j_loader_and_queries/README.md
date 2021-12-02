@@ -169,6 +169,10 @@ Below is an explanation of what each file in these folders means.
 
 6. ring_size_distribution.png:
     This plot is a simple plot of the number of ring patterns found by the number of molecules in the ring. Note that this is highly unreliable when matching a small number of patterns.
+    
+    
+The query template where users pass the parameter values to a function in Python, and the function finds and replaces the variables in the query template bound by double curly braces, i.e. “{{PARAMETER}}”. These parameters include the ring size range ({{MIN_RING_SIZE}}, {{MAX_RING_SIZE}}), filtering out the structure by which generation the feeder molecule was formed ({{MIN_FEEDER_GENERATION}}, {{MAX_FEEDER_GENERATION}}), the ability to remove this feeder generation constraint altogether ({{COMMENT_OUT_FEEDER_GEN_LOGIC}}) and the number of patterns to return ({{NUM_STRUCTURES_LIMIT}}). The latter was included to restrict the time required for the query to complete, as the pattern match query can go on for a long time if left unlimited.
+
 
 
 
