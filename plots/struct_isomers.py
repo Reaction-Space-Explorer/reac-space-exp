@@ -76,8 +76,8 @@ def plot_lollipop(exactwt_freq_dict, gen, shared_axis=True):
 	Make a (shared axis) lollipop plot of the spectrum.
 	"""
 	# which marker (dot) color to use for which generation
-	gen_colors = ["blue", "red", "cyan", "green", "magenta"]
-	
+	#gen_colors = ["blue", "red", "cyan", "green", "magenta"]
+	gen_colors = ['#F56D43', '#FEE08A', '#E6F59A', '#65C2A5', '#5E4FA2']
 	weights = list(exactwt_freq_dict.keys())
 	# normalized freqs
 	freqs = list(exactwt_freq_dict.values())
@@ -99,10 +99,11 @@ def plot_lollipop(exactwt_freq_dict, gen, shared_axis=True):
 		# use below line for diff ticks for each subplot.
 		#axes[gen-1].set_yticks(axis_ticks[gen-1])
 		plt.setp(stemlines, linestyle="-", color='gray', linewidth=0.75)
-		plt.setp(markers, markersize=1, label=f"Generation {gen}")
-		axes[gen-1].legend(loc='upper left')
-		# get rid of space between subplots
-		plt.subplots_adjust(wspace=0, hspace=0)
+		plt.setp(markers, markersize=3.5, mfc= gen_colors[gen-1], mec='k', mew=0.4, label=f"Generation {gen}")
+		
+		axes[gen-1].minorticks_on()
+		axes[gen-1].tick_params(axis='both', labelsize=13)
+		axes[gen-1].legend(fontsize=13, markerscale=2.2, handletextpad=0.1, loc='upper left')
 	else:
 		(markers, stemlines, baseline) = plt.stem(weights, freqs, basefmt="gray",
 				 markerfmt=f"{gen_colors[gen-1][0]}o", use_line_collection=True )
@@ -117,7 +118,7 @@ def plot_lollipop(exactwt_freq_dict, gen, shared_axis=True):
 # Only one fig
 #fig = plt.figure(figsize=(8,8))
 #ax = fig.add_subplot(111)
-fig, axes = plt.subplots(5, figsize=(8,8), sharex=True, sharey=True)
+fig, axes = plt.subplots(5, figsize=(6, 6), sharex=True, sharey=True)
 #fig.suptitle("Mass spectra of the model glucose reaction network", y=0.91)
 
 # Plot exact wt vs. number of compounds
@@ -155,8 +156,12 @@ with open("../main/glucose/glucose_degradation_output_10mar.txt") as output:
 		#plot_lollipop(exactwt_count, gen)
 		cumulative_list = [x for x in cumulative_list if x not in gen_smiles_dict[gen]]
 	#plt.legend(loc='upper left')
-	plt.xlabel('Exact Mass')
-	plt.ylabel('Cumulative Frequency')
+	plt.xlabel('Exact Mass', fontsize=13)
+	axes[2].set_ylabel('Cumulative Frequency', fontsize=13)
+	
 	plt.tight_layout()
-	plt.savefig('struct_isomer_freq_gray.jpg', dpi=300)
+	# get rid of space between subplots
+	plt.subplots_adjust(wspace=0, hspace=0)
+		
+	plt.savefig('struct_isomer_freq.jpg', dpi=300)
 	plt.show()
