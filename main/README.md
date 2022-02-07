@@ -49,3 +49,10 @@ which represents ```C#N + C#N -> C(C=N)#N``` happening.
 We experimented with different techniques (using RDKit/MolVS as well as Ambit-tautomer) to remove redundant tautomers but none of them were fully satisfactory. Some of the (redundant) code which we no longer employ in our workflow is still here (e.g. [clean_tautomers.py](clean_tautomers.py), [ambit_tautomer.py](ambit_tautomer.py)). Ambit is a Java library (dependent on CDK) which, to our workflow, could be pipelined using ```jpype```. See [Using_Ambit.md](Using_Ambit.md) for notes that I wrote in mid-2020 if they seem useful to you.
 ## TODO:
 * see if there's anything else useful to explain
+
+## Future Code Improvements
+* The way I wrote the "cheap hax" to toggle the `Cannizarro 2` rule by setting `with_formaldehyde=True` or `=False` was terrible. This boolean was defined initially in `../rules/cannizarro2.py`, to decide whether to use glucose as a "fixed aldehyde" or to use formaldehyde instead. Things can easily go wrong because of how this boolean has been accessed/mutated in other scripts like `main.py` or the individual reaction scripts like `glucose_degradation.py`.
+* The way these scripts have been run up to now is by performing `mod -f filename.py` --- that still provides most of Python functionality but I have noticed conflicts with MOD's way of dealing with package directories and Python's native way. In newer versions, importing `*` from `libpymod` directly could reduce that.
+    * A more proper way of dealing with packages would then be possible.
+* A lot of what I put in `main.py` (back in 2020) are 'utility' methods. These could go in their own separate file.
+* Several lengthy methods could be modularised better for the sake of readability. Also, I learnt much cleaner ways to do certain tasks later on that I haven't updated everywhere. (These don't affect the function of the code itself, but make it more readable.)
