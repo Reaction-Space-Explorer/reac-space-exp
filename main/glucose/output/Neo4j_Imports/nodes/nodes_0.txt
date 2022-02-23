@@ -1,0 +1,2 @@
+29	C(C(C(C(C(CO)O)O)O)O)=O	180.063388104	Molecule
+30	O	18.010564684	Molecule
