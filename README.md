@@ -3,7 +3,7 @@ An open source cheminformatics workflow to simulate chemical reaction networks i
 
 The platform uses:
 * [MØD](https://github.com/jakobandersen/mod)
-    * Note: Most of the reaction networks were generated with MØD versions v.0.9.0 to [v.0.11.0](https://github.com/jakobandersen/mod/releases/tag/v0.11.0). However, the code (and any `.dg` output files that may have used older formats) are still supported. We have provided `.dg` files with newer formats that come with reaction rules self contained in them. Note that for running new reactions you will still need to load rules from the [library we compiled](rules/).
+    * Note: Most of the reaction networks were generated with MØD versions v.0.9.0 to [v.0.11.0](https://github.com/jakobandersen/mod/releases/tag/v0.11.0). However, the code (and any `.dg` output files that may have used older formats) are still supported. We have provided `.dg` files with newer formats that come with reaction rules self contained in them. Note that for reproducing reactions for scratch you will still need to load rules from the [library we compiled](rules/). The user is free to add or remove any rules as per their choice.
 * [RDKit](https://anaconda.org/rdkit/rdkit) (not compatible with Python 3.8.x as of now, we used a separate conda environment with Python 3.7.9).
 * [Neo4j](https://neo4j.com/) for graph queries.
 * [Gephi](https://gephi.org/) for network visualization.
@@ -15,6 +15,7 @@ Figures were plotted using [matplotlib](https://matplotlib.org/), [seaborn](http
 The [main](main/) folder contains subfolders for each reaction (e.g. [glucose degradation](main/glucose/), [formose](main/formose/)) that we have studied. The output produced by running this pipeline has been placed in subfolders inside those.
 
 ### Available output files
+For reactions with published or submitted manuscripts, we have provided.
 * A tab-separated table containing SMILES of each species and the generation in which it was produced.
 * The `.dg` file that was dumped via MØD itself, which can be used to load the full network into MØD without the need of generating it again using the [DG.load()]((https://jakobandersen.github.io/mod/pymod/dg/DG.html?highlight=dg%20load#mod.DG.load)) method built into it.
 * A custom format (tab-separated) output that can be loaded in Neo4J for network queries, or Gephi for the purpose of visualization.
