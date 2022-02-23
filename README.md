@@ -2,11 +2,33 @@
 An open source cheminformatics workflow to simulate chemical reaction networks important in prebiotic chemistry and to discover autocatalytic loops. Available open source under the BSD-3 Clause license.
 
 The platform uses:
-* [MØD](https://github.com/jakobandersen/mod) version [v.0.11.0](https://github.com/jakobandersen/mod/releases/tag/v0.11.0).2 for network generation. (More recent versions are also supported.)
+* [MØD](https://github.com/jakobandersen/mod)
+    * Note: Most of the reaction networks were generated with MØD versions v.0.9.0 to [v.0.11.0](https://github.com/jakobandersen/mod/releases/tag/v0.11.0). However, the code (and any `.dg` output files that may have used older formats) are still supported. We have provided `.dg` files with newer formats that come with reaction rules self contained in them. Note that for running new reactions you will still need to load rules from the [library we compiled](rules/).
 * [RDKit](https://anaconda.org/rdkit/rdkit) (not compatible with Python 3.8.x as of now, we used a separate conda environment with Python 3.7.9).
 * [Neo4j](https://neo4j.com/) for graph queries.
+* [Gephi](https://gephi.org/) for network visualization.
 
-Figures were plotted using [matplotlib](https://matplotlib.org/).
+Figures were plotted using [matplotlib](https://matplotlib.org/), [seaborn](https://seaborn.pydata.org/).
+
+## Organization of this repository
+### Scripts to run reactions
+The [main](main/) folder contains subfolders for each reaction (e.g. [glucose degradation](main/glucose/), [formose](main/formose/)) that we have studied. The output produced by running this pipeline has been placed in subfolders inside those.
+
+### Available output files
+* A tab-separated table containing SMILES of each species and the generation in which it was produced.
+* The `.dg` file that was dumped via MØD itself, which can be used to load the full network into MØD without the need of generating it again using the [DG.load()]((https://jakobandersen.github.io/mod/pymod/dg/DG.html?highlight=dg%20load#mod.DG.load)) method built into it.
+* A custom format (tab-separated) output that can be loaded in Neo4J for network queries, or Gephi for the purpose of visualization.
+* A table of rules applied by generation.
+
+The methods for generating these are contained in the code scripts
+
+See the README description in [main](main/) for an overview of the formats.
+
+### Library of reaction rules
+All rules are placed in the [rules](rules/) folder. They are written in GML format, mostly compartmentalized in separate `.py` files. For convenience purposes, we used some tricks to make things modular. The `all.py` file calls each `.py` file in the folder. Additional rules that you'd like to load (*if* using our methods) would The same file also imports utility methods from `common.py`. Examples that demonstrate how to write rules can be found on the [documentation pages of MØD](https://jakobandersen.github.io/mod/).
+
+### Complementary data
+The [data](data/) folder contains a list of forbidden substructures that we utilize for post-generation filtering (discussed in Arya *et al.* 2022), a visual list of all reaction rules (which may be slightly dated), table of thermochemical data, among other things.
 
 ### Running a file using MØD
 The way we ran the files were using the terminal 
@@ -16,9 +38,11 @@ mod -f glucose_degradation.py
 You will notice there are some weird calls to methods that you may think have not even been imported, such as ```include("main.py")```. When a python file is run via MØD, it auto imports packages and methods in *libPyMØD*.
 
 ## Publications
-To-be-updated.
+* Arya, A. *et al.* (2022) "An open source computational workflow for the discovery of autocatalytic cycles in abiotic reactions" (under review in _Chemical Science_).
+    * For this, the reaction studied was [glucose degradation](main/glucose), and the [output files](main/glucose/output) for it can be found in the relevant folder.
+
+Stay tuned for updates on other reactions studied by us.
+
 ## TODO:
-* ~Try to match all the possible structures in the Y&M paper.~
-    * 96% structures have matched for glucose degradation, 100% for formose.
-* For the future take into account Kinetics for the molecules in the network (https://rmg.mit.edu/) 
+* To be updated.
 

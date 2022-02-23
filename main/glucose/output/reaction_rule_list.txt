@@ -1,0 +1,208 @@
+Aldol Condensation
+Benzilic Acid Rearrangement
+Benzilic Acid Rearrangement (inverse)
+Retro Aldol
+Keto-enol migration twice
+Amadori/Heyns Rearrangement
+Ester Hydrolysis
+Cannizarro 1
+Cannizarro 2, glucose (oxidation)
+Cannizarro 2, glucose (reduction)
+Alkyne Addition, N, HH
+Alkyne Addition, N, HC
+Alkyne Addition, N, CC
+Alkyne Addition, S, H
+Alkyne Addition, S, C
+Alkyne Addition, C
+Knoevenagel C
+Knoevenagel H
+Knoevenagel C (inverse)
+Knoevenagel H (inv)
+DAMN Scission
+Cyanogen Ammonolysis
+Cyanamide Hydration
+Carbamylation, SC
+Carbamylation, SH
+Carbamylation, N, HH
+Carbamylation, N, HC
+Carbamylation, N, CC
+Cyanate from cyanogen
+Ketone-Catalyzed Decarboxylation
+Amadori Rearrangement
+Thial -> Thiene
+Sulfide to Nitrile Addition
+Thioamidine to Amide Hydrolysis
+Ketone/Aldehyde to Thioketone/Thial, HH
+Ketone/Aldehyde to Thioketone/Thial, HC
+Ketone/Aldehyde to Thioketone/Thial, CC
+HCN to Ketone
+Strecker Degradation Dicarbonyl, H, H, H, H
+Strecker Degradation Dicarbonyl, H, H, H, C
+Strecker Degradation Dicarbonyl, H, H, C, H
+Strecker Degradation Dicarbonyl, H, H, C, C
+Strecker Degradation Dicarbonyl, H, C, H, H
+Strecker Degradation Dicarbonyl, H, C, H, C
+Strecker Degradation Dicarbonyl, H, C, C, H
+Strecker Degradation Dicarbonyl, H, C, C, C
+Strecker Degradation Dicarbonyl, C, H, H, H
+Strecker Degradation Dicarbonyl, C, H, H, C
+Strecker Degradation Dicarbonyl, C, H, C, H
+Strecker Degradation Dicarbonyl, C, H, C, C
+Strecker Degradation Dicarbonyl, C, C, H, H
+Strecker Degradation Dicarbonyl, C, C, H, C
+Strecker Degradation Dicarbonyl, C, C, C, H
+Strecker Degradation Dicarbonyl, C, C, C, C
+Schiff Tautomerization
+Alkyne Addition, N, HH, inverse
+Alkyne Addition, S, H, inverse
+Alkyne Addition, C, inverse
+DAMN Scission, inverse
+Cyanogen Ammonolysis, inverse
+Cyanamide Hydration, inverse
+Carbamylation, SC, inverse
+Carbamylation, SH, inverse
+Carbamylation, N, HH, inverse
+Cyanate from cyanogen, inverse
+Ketone-Catalyzed Decarboxylation, inverse
+Amadori Rearrangement, inverse
+Thial -> Thiene, inverse
+Sulfide to Nitrile Addition, inverse
+Thioamidine to Amide Hydrolysis, inverse
+Ketone/Aldehyde to Thioketone/Thial, HH, inverse
+HCN to Ketone, inverse
+Strecker Degradation Dicarbonyl, H, H, H, H, inverse
+5 Membered Ring Exoamine Hydrolysis
+6 Membered Ring Exoamine Hydrolysis
+Ammonolysis of Esters
+Isocyanate Hydrolysis
+Cyanamidation, SC
+Cyanamidation, SH
+Cyanamidation, N, HH
+Cyanamidation, N, HC
+Cyanamidation, N, CC
+Nitrile Amination
+HCN Addition to Nitriles
+CN addition to iminonitriles
+CN addition to aminodinitriles
+Amide Hydrolysis
+Amide Formation Hydrolysis, C
+Alkene Addition, CN
+Elimination + enol to keto
+Elimination2
+Dehydration of Amines
+Deydration of Amines (inverse)
+Hydration of C(=O)C
+Hydration of C=C(O)
+Enamine Hydration and Elimination
+Deamination of Vicinal Diamine
+Deamination of Vicinal Diamine, (inverse)
+Deamination 2
+Deamination 3
+Deamination 3 (inverse)
+Cyanohydrin Formation
+Strecker Synthesis
+Alpha-Beta Unsaturated Acid Decarboxylation
+Beta-gamma Unsaturated Acid Decarboxylation
+Mannich Addition
+Mannich Addition (reverse)
+Hemiacetal Formation for 5 membered rings
+Hemiacetal Formation for 6 membered rings
+Hemiacetal Formation for 7 membered rings
+Hemiacetal Formation for 5 membered rings, inverse
+Hemiacetal Formation for 6 membered rings, inverse
+Hemiacetal Formation for 7 membered rings, inverse
+Imine to Carbonyl
+Amidine to Amide Hydrolysis
+Imine to Enamine
+Nitrile Hydrolysis
+Transamination
+Transamination (inverse)
+Alpha-Keto Acid Decarboxylation
+Beta Decarboxylation
+Nitrile Ring Closure 5
+Nitrile Ring Closure 6
+Ring Closure 5 membered O, O
+Ring Closure 5 membered O, N
+Ring Closure 5 membered O, S
+Ring Closure 5 membered N, O
+Ring Closure 5 membered N, N
+Ring Closure 5 membered N, S
+Ring Closure 5 membered S, O
+Ring Closure 5 membered S, N
+Ring Closure 5 membered S, S
+Ring Closure 6 membered O, O
+Ring Closure 6 membered O, N
+Ring Closure 6 membered O, S
+Ring Closure 6 membered N, O
+Ring Closure 6 membered N, N
+Ring Closure 6 membered N, S
+Ring Closure 6 membered S, O
+Ring Closure 6 membered S, N
+Ring Closure 6 membered S, S
+Ring Closure 7 membered O, O
+Ring Closure 7 membered O, N
+Ring Closure 7 membered O, S
+Ring Closure 7 membered N, O
+Ring Closure 7 membered N, N
+Ring Closure 7 membered N, S
+Ring Closure 7 membered S, O
+Ring Closure 7 membered S, N
+Ring Closure 7 membered S, S
+Ring Closure 5 membered, inverse O, O
+Ring Closure 5 membered, inverse O, N
+Ring Closure 5 membered, inverse O, S
+Ring Closure 5 membered, inverse N, O
+Ring Closure 5 membered, inverse N, N
+Ring Closure 5 membered, inverse N, S
+Ring Closure 5 membered, inverse S, O
+Ring Closure 5 membered, inverse S, N
+Ring Closure 5 membered, inverse S, S
+Ring Closure 6 membered, inverse O, O
+Ring Closure 6 membered, inverse O, N
+Ring Closure 6 membered, inverse O, S
+Ring Closure 6 membered, inverse N, O
+Ring Closure 6 membered, inverse N, N
+Ring Closure 6 membered, inverse N, S
+Ring Closure 6 membered, inverse S, O
+Ring Closure 6 membered, inverse S, N
+Ring Closure 6 membered, inverse S, S
+Ring Closure 7 membered, inverse O, O
+Ring Closure 7 membered, inverse O, N
+Ring Closure 7 membered, inverse O, S
+Ring Closure 7 membered, inverse N, O
+Ring Closure 7 membered, inverse N, N
+Ring Closure 7 membered, inverse N, S
+Ring Closure 7 membered, inverse S, O
+Ring Closure 7 membered, inverse S, N
+Ring Closure 7 membered, inverse S, S
+Amine Nitrile Ring Closure 5
+Amine Nitrile Ring Closure 6
+Amine Imine Ring Closure 5
+Amine Imine Ring Closure 6
+Amidine Nitrile Ring Closure 6
+Amide Nitrile Ring Closure 6
+Amine Carbonyl Ring Closure, H, 5
+Amine Carbonyl Ring Closure, C, 5
+Amine Carbonyl Ring Closure, H, 6
+Amine Carbonyl Ring Closure, C, 6
+Michael Addition 0,0, 
+Michael Addition 0,1, 
+Michael Addition 0,2, 
+Michael Addition 1,0, 
+Michael Addition 1,1, 
+Michael Addition 1,2, 
+Michael Addition 2,0, 
+Michael Addition 2,1, 
+Michael Addition 2,2, 
+Michael Addition 3,0, 
+Michael Addition 3,1, 
+Michael Addition 3,2, 
+Michael Addition 0,0, (reverse)
+Michael Addition 0,1, (reverse)
+Michael Addition 0,2, (reverse)
+Michael Addition 2,0, (reverse)
+Michael Addition 2,1, (reverse)
+Michael Addition 2,2, (reverse)
+Strecker Degradation, HH
+Strecker Degradation, HC
+Strecker Degradation, CC

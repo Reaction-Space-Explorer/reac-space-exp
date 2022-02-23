@@ -1,0 +1,32 @@
+Rule	Generation 1	Generation 2	Generation 3	Generation 4	Generation 5
+Aldol Condensation	0	6	417	3128	14874
+Elimination2	0	6	74	986	9111
+Knoevenagel H	0	6	347	2197	8248
+Retro Aldol	1	16	97	1180	7901
+Knoevenagel C	0	5	277	2103	7528
+Elimination + enol to keto	8	67	224	1437	7233
+Michael Addition 0,2, 	0	0	9	525	6834
+Cannizarro 2, glucose (oxidation)	1	11	62	712	5392
+Hemiacetal Formation for 5 membered rings	1	12	62	739	5333
+Keto-enol migration twice	1	16	96	739	4001
+Hydration of C(=O)C	0	9	84	525	3643
+Knoevenagel H (inv)	1	11	58	661	3395
+Hemiacetal Formation for 6 membered rings	1	7	36	418	3227
+Cannizarro 2, glucose (reduction)	1	11	62	420	2816
+Knoevenagel C (inverse)	0	0	8	409	2784
+Hydration of C=C(O)	0	0	12	131	1822
+Hemiacetal Formation for 7 membered rings	1	6	18	194	1530
+Michael Addition 0,2, (reverse)	0	0	0	41	1109
+Hemiacetal Formation for 5 membered rings, inverse	0	1	12	74	890
+Ring Closure 5 membered O, O	0	1	11	54	694
+Benzilic Acid Rearrangement (inverse)	0	1	9	55	641
+Benzilic Acid Rearrangement	0	1	13	85	625
+Hemiacetal Formation for 6 membered rings, inverse	0	1	7	45	441
+Ring Closure 6 membered O, O	0	1	8	35	413
+Cannizarro 1	0	1	10	57	382
+Beta Decarboxylation	0	0	2	12	317
+Hemiacetal Formation for 7 membered rings, inverse	0	1	6	30	228
+Ring Closure 7 membered O, O	0	1	7	21	162
+Alpha-Keto Acid Decarboxylation	0	0	1	10	103
+Beta-gamma Unsaturated Acid Decarboxylation	0	0	0	2	33
+Alpha-Beta Unsaturated Acid Decarboxylation	0	0	0	3	16
