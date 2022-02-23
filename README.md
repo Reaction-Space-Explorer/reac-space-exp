@@ -4,6 +4,7 @@ An open source cheminformatics workflow to simulate chemical reaction networks i
 The platform uses:
 * [MØD](https://github.com/jakobandersen/mod)
     * Note: Most of the reaction networks were generated with MØD versions v.0.9.0 to [v.0.11.0](https://github.com/jakobandersen/mod/releases/tag/v0.11.0). However, the code (and any `.dg` output files that may have used older formats) are still supported. We have provided `.dg` files with newer formats that come with reaction rules self contained in them. Note that for reproducing reactions for scratch you will still need to load rules from the [library we compiled](rules/). The user is free to add or remove any rules as per their choice.
+    * Although MØD installation has been described on its documentation pages, some people have benefitted from a [small tutorial](Setting_up_MOD.md) we ourselves wrote.
 * [RDKit](https://anaconda.org/rdkit/rdkit) (not compatible with Python 3.8.x as of now, we used a separate conda environment with Python 3.7.9).
 * [Neo4j](https://neo4j.com/) for graph queries.
 * [Gephi](https://gephi.org/) for network visualization.
