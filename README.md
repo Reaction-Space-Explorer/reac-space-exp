@@ -40,11 +40,10 @@ mod -f glucose_degradation.py
 You will notice there are some weird calls to methods that you may think have not even been imported, such as ```include("main.py")```. When a python file is run via MØD, it auto imports packages and methods in *libPyMØD*.
 
 ## Publications
-* Arya, A. *et al.* (2022) "An open source computational workflow for the discovery of autocatalytic cycles in abiotic reactions" (under review in _Chemical Science_).
+* Arya, A., Ray, J., Sharma, S., Cruz Simbron, R., Lozano, A., Smith, H. B., Andersen, J. L., Chen, H., Meringer, M., & Cleaves, H. J. (2022). An open source computational workflow for the discovery of autocatalytic networks in abiotic reactions. In Chemical Science. Royal Society of Chemistry (RSC). https://doi.org/10.1039/d2sc00256f
+* Sharma, S.; Arya, A.; Cruz, R.; Cleaves II, H.J. Automated Exploration of Prebiotic Chemical Reaction Space: Progress and Perspectives. Life 2021, 11, 1140. https://doi.org/10.3390/life11111140
+
     * For this, the reaction studied was [glucose degradation](main/glucose), and the [output files](main/glucose/output) for it can be found in the relevant folder.
 
 Stay tuned for updates on other reactions studied by us.
-
-## TODO:
-* To be updated.
 
