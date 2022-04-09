@@ -3,7 +3,7 @@ An open source cheminformatics workflow to simulate chemical reaction networks i
 
 The platform uses:
 * [MØD](https://github.com/jakobandersen/mod)
-    * Note: Most of the reaction networks were generated with MØD versions v.0.9.0 to [v.0.11.0](https://github.com/jakobandersen/mod/releases/tag/v0.11.0). However, the code (and any `.dg` output files that may have used older formats) are still supported. We have provided `.dg` files with newer formats that come with reaction rules self contained in them. Note that for reproducing reactions for scratch you will still need to load rules from the [library we compiled](rules/). The user is free to add or remove any rules as per their choice.
+    * Note: Most of the reaction networks were generated with MØD versions v.0.9.0 to [v.0.11.0](https://github.com/jakobandersen/mod/releases/tag/v0.11.0). However, the code (and any `.dg` output files that may have used older formats) are still supported. We have provided `.dg` files with newer formats that come with reaction rules self contained in them. Note that for reproducing reactions from scratch you will still need to load rules from the [library we compiled](rules/). The user is free to add or remove any rules as per their choice.
     * Although MØD installation has been described on its documentation pages, some people have benefitted from a [small tutorial](Setting_up_MOD.md) we ourselves wrote.
 * [RDKit](https://anaconda.org/rdkit/rdkit) (not compatible with Python 3.8.x as of now, we used a separate conda environment with Python 3.7.9).
 * [Neo4j](https://neo4j.com/) for graph queries.
@@ -18,7 +18,7 @@ The [main](main/) folder contains subfolders for each reaction (e.g. [glucose de
 ### Available output files
 For reactions with published or submitted manuscripts, we have provided.
 * A tab-separated table containing SMILES of each species and the generation in which it was produced.
-* The `.dg` file that was dumped via MØD itself, which can be used to load the full network into MØD without the need of generating it again using the [DG.load()]((https://jakobandersen.github.io/mod/pymod/dg/DG.html?highlight=dg%20load#mod.DG.load)) method built into it.
+* The `.dg` file that was dumped via MØD itself, which can be used to load the full network into MØD without the need of generating it again using the [DG.load](https://jakobandersen.github.io/mod/pymod/dg/DG.html?highlight=dg%20load#mod.DG.load)() method built into it.
 * A custom format (tab-separated) output that can be loaded in Neo4J for network queries, or Gephi for the purpose of visualization.
 * A table of rules applied by generation.
 
@@ -40,10 +40,9 @@ mod -f glucose_degradation.py
 You will notice there are some weird calls to methods that you may think have not even been imported, such as ```include("main.py")```. When a python file is run via MØD, it auto imports packages and methods in *libPyMØD*.
 
 ## Publications
-* Arya, A., Ray, J., Sharma, S., Cruz Simbron, R., Lozano, A., Smith, H. B., Andersen, J. L., Chen, H., Meringer, M., & Cleaves, H. J. (2022). An open source computational workflow for the discovery of autocatalytic networks in abiotic reactions. In Chemical Science. Royal Society of Chemistry (RSC). https://doi.org/10.1039/d2sc00256f
-* Sharma, S.; Arya, A.; Cruz, R.; Cleaves II, H.J. Automated Exploration of Prebiotic Chemical Reaction Space: Progress and Perspectives. Life 2021, 11, 1140. https://doi.org/10.3390/life11111140
-
+* Arya, A., Ray, J., Sharma, S., Cruz Simbron, R., Lozano, A., Smith, H. B., ...Cleaves, H. J. (2022). An open source computational workflow for the discovery of autocatalytic networks in abiotic reactions. _Chemical Science_. https://doi.org/10.1039/d2sc00256f
     * For this, the reaction studied was [glucose degradation](main/glucose), and the [output files](main/glucose/output) for it can be found in the relevant folder.
+* Sharma, S.; Arya, A.; Cruz, R.; Cleaves II, H.J. Automated Exploration of Prebiotic Chemical Reaction Space: Progress and Perspectives. _Life_ 2021, 11, 1140. https://doi.org/10.3390/life11111140
 
 Stay tuned for updates on other reactions studied by us.
 
