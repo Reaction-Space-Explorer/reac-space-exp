@@ -71,7 +71,7 @@ MarkupSafe==1.1.1
 matplotlib==3.2.1
 mistune==0.8.4
 msgpack==0.5.6
-nbconvert==5.6.1
+nbconvert==6.3.0
 nbformat==5.0.6
 neo4j==4.1.1
 neo4j-driver==1.6.3
