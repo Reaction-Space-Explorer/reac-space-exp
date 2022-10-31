@@ -1,0 +1,150 @@
+4_0	C=O	-1	Aldol Condensation
+4_0	C(CO)=O	-1	Aldol Condensation
+4_0	C(C(CO)O)=O	1	Aldol Condensation
+4_1	C=O	-1	Knoevenagel H
+4_1	C(CO)=O	-1	Knoevenagel H
+4_1	C(C(CO)O)=O	1	Knoevenagel H
+6_0	C(CO)=O	-1	Aldol Condensation
+6_0	C(CO)=O	-1	Aldol Condensation
+6_0	C(C(C(CO)O)O)=O	1	Aldol Condensation
+6_1	C(CO)=O	-1	Knoevenagel H
+6_1	C(CO)=O	-1	Knoevenagel H
+6_1	C(C(C(CO)O)O)=O	1	Knoevenagel H
+7_0	C(CO)=O	-1	Keto-enol migration twice
+7_0	C(CO)=O	1	Keto-enol migration twice
+10_0	C=O	-1	Cannizarro 2, HCHO (oxidation)
+10_0	C=O	-1	Cannizarro 2, HCHO (oxidation)
+10_0	O	-1	Cannizarro 2, HCHO (oxidation)
+10_0	CO	1	Cannizarro 2, HCHO (oxidation)
+10_0	C(O)=O	1	Cannizarro 2, HCHO (oxidation)
+10_1	C=O	-1	Cannizarro 2, HCHO (reduction)
+10_1	C=O	-1	Cannizarro 2, HCHO (reduction)
+10_1	O	-1	Cannizarro 2, HCHO (reduction)
+10_1	CO	1	Cannizarro 2, HCHO (reduction)
+10_1	C(O)=O	1	Cannizarro 2, HCHO (reduction)
+12_0	C=O	-1	Cannizarro 2, HCHO (oxidation)
+12_0	C(CO)=O	-1	Cannizarro 2, HCHO (oxidation)
+12_0	O	-1	Cannizarro 2, HCHO (oxidation)
+12_0	C(O)=O	1	Cannizarro 2, HCHO (oxidation)
+12_0	C(CO)O	1	Cannizarro 2, HCHO (oxidation)
+14_0	C=O	-1	Cannizarro 2, HCHO (reduction)
+14_0	C(CO)=O	-1	Cannizarro 2, HCHO (reduction)
+14_0	O	-1	Cannizarro 2, HCHO (reduction)
+14_0	CO	1	Cannizarro 2, HCHO (reduction)
+14_0	C(CO)(O)=O	1	Cannizarro 2, HCHO (reduction)
+16_0	C(CO)=O	-1	Aldol Condensation
+16_0	C(C(CO)O)=O	-1	Aldol Condensation
+16_0	C(C(C(C(CO)O)O)O)=O	1	Aldol Condensation
+16_1	C(CO)=O	-1	Knoevenagel H
+16_1	C(C(CO)O)=O	-1	Knoevenagel H
+16_1	C(C(C(C(CO)O)O)O)=O	1	Knoevenagel H
+18_0	C(CO)=O	-1	Aldol Condensation
+18_0	C(C(C(CO)O)O)=O	-1	Aldol Condensation
+18_0	C(C(C(C(C(CO)O)O)O)O)=O	1	Aldol Condensation
+18_1	C(CO)=O	-1	Knoevenagel H
+18_1	C(C(C(CO)O)O)=O	-1	Knoevenagel H
+18_1	C(C(C(C(C(CO)O)O)O)O)=O	1	Knoevenagel H
+20_0	C(CO)(O)=O	-1	Benzilic Acid Rearrangement (inverse)
+20_0	O	1	Benzilic Acid Rearrangement (inverse)
+20_0	C(C=O)=O	1	Benzilic Acid Rearrangement (inverse)
+21_0	C(C(CO)O)=O	-1	Retro Aldol
+21_0	C=O	1	Retro Aldol
+21_0	C(CO)=O	1	Retro Aldol
+21_1	C(C(CO)O)=O	-1	Knoevenagel H (inv)
+21_1	C=O	1	Knoevenagel H (inv)
+21_1	C(CO)=O	1	Knoevenagel H (inv)
+22_0	C(C(C(CO)O)O)=O	-1	Retro Aldol
+22_0	C(CO)=O	1	Retro Aldol
+22_0	C(CO)=O	1	Retro Aldol
+22_1	C(C(C(CO)O)O)=O	-1	Knoevenagel H (inv)
+22_1	C(CO)=O	1	Knoevenagel H (inv)
+22_1	C(CO)=O	1	Knoevenagel H (inv)
+24_0	C(C(CO)O)=O	-1	Keto-enol migration twice
+24_0	C(CO)(CO)=O	1	Keto-enol migration twice
+26_0	C(C(C(CO)O)O)=O	-1	Keto-enol migration twice
+26_0	C(CO)(C(CO)O)=O	1	Keto-enol migration twice
+28_0	C=O	-1	Cannizarro 2, HCHO (oxidation)
+28_0	O	-1	Cannizarro 2, HCHO (oxidation)
+28_0	C(C(CO)O)=O	-1	Cannizarro 2, HCHO (oxidation)
+28_0	C(O)=O	1	Cannizarro 2, HCHO (oxidation)
+28_0	C(C(CO)O)O	1	Cannizarro 2, HCHO (oxidation)
+30_0	C=O	-1	Cannizarro 2, HCHO (oxidation)
+30_0	O	-1	Cannizarro 2, HCHO (oxidation)
+30_0	C(C(C(CO)O)O)=O	-1	Cannizarro 2, HCHO (oxidation)
+30_0	C(O)=O	1	Cannizarro 2, HCHO (oxidation)
+30_0	C(C(C(CO)O)O)O	1	Cannizarro 2, HCHO (oxidation)
+32_0	C=O	-1	Cannizarro 2, HCHO (reduction)
+32_0	O	-1	Cannizarro 2, HCHO (reduction)
+32_0	C(C(CO)O)=O	-1	Cannizarro 2, HCHO (reduction)
+32_0	CO	1	Cannizarro 2, HCHO (reduction)
+32_0	C(C(CO)O)(O)=O	1	Cannizarro 2, HCHO (reduction)
+34_0	C=O	-1	Cannizarro 2, HCHO (reduction)
+34_0	O	-1	Cannizarro 2, HCHO (reduction)
+34_0	C(C(C(CO)O)O)=O	-1	Cannizarro 2, HCHO (reduction)
+34_0	CO	1	Cannizarro 2, HCHO (reduction)
+34_0	C(C(C(CO)O)O)(O)=O	1	Cannizarro 2, HCHO (reduction)
+36_0	C(C(CO)O)=O	-1	Knoevenagel C
+36_0	C(C(CO)O)=O	-1	Knoevenagel C
+36_0	C(C(CO)(C(C(CO)O)O)O)=O	1	Knoevenagel C
+36_1	C(C(CO)O)=O	-1	Knoevenagel H
+36_1	C(C(CO)O)=O	-1	Knoevenagel H
+36_1	C(C(CO)(C(C(CO)O)O)O)=O	1	Knoevenagel H
+38_0	C=O	-1	Knoevenagel C
+38_0	C(C(CO)O)=O	-1	Knoevenagel C
+38_0	C(C(CO)(CO)O)=O	1	Knoevenagel C
+38_1	C=O	-1	Knoevenagel H
+38_1	C(C(CO)O)=O	-1	Knoevenagel H
+38_1	C(C(CO)(CO)O)=O	1	Knoevenagel H
+40_0	C=O	-1	Knoevenagel C
+40_0	C(C(C(CO)O)O)=O	-1	Knoevenagel C
+40_0	C(C(CO)(C(CO)O)O)=O	1	Knoevenagel C
+40_1	C=O	-1	Knoevenagel H
+40_1	C(C(C(CO)O)O)=O	-1	Knoevenagel H
+40_1	C(C(CO)(C(CO)O)O)=O	1	Knoevenagel H
+41_0	C(CO)=O	-1	Knoevenagel C
+41_0	C(C(CO)O)=O	-1	Knoevenagel C
+41_0	C(C(CO)(C(CO)O)O)=O	1	Knoevenagel C
+41_1	C(CO)=O	-1	Knoevenagel H
+41_1	C(C(CO)O)=O	-1	Knoevenagel H
+41_1	C(C(CO)(C(CO)O)O)=O	1	Knoevenagel H
+43_0	C(CO)=O	-1	Knoevenagel C
+43_0	C(C(C(CO)O)O)=O	-1	Knoevenagel C
+43_0	C(C(C(CO)O)(C(CO)O)O)=O	1	Knoevenagel C
+43_1	C(CO)=O	-1	Knoevenagel H
+43_1	C(C(C(CO)O)O)=O	-1	Knoevenagel H
+43_1	C(C(C(CO)O)(C(CO)O)O)=O	1	Knoevenagel H
+45_0	C(C(CO)O)=O	-1	Knoevenagel H
+45_0	C(CO)(O)=O	-1	Knoevenagel H
+45_0	C(C(C(C(CO)O)O)O)(O)=O	1	Knoevenagel H
+47_0	C(C(C(CO)O)O)=O	-1	Knoevenagel H
+47_0	C(CO)(O)=O	-1	Knoevenagel H
+47_0	C(C(C(C(C(CO)O)O)O)O)(O)=O	1	Knoevenagel H
+48_0	C=O	-1	Knoevenagel H
+48_0	C(CO)(O)=O	-1	Knoevenagel H
+48_0	C(C(CO)O)(O)=O	1	Knoevenagel H
+49_0	C(CO)=O	-1	Knoevenagel H
+49_0	C(CO)(O)=O	-1	Knoevenagel H
+49_0	C(C(C(CO)O)O)(O)=O	1	Knoevenagel H
+51_0	C(C(CO)O)=O	-1	Elimination + enol to keto
+51_0	O	1	Elimination + enol to keto
+51_0	C(CC=O)=O	1	Elimination + enol to keto
+53_0	C(C(CO)O)=O	-1	Elimination + enol to keto
+53_0	O	1	Elimination + enol to keto
+53_0	C(C(C)=O)=O	1	Elimination + enol to keto
+55_0	C(C(C(CO)O)O)=O	-1	Elimination + enol to keto
+55_0	O	1	Elimination + enol to keto
+55_0	C(C(CCO)=O)=O	1	Elimination + enol to keto
+57_0	C(C(C(CO)O)O)=O	-1	Elimination + enol to keto
+57_0	O	1	Elimination + enol to keto
+57_0	C(CC(C=O)O)=O	1	Elimination + enol to keto
+59_0	C(C(C(CO)O)O)=O	-1	Elimination + enol to keto
+59_0	O	1	Elimination + enol to keto
+59_0	C(CC(CO)=O)=O	1	Elimination + enol to keto
+61_0	C(C(C(CO)O)O)=O	-1	Elimination + enol to keto
+61_0	O	1	Elimination + enol to keto
+61_0	C(C(C(C)=O)O)=O	1	Elimination + enol to keto
+63_0	C(CO)O	-1	Elimination + enol to keto
+63_0	O	1	Elimination + enol to keto
+63_0	C(C)=O	1	Elimination + enol to keto
+65_0	C(C(C(CO)O)O)=O	-1	Hemiacetal Formation for 5 membered rings
+65_0	C1C(C(C(O)O1)O)O	1	Hemiacetal Formation for 5 membered rings

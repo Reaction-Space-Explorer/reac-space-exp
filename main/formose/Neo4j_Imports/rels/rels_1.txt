@@ -1,0 +1,34 @@
+4_0	C=O	-1	Aldol Condensation
+4_0	C(CO)=O	-1	Aldol Condensation
+4_0	C(C(CO)O)=O	1	Aldol Condensation
+4_1	C=O	-1	Knoevenagel H
+4_1	C(CO)=O	-1	Knoevenagel H
+4_1	C(C(CO)O)=O	1	Knoevenagel H
+6_0	C(CO)=O	-1	Aldol Condensation
+6_0	C(CO)=O	-1	Aldol Condensation
+6_0	C(C(C(CO)O)O)=O	1	Aldol Condensation
+6_1	C(CO)=O	-1	Knoevenagel H
+6_1	C(CO)=O	-1	Knoevenagel H
+6_1	C(C(C(CO)O)O)=O	1	Knoevenagel H
+7_0	C(CO)=O	-1	Keto-enol migration twice
+7_0	C(CO)=O	1	Keto-enol migration twice
+10_0	C=O	-1	Cannizarro 2, HCHO (oxidation)
+10_0	C=O	-1	Cannizarro 2, HCHO (oxidation)
+10_0	O	-1	Cannizarro 2, HCHO (oxidation)
+10_0	CO	1	Cannizarro 2, HCHO (oxidation)
+10_0	C(O)=O	1	Cannizarro 2, HCHO (oxidation)
+10_1	C=O	-1	Cannizarro 2, HCHO (reduction)
+10_1	C=O	-1	Cannizarro 2, HCHO (reduction)
+10_1	O	-1	Cannizarro 2, HCHO (reduction)
+10_1	CO	1	Cannizarro 2, HCHO (reduction)
+10_1	C(O)=O	1	Cannizarro 2, HCHO (reduction)
+12_0	C=O	-1	Cannizarro 2, HCHO (oxidation)
+12_0	C(CO)=O	-1	Cannizarro 2, HCHO (oxidation)
+12_0	O	-1	Cannizarro 2, HCHO (oxidation)
+12_0	C(O)=O	1	Cannizarro 2, HCHO (oxidation)
+12_0	C(CO)O	1	Cannizarro 2, HCHO (oxidation)
+14_0	C=O	-1	Cannizarro 2, HCHO (reduction)
+14_0	C(CO)=O	-1	Cannizarro 2, HCHO (reduction)
+14_0	O	-1	Cannizarro 2, HCHO (reduction)
+14_0	CO	1	Cannizarro 2, HCHO (reduction)
+14_0	C(CO)(O)=O	1	Cannizarro 2, HCHO (reduction)
