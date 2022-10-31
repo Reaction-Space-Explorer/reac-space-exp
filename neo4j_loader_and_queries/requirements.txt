@@ -104,7 +104,7 @@ pydub==0.23.1
 pygame==1.9.4
 Pygments==2.7.4
 PyHamcrest==2.0.2
-PyJWT==1.7.1
+PyJWT==2.4.0
 pyOpenSSL==19.1.0
 pyparsing==2.4.7
 pypiwin32==223
