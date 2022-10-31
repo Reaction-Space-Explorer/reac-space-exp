@@ -9,11 +9,11 @@ The platform uses:
 * [Neo4j](https://neo4j.com/) for graph queries.
 * [Gephi](https://gephi.org/) for network visualization.
 
-Figures were plotted using [matplotlib](https://matplotlib.org/), [seaborn](https://seaborn.pydata.org/).
+Figures were plotted using [matplotlib](https://matplotlib.org/), [seaborn](https://seaborn.pydata.org/), and [skunk](https://github.com/whitead/skunk).
 
 ## Organization of this repository
 ### Scripts to run reactions
-The [main](main/) folder contains subfolders for each reaction (e.g. [glucose degradation](main/glucose/), [formose](main/formose/)) that we have studied. The output produced by running this pipeline has been placed in subfolders inside those.
+The [main](main/) folder contains subfolders for each reaction (e.g. [glucose degradation](main/glucose/), and [formose](main/formose/)) that we have studied. The output produced by running this pipeline has been placed in subfolders inside those.
 
 ### Available output files
 For reactions with published or submitted manuscripts, we have provided.
@@ -40,9 +40,9 @@ mod -f glucose_degradation.py
 You will notice there are some weird calls to methods that you may think have not even been imported, such as ```include("main.py")```. When a python file is run via MØD, it auto imports packages and methods in *libPyMØD*.
 
 ## Publications
-* Arya, A., Ray, J., Sharma, S., Cruz Simbron, R., Lozano, A., Smith, H. B., ...Cleaves, H. J. (2022). An open source computational workflow for the discovery of autocatalytic networks in abiotic reactions. _Chemical Science_. https://doi.org/10.1039/d2sc00256f
+* Arya, A., Ray, J., Sharma, S., Cruz Simbron, R., Lozano, A., Smith, H. B., ...Cleaves, H. J. (2022). An open source computational workflow for the discovery of autocatalytic networks in abiotic reactions. _Chemical Science_ 13, 4838–4853. https://doi.org/10.1039/d2sc00256f
     * For this, the reaction studied was [glucose degradation](main/glucose), and the [output files](main/glucose/output) for it can be found in the relevant folder.
 * Sharma, S.; Arya, A.; Cruz, R.; Cleaves II, H.J. Automated Exploration of Prebiotic Chemical Reaction Space: Progress and Perspectives. _Life_ 2021, 11, 1140. https://doi.org/10.3390/life11111140
 
-Stay tuned for updates on other reactions studied by us.
+Stay tuned for updates..
 
