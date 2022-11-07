@@ -32,6 +32,10 @@ All rules are placed in the [rules](rules/) folder. They are written in GML form
 ### Complementary data
 The [data](data/) folder contains a list of forbidden substructures that we utilize for post-generation filtering (discussed in Arya *et al.* 2022), a visual list of all reaction rules (which may be slightly dated), table of thermochemical data, among other things.
 
+### Autocatalysis Search and Figures
+The [imperative_loader_and_queries](imperative_loader_and_queries/) folder contains the files, and instructions for spontaneous autocatalytic loop search, among other things.
+
+
 ### Running a file using MØD
 The way we ran the files were using the terminal 
 ```bash
