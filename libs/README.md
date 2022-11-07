@@ -1,2 +1,0 @@
-## What this folder is for?
-I'm placing the Ambit and CDK .jar file libraries here. For download links, refer to the [Using Ambit in Python](https://github.com/cartilage-ftw/reac-space-exp/blob/master/main/Using_Ambit.md) guide I wrote.
