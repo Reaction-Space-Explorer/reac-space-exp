@@ -91,7 +91,7 @@ parso==0.7.0
 pathspec==0.5.9
 patsy==0.5.1
 pickleshare==0.7.5
-Pillow==8.2.0
+Pillow==9.3.0
 pipenv==2020.11.15
 prometheus-client==0.7.1
 prompt-toolkit==2.0.10
