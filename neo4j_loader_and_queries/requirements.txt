@@ -13,7 +13,7 @@ bleach==3.3.0
 botocore==1.19.51
 brewer2mpl==1.4.1
 cement==2.8.2
-certifi==2019.6.16
+certifi==2022.12.7
 cffi==1.14.4
 channels==2.1.2
 channels-redis==2.3.2
