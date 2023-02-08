@@ -21,7 +21,7 @@ chardet==3.0.4
 Click==7.0
 colorama==0.4.3
 constantly==15.1.0
-cryptography==3.3.2
+cryptography==39.0.1
 cycler==0.10.0
 daphne==2.2.5
 decorator==4.4.2
