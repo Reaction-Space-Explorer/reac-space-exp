@@ -144,7 +144,7 @@ virtualenv==20.2.2
 virtualenv-clone==0.5.4
 wcwidth==0.1.8
 webencodings==0.5.1
-Werkzeug==0.16.0
+Werkzeug==2.2.3
 xlrd==1.2.0
 XlsxWriter==1.4.0
 xmltodict==0.12.0
