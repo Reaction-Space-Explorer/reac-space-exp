@@ -1,0 +1,40 @@
+name: CI
+on: [push, pull_request]
+
+jobs:
+  cited-paths:
+    name: paths cited by publications still exist
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          missing=0
+          while IFS= read -r p; do
+            case "$p" in ''|\#*) continue ;; esac
+            if [ ! -e "$p" ]; then echo "MISSING: $p"; missing=1; fi
+          done < .github/cited_paths.txt
+          [ "$missing" = 0 ] && echo "all cited paths present"
+          exit $missing
+
+  python:
+    name: python sources parse
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      # MOD is a C++ extension that cannot be installed here, so the scripts are checked
+      # for syntax rather than run
+      - run: |
+          python -m compileall -q rules imperative_loader_and_queries neo4j_loader_and_queries \
+            && echo "rules and loaders parse"
+      - run: |
+          python - <<'PY'
+          import json, pathlib, sys
+          bad = []
+          for p in pathlib.Path('.').rglob('*.ipynb'):
+              try: json.loads(p.read_text())
+              except Exception as e: bad.append(f"{p}: {e}")
+          print("\n".join(bad) or f"notebooks parse")
+          sys.exit(1 if bad else 0)
+          PY

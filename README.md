@@ -1,52 +1,79 @@
 # Reaction Space Explorer
-An open source cheminformatics workflow to simulate chemical reaction networks important in prebiotic chemistry and to discover autocatalytic loops. Available open source under the BSD-3 Clause license.
 
-The platform uses:
-* [MØD](https://github.com/jakobandersen/mod)
-    * Note: Most of the reaction networks were generated with MØD versions v.0.9.0 to [v.0.11.0](https://github.com/jakobandersen/mod/releases/tag/v0.11.0). However, the code (and any `.dg` output files that may have used older formats) are still supported. We have provided `.dg` files with newer formats that come with reaction rules self contained in them. Note that for reproducing reactions from scratch you will still need to load rules from the [library we compiled](rules/). The user is free to add or remove any rules as per their choice.
-    * Although MØD installation has been described on its documentation pages, some people have benefitted from a [small tutorial](Setting_up_MOD.md) we ourselves wrote.
-* [RDKit](https://anaconda.org/rdkit/rdkit) (not compatible with Python 3.8.x as of now, we used a separate conda environment with Python 3.7.9).
-* [Neo4j](https://neo4j.com/) for graph queries.
-* [Gephi](https://gephi.org/) for network visualization.
+[![CI](https://github.com/Reaction-Space-Explorer/reac-space-exp/actions/workflows/ci.yml/badge.svg)](https://github.com/Reaction-Space-Explorer/reac-space-exp/actions/workflows/ci.yml)
+[![License: BSD-3-Clause](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](LICENSE)
 
-Figures were plotted using [matplotlib](https://matplotlib.org/), [seaborn](https://seaborn.pydata.org/), and [skunk](https://github.com/whitead/skunk).
-
-## Organization of this repository
-### Scripts to run reactions
-The [main](main/) folder contains subfolders for each reaction (e.g. [glucose degradation](main/glucose/), and [formose](main/formose/)) that we have studied. The output produced by running this pipeline has been placed in subfolders inside those.
-
-### Available output files
-For reactions with published or submitted manuscripts, we have provided.
-* A tab-separated table containing SMILES of each species and the generation in which it was produced.
-* The `.dg` file that was dumped via MØD itself, which can be used to load the full network into MØD without the need of generating it again using the [DG.load](https://jakobandersen.github.io/mod/pymod/dg/DG.html?highlight=dg%20load#mod.DG.load)() method built into it.
-* A custom format (tab-separated) output that can be loaded in Neo4J for network queries, or Gephi for the purpose of visualization.
-* A table of rules applied by generation.
-
-The methods for generating these are contained in the code scripts
-
-See the README description in [main](main/) for an overview of the formats.
-
-### Library of reaction rules
-All rules are placed in the [rules](rules/) folder. They are written in GML format, mostly compartmentalized in separate `.py` files. For convenience purposes, we used some tricks to make things modular. The `all.py` file calls each `.py` file in the folder. Additional rules that you'd like to load (*if* using our methods) would The same file also imports utility methods from `common.py`. Examples that demonstrate how to write rules can be found on the [documentation pages of MØD](https://jakobandersen.github.io/mod/).
-
-### Complementary data
-The [data](data/) folder contains a list of forbidden substructures that we utilize for post-generation filtering (discussed in Arya *et al.* 2022), a visual list of all reaction rules (which may be slightly dated), table of thermochemical data, among other things.
-
-### Autocatalysis Search and Figures
-The [imperative_loader_and_queries](imperative_loader_and_queries/) folder contains the files, and instructions for spontaneous autocatalytic loop search, among other things.
-
-
-### Running a file using MØD
-The way we ran the files were using the terminal 
-```bash
-mod -f glucose_degradation.py
-```
-You will notice there are some weird calls to methods that you may think have not even been imported, such as ```include("main.py")```. When a python file is run via MØD, it auto imports packages and methods in *libPyMØD*.
+An open source cheminformatics workflow that generates prebiotic chemical reaction networks
+with [MØD](https://github.com/jakobandersen/mod), filters them, and searches the result for
+autocatalytic cycles.
 
 ## Publications
-* Arya, A., Ray, J., Sharma, S., Cruz Simbron, R., Lozano, A., Smith, H. B., ...Cleaves, H. J. (2022). An open source computational workflow for the discovery of autocatalytic networks in abiotic reactions. _Chemical Science_ 13, 4838–4853. https://doi.org/10.1039/d2sc00256f
-    * For this, the reaction studied was [glucose degradation](main/glucose), and the [output files](main/glucose/output) for it can be found in the relevant folder.
-* Sharma, S.; Arya, A.; Cruz, R.; Cleaves II, H.J. Automated Exploration of Prebiotic Chemical Reaction Space: Progress and Perspectives. _Life_ 2021, 11, 1140. https://doi.org/10.3390/life11111140
 
-Stay tuned for updates..
+- **Arya, A.; Ray, J.; Sharma, S.; Cruz Simbron, R.; Lozano, A.; Smith, H. B.; Andersen,
+  J. L.; Chen, H.; Meringer, M.; Cleaves, H. J.** An open source computational workflow for
+  the discovery of autocatalytic networks in abiotic reactions. *Chem. Sci.* **2022**, *13*,
+  4838–4853. [doi:10.1039/D2SC00256F](https://doi.org/10.1039/D2SC00256F)
+  — the reaction studied is [glucose degradation](main/glucose); its
+  [output files](main/glucose/output) are in that folder.
+- **Sharma, S.; Arya, A.; Cruz, R.; Cleaves II, H. J.** Automated Exploration of Prebiotic
+  Chemical Reaction Space: Progress and Perspectives. *Life* **2021**, *11*, 1140.
+  [doi:10.3390/life11111140](https://doi.org/10.3390/life11111140)
+- **Cruz-Simbron, R.; Sharma, S.; Arya, A.; Ray, J.; Lozano, A.; Andersen, J. L.; Chen, H.;
+  Cleaves, H. J.** Combined Network and High Resolution Mass Spectrometry Analysis of the
+  Formose Reaction Reveals Mechanisms for Emergent Behaviors. *ChemRxiv* **2024**, preprint.
+  [doi:10.26434/chemrxiv-2024-nj0p6](https://doi.org/10.26434/chemrxiv-2024-nj0p6)
+  — the reaction is [formose](main/formose).
 
+## What is here
+
+| | |
+|---|---|
+| [`main/`](main/) | One folder per reaction studied: [glucose](main/glucose), [formose](main/formose), and smaller runs for urey, pyruvic, maillard, hcn, amm_glucose and amm_formose. Generated output sits in subfolders. See [`main/README`](main/) for the formats |
+| [`rules/`](rules/) | The reaction rule library, in GML, split across `.py` files. `all.py` calls each of them and imports helpers from `common.py` |
+| [`data/`](data/) | Forbidden substructures used for post-generation filtering, the visual list of rules, thermochemical tables |
+| [`imperative_loader_and_queries/`](imperative_loader_and_queries/) | Autocatalytic cycle search, and the queries behind it |
+| [`neo4j_loader_and_queries/`](neo4j_loader_and_queries/) | Loading a network into Neo4j, and the Cypher queries run against it |
+| [`stoichiometric_network_analysis/`](stoichiometric_network_analysis/) | Stoichiometric analysis of the generated networks, by Alejandro Lozano. MassPy examples, and analyses of the glucose and radical networks |
+| [`match-viz/`](match-viz/) | Interactive view of the Yang and Montgomery 1996 structures matched in the glucose network, built with [mols2grid](https://github.com/cbouy/mols2grid). Served at [reaction-space-explorer.github.io/reac-space-exp/match-viz](https://reaction-space-explorer.github.io/reac-space-exp/match-viz/) |
+| [`plots/`](plots/), [`radicals/`](radicals/), [`tautomer/`](tautomer/), [`test/`](test/) | Figure code, the radical network, tautomer handling, and scratch runs |
+
+For each published reaction the output includes a tab-separated table of species SMILES with
+the generation each appeared in, the `.dg` dump that
+[`DG.load`](https://jakobandersen.github.io/mod/pymod/dg/DG.html#mod.DG.load) reads back
+without regenerating, a tab-separated form for Neo4j and Gephi, and a table of rules applied
+per generation.
+
+## Running
+
+Networks are generated by MØD, which runs the scripts itself:
+
+```bash
+mod -f main/glucose/glucose_degradation.py
+```
+
+Calls such as `include("main.py")` are not plain Python; MØD imports *libPyMØD* into scope
+before running the file. Most networks here were generated with MØD v0.9.0 to
+[v0.11.0](https://github.com/jakobandersen/mod/releases/tag/v0.11.0), and the `.dg` files are
+provided in a newer format with the rules self-contained. Regenerating from scratch still
+needs the [rule library](rules/). Installation is covered in the MØD documentation, and in
+the [short tutorial](Setting_up_MOD.md) written for this project.
+
+The rest of the workflow uses [RDKit](https://www.rdkit.org),
+[Neo4j](https://neo4j.com/) for graph queries and [Gephi](https://gephi.org/) for
+visualization. Figures were plotted with [matplotlib](https://matplotlib.org/),
+[seaborn](https://seaborn.pydata.org/) and [skunk](https://github.com/whitead/skunk).
+
+## Paths cited by the papers
+
+A link in a printed paper cannot be corrected. The files and folders listed in
+[`.github/cited_paths.txt`](.github/cited_paths.txt) are cited by the publications above, so
+they must not be moved, renamed or deleted; CI fails if one goes missing. Add to that list
+when a new manuscript cites a path.
+
+Note that `data/formose_filtered_network_deltaG.csv` is tab-separated despite the extension,
+which is the name the manuscript cites.
+
+## License
+
+BSD 3-Clause, see [LICENSE](LICENSE). `match-viz/` came from a separate repository and
+carries its own MIT license.

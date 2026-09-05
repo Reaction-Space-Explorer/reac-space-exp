@@ -1,0 +1,15 @@
+# Paths cited by published or submitted work. A link in a paper cannot be edited after
+# print, so these must not be moved, renamed or deleted. CI fails if one goes missing.
+#
+# Arya et al., Chem. Sci. 2022, 13, 4838 (ESI)
+data/All_Rules.pdf
+data/Filtered Structures List.pdf
+main/glucose
+main/glucose/output
+rules
+# Cruz-Simbron et al., ChemRxiv 2024 (JCIM SI, and the ACS Earth & Space manuscript)
+data/formose_filtered_network_deltaG.csv
+main/formose/Formose_Autocatalytic_Cycles_April_2023.zip
+imperative_loader_and_queries
+# served at reaction-space-explorer.github.io/reac-space-exp/match-viz/
+match-viz/index.html
