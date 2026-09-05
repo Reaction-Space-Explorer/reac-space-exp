@@ -13,9 +13,10 @@ the clearest introduction to them.
 | `radical_network/` | The radical network, same treatment |
 | `glucose_degradation_output.txt` | The network the analyses read |
 
-Each of the first three holds `Data_cleaning.ipynb`, which builds the matrix from the network
-output, `Ematrix.m` for the MATLAB side, `reactants` and `products` as the incidence lists,
-and `test.mat` with the assembled matrices.
+Each of the three holds the same four files: `Data_cleaning.ipynb` builds the matrix from the
+network output and pickles it into `reactants` and `products`, and `Ematrix.m` finds the
+extreme currents from it, leaving `test.mat`. `Ematrix.m` is Guy Schmitz's 2008 program, not
+written here; each folder's README says so.
 
 Imported from the `Stoichiometric-Network-Analysis` repository with its history. Two sets of
 files from that repository are not here, both being third-party course material rather than

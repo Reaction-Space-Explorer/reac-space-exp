@@ -1,5 +1,19 @@
 ### Main Directory
-* Each folder in this directory was meant to be for running a separate reaction (e.g. "glucose" is for glucose degradation).
+* Each folder in this directory is one reaction, with the starting species given at the top
+of its script:
+
+| | Starting species | |
+|---|---|---|
+| [`glucose/`](glucose) | open-chain glucose | Alkaline glucose degradation, the network of Arya et al. 2022 |
+| [`formose/`](formose) | formaldehyde, glycolaldehyde | The formose reaction, the network of Cruz-Simbron et al. 2024 |
+| [`amm_glucose/`](amm_glucose) | ammonia, water, open-chain glucose | Glucose degradation with ammonia present |
+| [`amm_formose/`](amm_formose) | ammonia, formaldehyde, glycolaldehyde, water | Formose with ammonia present |
+| [`maillard/`](maillard) | glycine, open-chain glucose, water | The Maillard reaction, a sugar with an amino acid |
+| [`hcn/`](hcn) | HCN, ammonia, water | HCN oligomerisation |
+| [`urey/`](urey) | formaldehyde, ammonia, HCN | Urey-Miller conditions |
+| [`pyruvic/`](pyruvic) | pyruvic acid, water | Pyruvic acid chemistry |
+
+Only glucose and formose carry generated output; the rest are the run scripts alone.
 * [main.py](main.py) contains methods and settings that will be used by reactions running in all subdirectories. It also contains some utility methods useful for seeing what's going on and debugging.
 * [mod_to_neo4j_exporter.py](mod_to_neo4j_exporter.py) contains method(s) to export networks from the MØD pipeline that we  later loaded into a [Neo4j](https://neo4j.com/) MØDule for running graph queries (searching for autocatalytic cycles, etc.).
 
