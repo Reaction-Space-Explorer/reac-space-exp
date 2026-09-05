@@ -65,16 +65,6 @@ The rest of the workflow uses [RDKit](https://www.rdkit.org),
 visualization. Figures were plotted with [matplotlib](https://matplotlib.org/),
 [seaborn](https://seaborn.pydata.org/) and [skunk](https://github.com/whitead/skunk).
 
-## Paths cited by the papers
-
-A link in a printed paper cannot be corrected. The files and folders listed in
-[`.github/cited_paths.txt`](.github/cited_paths.txt) are cited by the publications above, so
-they must not be moved, renamed or deleted; CI fails if one goes missing. Add to that list
-when a new manuscript cites a path.
-
-Note that `data/formose_filtered_network_deltaG.csv` is tab-separated despite the extension,
-which is the name the manuscript cites.
-
 ## License
 
 BSD 3-Clause, see [LICENSE](LICENSE). `match-viz/` came from a separate repository and
