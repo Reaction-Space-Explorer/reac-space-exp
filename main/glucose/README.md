@@ -1,10 +1,9 @@
 # glucose
 
-Alkaline glucose degradation, the network reported in Arya et al., *Chem. Sci.* 2022.
+Alkaline glucose degradation, the network of Arya et al., *Chem. Sci.* 2022.
+Run with `mod -f glucose_degradation.py`.
 
-| | |
-|---|---|
-| `glucose_degradation.py` | The run itself. `mod -f glucose_degradation.py` |
-| `glucose_degradation_output.txt` | Species with the generation each first appeared in, format in [`main/README.md`](../README.md) |
-| `retrosyn_search.py` | Walks the finished network backwards from a target species |
-| `output/` | The published run, see its own README |
+- `glucose_degradation.py` — the run
+- `glucose_degradation_output.txt` — species with the generation each appeared in
+- `retrosyn_search.py` — walks the finished network back from a target species
+- `output/` — the published run

@@ -1,7 +1,6 @@
 # tautomer
 
-Work on tautomer handling, kept separate from the generation pipeline.
+Trials of [MolVS](https://molvs.readthedocs.io/) for tautomer canonicalisation, so species
+differing only by a tautomeric shift are not counted twice. Not part of the pipeline.
 
-`molvs/` tries [MolVS](https://molvs.readthedocs.io/) for tautomer canonicalisation, so that
-species differing only by a tautomeric shift are not counted twice. `molvs/test.ipynb` is
-the comparison that was run, next to the note that came with it.
+- `molvs/test.ipynb` — the comparison, with the note that came with it

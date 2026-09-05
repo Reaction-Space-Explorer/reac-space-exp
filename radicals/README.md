@@ -1,32 +1,23 @@
 # radicals
 
-Radical chemistry networks, generated with MØD like the rest but kept separate: the rules
-here act on radical species rather than closed-shell molecules.
+Radical networks, generated with MØD like the rest but with rules acting on radicals rather
+than closed-shell molecules. Run with `mod -f all6.py`.
 
-```bash
-mod -f all6.py
-```
-
-MØD appends to its output rather than replacing it, so a previous run has to be cleared
-first, or the new network will be generated on top of the old one:
+MØD appends to its output, so clear a previous run first, then recreate `Etapa0.txt` with the
+starting molecules:
 
 ```bash
 rm -r Rule* Density* dgdumfile-* Masses* Stage*
 mod clean
 ```
 
-`Etapa0.txt` then has to be recreated with the starting molecules.
+- `all6.py` — the driver; includes the rule files and plots how mass evolves over generations
+- `common.py` — helpers included by each rule file
+- `Etapa0.txt` — starting molecules
+- `OHRadAlcanes.py`, `OHRadHM.py`, `OHRadO=M.py` — hydroxyl radical against each substrate class
+- `doublebond-attack-Mrad.py` — radical addition across a double bond
+- `sustract-proton.py` — proton abstraction
+- `termination.py` — radical recombination
+- `all7/` — a later run
 
-| | |
-|---|---|
-| `all6.py` | The driver. Includes the rule files and plots how molecular mass evolves over generations |
-| `common.py` | Helpers the rule files share, included by each |
-| `Etapa0.txt` | Starting molecules, read at generation 0 |
-| `OHRadAlcanes.py` | Hydroxyl radical abstracting from an alkane |
-| `OHRadHM.py`, `OHRadO=M.py` | Hydroxyl radical against the other substrate classes |
-| `doublebond-attack-Mrad.py` | Radical addition across a double bond |
-| `sustract-proton.py` | Proton abstraction |
-| `termination.py` | Radical recombination, ending a chain |
-| `all7/` | A later run, see its own README |
-
-Several files and comments are in Spanish; `Etapa` is stage, `sustract` is abstract.
+Names are Spanish: `Etapa` is stage, `sustract` abstract.
