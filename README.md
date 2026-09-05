@@ -1,3 +1,7 @@
+> These analyses now also live in the main repository, at
+> [reac-space-exp/stoichiometric_network_analysis](https://github.com/Reaction-Space-Explorer/reac-space-exp/tree/master/stoichiometric_network_analysis).
+> This repository keeps the full commit history and the lecture material.
+
 ## Stoichiometric Network Analysis
 Stoichiometric Analysis relies on:<br>
 * Linear Algebra
