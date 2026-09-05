@@ -1,5 +1,5 @@
 # What the scripts in this folder actually import, at the versions used for the
-# Chem. Sci. 2022 work. requirements-frozen-2020.txt is the original pip freeze,
+# Chem. Sci. 2022 work. frozen-environment-2020.txt is the original pip freeze,
 # kept as the record of the whole environment.
 matplotlib==3.2.1
 networkx==2.4
