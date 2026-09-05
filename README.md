@@ -33,8 +33,10 @@ autocatalytic cycles.
 | [`data/`](data/) | Forbidden substructures used for post-generation filtering, the visual list of rules, thermochemical tables |
 | [`imperative_loader_and_queries/`](imperative_loader_and_queries/) | Autocatalytic cycle search, and the queries behind it |
 | [`neo4j_loader_and_queries/`](neo4j_loader_and_queries/) | Loading a network into Neo4j, and the Cypher queries run against it |
-| [`stoichiometric_network_analysis/`](stoichiometric_network_analysis/) | Stoichiometric analysis of the generated networks, by Alejandro Lozano. MassPy examples, and analyses of the glucose and radical networks |
+| [`stoichiometric_network_analysis/`](stoichiometric_network_analysis/) | The generated networks read as stoichiometric matrices, by Alejandro Lozano: glucose at the third and fifth generation, and the radical network |
 | [`match-viz/`](match-viz/) | Interactive view of the Yang and Montgomery 1996 structures matched in the glucose network, built with [mols2grid](https://github.com/cbouy/mols2grid). Served at [reaction-space-explorer.github.io/reac-space-exp/match-viz](https://reaction-space-explorer.github.io/reac-space-exp/match-viz/) |
+
+Each folder carries its own README describing the files in it.
 | [`plots/`](plots/), [`radicals/`](radicals/), [`tautomer/`](tautomer/), [`test/`](test/) | Figure code, the radical network, tautomer handling, and scratch runs |
 
 For each published reaction the output includes a tab-separated table of species SMILES with
