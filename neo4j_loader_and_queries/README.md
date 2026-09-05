@@ -14,7 +14,7 @@ ready to go!
 The script `main.py` was developed using [Python version 3.7.3 from python.org](https://www.python.org/downloads/release/python-373/).
 
 For experienced users, see `requirements.txt` for installation. It lists the five packages
-these scripts import; `requirements-frozen-2020.txt` is the original freeze of the whole
+these scripts import; `frozen-environment-2020.txt` is the original freeze of the whole
 environment, kept as a record.
 
 For more help, keep reading...
