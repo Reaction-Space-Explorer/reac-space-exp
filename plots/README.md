@@ -51,3 +51,14 @@ Starting round 3
 Took 571.1698200702667 seconds to complete round 3
 Original subset size: 13832
 ```
+
+## Method notes
+
+Change in node degree per generation: group by molecule (`smiles_str`), sort by generation
+ascending, take the rolling difference of `count_relationships`. Generation 0 has a null
+delta and should be filled with 0. The difference may need scaling; in the glucose network
+the degree roughly tripled each generation. Drawn as a line against node-degree rank.
+
+Whole-network drawing was done in matplotlib and Gephi;
+[graph-tool](https://graph-tool.skewed.de/static/doc/generation.html) was suggested as an
+alternative and never tried.

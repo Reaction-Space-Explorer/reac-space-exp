@@ -11,3 +11,7 @@ feeders.
 - `_query_visualization_diagram*.jpg` — the matched pattern drawn out
 - `node_degree_distribution/` — degree distribution of the pivot nodes
 - `archive/` — earlier versions
+
+Not done, from the 2020 planning: flagging matched cycles that contain stereo compounds, or
+that use rules which change stereoisomerism; and counting rule *sequence* frequency, the
+paths of rules within a matched cycle, rather than rule frequency alone.
