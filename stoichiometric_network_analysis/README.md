@@ -12,7 +12,8 @@ history.
 
 Each folder holds the same four files: `Data_cleaning.ipynb` builds the matrix and pickles it
 into `reactants` and `products`, `Ematrix.m` finds the extreme currents, `test.mat` holds the
-result. `Ematrix.m` is Guy Schmitz's 2008 program, not written here.
+result. `Ematrix.m` is not written here: it is Guy Schmitz's 2008 program with
+Kolar-Anić, Anić and Čupić, J. Phys. Chem. A 112, 13452.
 
 `lectures/` and `course_homework/` came with the original repository and are third-party
 teaching material rather than work on these networks: the slides are Bernhard Palsson's, from
